@@ -1,0 +1,17 @@
+{
+  "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
+  "roadmap": {
+    "v0.2.0": {
+      "keywords": ["object", "enum", "interface", "when", "for", "while", "companion", "by"],
+      "desc": "基本声明与控制流"
+    },
+    "v0.3.0": {
+      "keywords": ["lambda", "suspend", "generic", "sealed", "inner"],
+      "desc": "Lambda / 协程 / 泛型 / 密封类"
+    },
+    "v0.4.0": {
+      "keywords": ["inline", "operator", "infix", "tailrec", "annotation", "typealias"],
+      "desc": "修饰符与注解完整支持"
+    }
+  }
+}

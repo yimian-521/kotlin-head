@@ -1,0 +1,96 @@
+package com.qitong.head.ast
+
+/** 源码位置：行号从 1 开始，列号从 1 开始 */
+data class Pos(val line: Int, val col: Int) {
+    override fun toString() = "$line:$col"
+}
+
+/** 源码范围 */
+data class Span(val start: Pos, val end: Pos) {
+    override fun toString() = "$start-$end"
+}
+
+/** AST 节点基类。每个节点知道自己在哪。 */
+sealed class KtNode(val span: Span)
+
+// ─── 顶层 ───
+/** 一个 .kt 文件 = 包声明 + 零或多个顶层声明 */
+data class KtFile(val pkg: String?, val declarations: List<KtDecl>) : KtNode(
+    Span(Pos(1, 1), Pos(1, 1)) // 文件级，范围由外部设置
+)
+
+// ─── 声明 ───
+sealed class KtDecl(span: Span) : KtNode(span)
+
+data class KtClass(
+    val name: String,
+    val modifiers: List<String>,  // public / data / sealed ...
+    val members: List<KtDecl>,
+    val classSpan: Span
+) : KtDecl(classSpan)
+
+data class KtFun(
+    val name: String,
+    val params: List<KtParam>,
+    val returnType: String?,     // null = 未声明（推断）
+    val body: KtExpr?,
+    val funSpan: Span
+) : KtDecl(funSpan)
+
+data class KtVal(
+    val name: String,
+    val type: String?,
+    val value: KtExpr?,
+    val valSpan: Span
+) : KtDecl(valSpan)
+
+data class KtParam(
+    val name: String,
+    val type: String?,
+    val paramSpan: Span
+)
+
+// ─── 表达式 ───
+sealed class KtExpr(span: Span) : KtNode(span)
+
+data class KtLitInt(val value: Int, val litSpan: Span) : KtExpr(litSpan)
+data class KtLitStr(val value: String, val litSpan: Span) : KtExpr(litSpan)
+data class KtLitBool(val value: Boolean, val litSpan: Span) : KtExpr(litSpan)
+
+data class KtRef(val name: String, val refSpan: Span) : KtExpr(refSpan)
+
+data class KtBinary(
+    val left: KtExpr,
+    val op: String,       // + - * / == != && || > < ...
+    val right: KtExpr,
+    val binSpan: Span
+) : KtExpr(binSpan)
+
+data class KtCall(
+    val target: KtExpr,       // 函数引用
+    val args: List<KtExpr>,
+    val callSpan: Span
+) : KtExpr(callSpan)
+
+data class KtIf(
+    val cond: KtExpr,
+    val thenBranch: KtExpr,
+    val elseBranch: KtExpr?,
+    val ifSpan: Span
+) : KtExpr(ifSpan)
+
+data class KtLambda(
+    val params: List<KtParam>,
+    val body: KtExpr,
+    val lambdaSpan: Span
+) : KtExpr(lambdaSpan)
+
+data class KtReturn(
+    val value: KtExpr?,
+    val returnSpan: Span
+) : KtExpr(returnSpan)
+
+data class KtBlock(
+    val statements: List<KtNode>,  // KtDecl | KtExpr
+    val blockSpan: Span
+) : KtExpr(blockSpan)

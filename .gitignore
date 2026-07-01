@@ -1,0 +1,5 @@
+build/
+mcp/
+test.kt
+*.jar
+.DS_Store

@@ -1,0 +1,8 @@
+{
+  "_comment": "模拟运行配置。名字和路径随便改，菜单自动更新。不报错就好.",
+  "profiles": [
+    { "name": "空文件测试", "file": "" },
+    { "name": "Conversation.kt", "file": "/tmp/qitong-gateway/qitong-ai-gateway-3.4.3/app/src/main/java/com/qtwl/gateway/data/model/Conversation.kt" },
+    { "name": "GatewayService.kt", "file": "/tmp/qitong-gateway/qitong-ai-gateway-3.4.3/app/src/main/java/com/qtwl/gateway/gateway/GatewayService.kt" }
+  ]
+}
