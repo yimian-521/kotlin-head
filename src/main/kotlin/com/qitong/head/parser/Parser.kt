@@ -405,6 +405,11 @@ class Parser(private val tokens: List<Token>) {
             val operand = parseExpression() // 高优先级，NOT作为前缀
             KtPrefixExpr("!", operand, Span(start, operand.span.end))
         }
+        RETURN -> {
+            val kw = advance()
+            val v = if (check(RBRACE) || isEof()) null else parseExpression()
+            KtReturn(v, Span(kw.pos, lastPos()))
+        }
         IDENT -> {
                 val start = t.pos
                 val sb = StringBuilder(t.text)
