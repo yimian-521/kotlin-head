@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-**v0.3.0** — HED/TDL 双格式落地
+**v0.4.0-dev** — 綦桐 33% 通过率 + Lexer/AST/Parser 重装
 
 | 模块 | 行数 | 职责 |
 |------|------|------|
@@ -66,6 +66,6 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.1.0 ✅ | data class / fun / val / if / 二进制运算 / 字面量 |
 | v0.2.0 ✅ | 三级诊断 + BugScanner + 模拟运行 + 容错跳过 |
 | v0.3.0 ✅ | HED/TDL 双格式落地 + 15种按钮行为模式 |
-| v0.4.0 🔜 | object / enum / interface / when / for / while |
+| v0.4.0-dev 🚧 | object / enum / interface / when / for / while / override / companion — 綦桐AI网关 63% 目标 / 当前 33% |
 | v0.5.0 | Lambda / 泛型 / suspend |
 | v1.0.0 | 32/32 綦桐文件全通过 |
