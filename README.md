@@ -18,17 +18,17 @@
 
 ## 当前版本
 
-**v0.4.2-dev** — 綦桐 67% 通过率 + 命名参数 + &&/|| 运算符
+**v0.5.1-dev** — class正解析+继承+LT/GT归位+尾部lambda，綦桐17/30 AST零崩溃
 
 | 模块 | 行数 | 职责 |
 |------|------|------|
-| Lexer | ~160 | Token 化 + 注解跳过 |
-| Parser | ~640 | 递归下降 + 容错跳过 |
-| AST | ~87 | Kt 节点定义 |
+| Lexer | ~170 | Token 化 + 注解跳过 + ELVIS |
+| Parser | ~700 | 递归下降 + 容错跳过 + 尾部lambda |
+| AST | ~95 | Kt 节点定义（KtClass/KtCall等） |
 | TypeChecker | ~110 | 符号表 + 类型绑定 |
-| Diagnostic | ~75 | 四级诊断 + 版本路线图 🔮 |
+| Diagnostic | ~80 | 四级诊断 + 版本路线图 🔮 |
 | BugScanner | ~55 | AST 结构模式检测 |
-| Main | ~340 | 按钮终端 + 模拟运行 |
+| Main | ~350 | 按钮终端 + 模拟运行 + VERSION |
 | DevMode | ~130 | 存储层（独立 jar） |
 
 ## 许可
@@ -66,6 +66,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.1.0 ✅ | data class / fun / val / if / 二进制运算 / 字面量 |
 | v0.2.0 ✅ | 三级诊断 + BugScanner + 模拟运行 + 容错跳过 |
 | v0.3.0 ✅ | HED/TDL 双格式落地 + 15种按钮行为模式 |
-| v0.4.2-dev 🚧 | object/enum/interface/when/for/while + 命名参数 + &&/|| — 綦桐 67% |
-| v0.5.0 | Lambda / 泛型 / suspend |
+| v0.4.5 ✅ | object/enum/interface/when/for/while + 命名参数 + &&/|| — 綦桐 23/30 |
+| v0.5.0 ✅ | class正解析 + 继承 + LT/GT归位 + 尾部lambda — 綦桐 17/30 AST零崩溃 |
+| v0.5.1 🚧 | 泛型 `<T>` 正解析 + `by` 委托 + 赋值语句 |
 | v1.0.0 | 32/32 綦桐文件全通过 |
