@@ -25,6 +25,7 @@ sealed class KtDecl(span: Span) : KtNode(span)
 data class KtClass(
     val name: String,
     val modifiers: List<String>,  // public / data / sealed ...
+    val superClass: String? = null, // ★ v0.5: 继承 : SuperClass(args)
     val members: List<KtDecl>,
     val classSpan: Span
 ) : KtDecl(classSpan)

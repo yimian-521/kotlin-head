@@ -64,7 +64,8 @@ class Parser(private val tokens: List<Token>) {
 
     private fun isDeclarationStart(t: TokType): Boolean =
         t == FUN || t == VAL || t == VAR || t == CLASS || t == AT || t == EOF
-            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION || t == DATA
+            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION
+        // ★ DATA 不在此列：import 路径中的 data.db 会被误判
 
     private fun isDeclarationStart(): Boolean = isDeclarationStart(peek().type)
 
@@ -92,17 +93,64 @@ class Parser(private val tokens: List<Token>) {
             val start = dataKw.pos
             val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList<KtDecl>()
             val end = lastPos()
-            return KtClass(name, listOf("data", "public"), members, Span(start, end))
+            return KtClass(name, listOf("data", "public"), null, members, Span(start, end))
         }
         // fun ...
         if (matchType(FUN)) return parseFun()
         // val / var ...
         if (matchType(VAL) || matchType(VAR)) return parseVal()
-        // class (non-data) ...
+        // class (non-data) —— ★ v0.5-step1: 正解析
         if (matchType(CLASS)) {
-            warnSkip("class ${peekNext()?.text ?: "?"}", "v0.2.0")
-            skipToNextDecl()
-            return null
+            val classKw = advance() // class
+            val name = advance().text
+            val start = classKw.pos
+            // ★ 跳过泛型 <N, T>（v0.5-step2 正解析）
+            if (checkType(LT)) {
+                var angleDepth = 1
+                advance() // <
+                while (angleDepth > 0 && !isEof()) {
+                    when (peek().type) {
+                        LT -> { advance(); angleDepth++ }
+                        GT -> { advance(); angleDepth-- }
+                        else -> advance()
+                    }
+                }
+            }
+            val members = mutableListOf<KtDecl>()
+            // ★ v0.5: 继承 : SuperClass(args)
+            var superClass: String? = null
+            if (checkType(COLON)) {
+                advance() // :
+                superClass = advance().text
+                // 跳过超类构造参数 : Foo(args)
+                if (checkType(LPAREN)) {
+                    advance()
+                    var depth = 1
+                    while (depth > 0 && !isEof()) {
+                        when (peek().type) {
+                            LPAREN -> { advance(); depth++ }
+                            RPAREN -> { advance(); depth-- }
+                            else -> advance()
+                        }
+                    }
+                }
+            }
+            // ★ 构造参数 (val x: Int, var y: String)
+            if (check(LPAREN)) {
+                members += parsePrimaryCtorMembers()
+            }
+            // ★ 类体 { fun foo() ... }
+            if (checkType(LBRACE)) {
+                advance() // {
+                while (!check(RBRACE)) {
+                    skipAnnotations()
+                    if (check(RBRACE)) break
+                    parseDeclaration()?.let { members += it }
+                    if (checkType(COMMA) || checkType(SEMICOLON)) advance()
+                }
+                advance() // }
+            }
+            return KtClass(name, listOf("public"), superClass, members, Span(start, lastPos()))
         }
         // object / companion object ...
         if (matchType(OBJECT) || matchType(COMPANION)) return parseObject()
@@ -125,7 +173,7 @@ class Parser(private val tokens: List<Token>) {
         advance()
         while (!isEof()) {
             val t = peek().type
-            if (isDeclarationStart(t)) break
+            if (isDeclarationStart(t) || t == DATA) break
             if (t == LBRACE) {
                 advance() // {
                 var depth = 1
@@ -404,6 +452,13 @@ class Parser(private val tokens: List<Token>) {
     private fun parseBinary(minPrec: Int = 0): KtExpr {
         var left = parsePrimary()
         while (true) {
+            // ★ v0.5: LT/GT 显式处理（已从 curPrec 移出，优先级 5）
+            if (peek().type == LT || peek().type == GT || peek().type == LTEQ || peek().type == GTEQ) {
+                val op = advance().text
+                val right = parseBinary(6)
+                left = KtBinary(left, op, right, Span(left.span.start, right.span.end))
+                continue
+            }
             val prec = curPrec() ?: break
             if (prec < minPrec) break
             val op = advance().text
@@ -552,13 +607,12 @@ RETURN -> {
     private fun error(msg: String): Nothing =
         throw ParseException("$msg at ${peek().pos}", peek().pos)
 
-    // 运算符优先级
+    // 运算符优先级（★ v0.5: LT/GT 移出，parseBinary 显式处理）
     private fun curPrec(): Int? = when (peek().type) {
         OR -> 1
         ELVIS -> 2
         AND -> 3
         EQEQ, BANGEQ -> 4
-        LT, GT, LTEQ, GTEQ -> 5
         AS -> 6
         PLUS, MINUS -> 7
         STAR, SLASH -> 8
