@@ -68,5 +68,6 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.3.0 ✅ | HED/TDL 双格式落地 + 15种按钮行为模式 |
 | v0.4.5 ✅ | object/enum/interface/when/for/while + 命名参数 + &&/|| — 綦桐 23/30 |
 | v0.5.0 ✅ | class正解析 + 继承 + LT/GT归位 + 尾部lambda — 綦桐 17/30 AST零崩溃 |
-| v0.5.1 🚧 | 泛型 `<T>` 正解析 + `by` 委托 + 赋值语句 |
+| v0.5.1 ✅ | 尾部lambda正解析 — MainActivity从崩溃→9诊断 |
+| v0.5.2 🚧 | 泛型 `<T>` 正解析 + `by` 委托 + 赋值语句 |
 | v1.0.0 | 32/32 綦桐文件全通过 |
