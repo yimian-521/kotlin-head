@@ -104,18 +104,8 @@ class Parser(private val tokens: List<Token>) {
             val classKw = advance() // class
             val name = advance().text
             val start = classKw.pos
-            // ★ 跳过泛型 <N, T>（v0.5-step2 正解析）
-            if (checkType(LT)) {
-                var angleDepth = 1
-                advance() // <
-                while (angleDepth > 0 && !isEof()) {
-                    when (peek().type) {
-                        LT -> { advance(); angleDepth++ }
-                        GT -> { advance(); angleDepth-- }
-                        else -> advance()
-                    }
-                }
-            }
+            // ★ v0.5.2: 统一类型参数跳过
+            skipTypeParams()
             val members = mutableListOf<KtDecl>()
             // ★ v0.5: 继承 : SuperClass(args)
             var superClass: String? = null
@@ -167,7 +157,42 @@ class Parser(private val tokens: List<Token>) {
 
     private fun peekNext(): Token? = tokens.getOrNull(pos + 1)
 
-    /** 跳到下一个声明开始，不抛异常。遇到花括号跳过整块 */
+        /** ★ v0.5.2: 统一跳过类型参数 <T, U, ...>——不分类token，只看位置 */
+    private fun skipTypeParams() {
+        if (!checkType(LT)) return
+        var depth = 1
+        advance() // <
+        while (depth > 0 && !isEof()) {
+            when (peek().type) {
+                LT -> { advance(); depth++ }
+                GT -> { advance(); depth-- }
+                else -> advance()
+            }
+        }
+    }
+
+    /** 读取类型名，含可选的 <TypeParams> 部分；返回完整类型字符串（如"List<String>"） */
+    private fun readTypeName(): String? {
+        if (!checkType(IDENT)) return null
+        val base = advance().text
+        if (checkType(LT)) {
+            val sb = StringBuilder(base).append('<')
+            var depth = 1
+            advance() // <
+            while (depth > 0 && !isEof()) {
+                val t = advance()
+                when (t.type) {
+                    LT -> { sb.append('<'); depth++ }
+                    GT -> { sb.append('>'); depth-- }
+                    COMMA -> sb.append(", ")
+                    IDENT -> sb.append(t.text)
+                    else -> sb.append(t.text)
+                }
+            }
+            return sb.toString()
+        }
+        return base
+    }
     private fun skipToNextDecl() {
         // ★ 先跳过当前 token，避免死在原位（调用方已验证它是声明标记）
         advance()
@@ -203,7 +228,7 @@ class Parser(private val tokens: List<Token>) {
             if (checkType(VAL) || checkType(VAR)) advance()
             val name = advance().text
             var type: String? = null
-            if (checkType(COLON)) { advance(); type = advance().text }
+            if (checkType(COLON)) { advance(); type = readTypeName() }
             // 跳过默认值（可能包含函数调用如 System.currentTimeMillis()）
             if (checkType(EQ)) {
                 advance() // =
@@ -228,6 +253,8 @@ class Parser(private val tokens: List<Token>) {
             advance()
         }
         val funKw = advance() // fun
+        // ★ v0.5.2: fun <T> 类型参数在函数名之前
+        skipTypeParams()
         val name = advance().text
         expect(LPAREN); advance()
         val params = mutableListOf<KtParam>()
@@ -235,7 +262,7 @@ class Parser(private val tokens: List<Token>) {
             if (checkType(COMMA)) { advance(); continue }
             val pName = advance().text
             var pType: String? = null
-            if (checkType(COLON)) { advance(); pType = advance().text }
+            if (checkType(COLON)) { advance(); pType = readTypeName() }
             params += KtParam(pName, pType, Span(lastPos(), lastPos()))
             // ★ 跳过参数默认值 = expr
             if (checkType(EQ)) {
@@ -253,7 +280,7 @@ class Parser(private val tokens: List<Token>) {
         }
         expect(RPAREN); advance()
         var returnType: String? = null
-        if (checkType(COLON)) { advance(); returnType = advance().text }
+        if (checkType(COLON)) { advance(); returnType = readTypeName() }
         val body = if (checkType(EQ)) parseExprBody() else if (checkType(LBRACE)) parseBlockBody() else null
         return KtFun(name, params, returnType, body, Span(funKw.pos, lastPos()))
     }
@@ -289,9 +316,14 @@ class Parser(private val tokens: List<Token>) {
         val kw = advance() // val / var
         val name = advance().text
         var type: String? = null
-        if (checkType(COLON)) { advance(); type = advance().text }
+        if (checkType(COLON)) { advance(); type = readTypeName() }
         var value: KtExpr? = null
         if (checkType(EQ)) { advance(); value = parseExpression() }
+        // ★ v0.5.2: by 委托——不区分token，只看位置：val name by <delegateExpr>
+        else if (match("by")) {
+            advance() // by
+            value = parseExpression() // delegate 表达式
+        }
         return KtVal(name, type, value, Span(kw.pos, lastPos()))
     }
 
@@ -452,6 +484,13 @@ class Parser(private val tokens: List<Token>) {
     private fun parseBinary(minPrec: Int = 0): KtExpr {
         var left = parsePrimary()
         while (true) {
+            // ★ v0.5.2: = 赋值——优先级最低（0），右结合
+            if (peek().type == EQ) {
+                advance() // =
+                val right = parseBinary(1) // 右结合
+                left = KtBinary(left, "=", right, Span(left.span.start, right.span.end))
+                continue
+            }
             // ★ v0.5: LT/GT 显式处理（已从 curPrec 移出，优先级 5）
             if (peek().type == LT || peek().type == GT || peek().type == LTEQ || peek().type == GTEQ) {
                 val op = advance().text

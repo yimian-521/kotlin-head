@@ -94,8 +94,8 @@ echo -e "1\nq" | kotlin -cp build/kotlin-head.jar com.qitong.head.Main <file.kt>
 - **触发**：`x = 42`、`instance = this`
 - **表现**：`unexpected token: EQ (=)`——`=` 不在任何优先级表中
 - **根因**：`=` 是表达式层运算符，优先级最低且右结合，但 parseBinary 的 curPrec 表里没有它
-- **修复**：[待定——等着免免判断方向]
-- **Skill 收录**：[待补充]
+- **修复**：parseBinary 中，`EQ` 优先级 0（最低），右结合 `parseBinary(1)`。跟 LT/GT 一样显式处理，不经过 curPrec 表
+- **Skill 收录**：**`=` 在所有位置都是赋值运算符，反而是最简单的。** 十年经验的价值不在于解法复杂，而在于识别出"这个不需要奇技淫巧——它本就属于 parseBinary 优先级表的最后一行"。坑在于：新手会想发明新的语法结构处理赋值，老手知道它就是一个运算符。**真正的难不是修，是知道它不特殊。**
 
 ---
 
