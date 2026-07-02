@@ -120,12 +120,22 @@ class Parser(private val tokens: List<Token>) {
 
     private fun peekNext(): Token? = tokens.getOrNull(pos + 1)
 
-    /** 跳到下一个声明开始，不抛异常 */
+    /** 跳到下一个声明开始，不抛异常。遇到花括号跳过整块 */
     private fun skipToNextDecl() {
         while (!isEof()) {
             val t = peek().type
             if (t == DATA || t == CLASS || t == FUN || t == VAL || t == VAR || t == AT || t == EOF) break
-            advance()
+            if (t == LBRACE) {
+                advance() // {
+                var depth = 1
+                while (depth > 0 && !isEof()) {
+                    when (peek().type) {
+                        LBRACE -> { advance(); depth++ }
+                        RBRACE -> { advance(); depth-- }
+                        else -> advance()
+                    }
+                }
+            } else advance()
         }
     }
 
@@ -312,8 +322,18 @@ class Parser(private val tokens: List<Token>) {
     }
 
     // ─── 表达式（递归下降，按优先级） ───
-    private fun parseExpression(): KtExpr = parseWhen()
-    
+    private var exprDepth = 0
+
+    private fun parseExpression(): KtExpr {
+        exprDepth++
+        if (exprDepth > 500) throw error("表达式递归过深（可能泛型 <T> 被误作运算符）")
+        try {
+            return parseFor()
+        } finally {
+            exprDepth--
+        }
+    }
+
     private fun parseWhen(): KtExpr {
         if (!matchType(WHEN)) return parseFor()
         val kw = advance() // when
@@ -426,11 +446,15 @@ RETURN -> {
                 }
                 KtLitBool(true, Span(kw.pos, lastPos()))
             }
+            WHEN -> parseWhen() // ★ v0.4.5: 小分支套入，不再走长链
+            IF -> parseIf()     // ★ v0.4.5: 同上
+            FOR -> parseFor()   // ★ v0.4.5: 同上
+            WHILE -> parseWhile() // ★ v0.4.5: 同上
             IDENT -> {
                 val start = t.pos
                 val sb = StringBuilder(t.text)
                 advance()
-                // ★ v0.4.2: 链式成员访问 a.b.c()
+                // ★ v0.4.5: 链式成员访问跨越函数调用 a.b().c
                 while (checkType(DOT)) {
                     advance() // DOT
                     if (checkType(IDENT)) {
@@ -438,8 +462,18 @@ RETURN -> {
                     } else break
                 }
                 val fullName = sb.toString()
-                if (checkType(LPAREN)) parseCall(KtRef(fullName, Span(start, lastPos())))
-                else KtRef(fullName, Span(start, start))
+                var expr: KtExpr = if (checkType(LPAREN)) parseCall(KtRef(fullName, Span(start, lastPos())))
+                                   else KtRef(fullName, Span(start, start))
+                // 调用后继续链式 .member 或 .call()
+                while (checkType(DOT)) {
+                    advance() // DOT
+                    if (checkType(IDENT)) {
+                        val member = advance().text
+                        expr = if (checkType(LPAREN)) parseCall(KtRef(member, Span(start, lastPos())))
+                               else KtRef(member, Span(start, lastPos()))
+                    } else break
+                }
+                expr
             }
             LPAREN -> parseParenOrLambda()
             LBRACE -> parseLambda()
@@ -490,12 +524,17 @@ RETURN -> {
 
     private fun parseLambdaTail(captured: KtExpr? = null): KtExpr {
         val start = lastPos()
-        expect(ARROW); advance()
-        val body = parseExpression()
+        val body = if (checkType(ARROW)) {
+            advance() // ->
+            parseExpression()
+        } else {
+            // ★ v0.4.5: 隐式 lambda，无 -> 直接解析体
+            parseExpression()
+        }
         expect(RBRACE); advance()
         val params = if (captured != null) {
             listOf(KtParam("it", null, Span(captured.span.start, captured.span.end)))
-                } else emptyList<KtParam>()
+        } else emptyList<KtParam>()
         return KtLambda(params, body, Span(start, lastPos()))
     }
 
@@ -515,12 +554,13 @@ RETURN -> {
     // 运算符优先级
     private fun curPrec(): Int? = when (peek().type) {
         OR -> 1
-        AND -> 2
-        EQEQ, BANGEQ -> 3
-        LT, GT, LTEQ, GTEQ -> 4
-        AS -> 5
-        PLUS, MINUS -> 6
-        STAR, SLASH -> 7
+        ELVIS -> 2
+        AND -> 3
+        EQEQ, BANGEQ -> 4
+        LT, GT, LTEQ, GTEQ -> 5
+        AS -> 6
+        PLUS, MINUS -> 7
+        STAR, SLASH -> 8
         else -> null
     }
 }

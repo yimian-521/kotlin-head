@@ -14,6 +14,7 @@ enum class TokType {
     AND, OR, NOT,
     EQ, EQEQ, BANGEQ,
     LT, GT, LTEQ, GTEQ,
+    ELVIS,
     LPAREN, RPAREN,
     LBRACE, RBRACE,
     LBRACK, RBRACK,
@@ -101,6 +102,7 @@ class Lexer(private val src: String) {
                 '!' -> tokens += readBang(start)
                 '<' -> tokens += readLt(start)
                 '>' -> tokens += readGt(start)
+                '?' -> tokens += readQ(start)
                 else -> advance()
             }
         }
@@ -189,5 +191,12 @@ class Lexer(private val src: String) {
         return if (peek() == '=') {
             advance(); tok(TokType.GTEQ, ">=", start)
         } else tok(TokType.GT, ">", start)
+    }
+
+    private fun readQ(start: Pos): Token {
+        advance() // ?
+        return if (peek() == ':') {
+            advance(); tok(TokType.ELVIS, "?:", start)
+        } else tok(TokType.IDENT, "?", start) // 安全调用 ?. 暂时忽略
     }
 }
