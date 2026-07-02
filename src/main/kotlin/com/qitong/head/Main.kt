@@ -19,6 +19,8 @@ import java.io.File
  */
 object Main {
 
+    const val VERSION = "0.4.0-dev"
+
     private val dev = DevMode.boot()
 
     // 状态机
@@ -36,11 +38,12 @@ object Main {
         println()
 
         if (args.isEmpty()) {
-            println("用法: kotlin-head <源码.kt>")
+            println("用法: kotlin-head <源码.kt> [--sim|--ast|--diag]")
             return
         }
 
         val path = args[0]
+        val flag = args.getOrNull(1) ?: ""
         val file = File(path)
         if (!file.exists()) {
             println("✖ 文件不存在: $path")
@@ -53,6 +56,15 @@ object Main {
 
         // 恢复上次状态
         restoreSession()
+
+        // 管道/flag 模式：直接跳转，不进入交互循环
+        when {
+            flag == "--sim" || flag == "--ast" || flag == "--diag" -> {
+                page = flag.removePrefix("--")
+                renderPage()
+                return
+            }
+        }
 
         // 主循环
         loop()
@@ -337,6 +349,27 @@ object Main {
                 sb.append("${pad}{\n")
                 for (s in node.statements) sb.append(formatAst(s, indent + 1))
                 sb.append("${pad}}\n")
+            }
+            // v0.4 新增
+            is KtWhen -> {
+                sb.append("${pad}when")
+                if (node.subject != null) sb.append(" (...)")
+                sb.append(" {\n")
+                for (b in node.branches) sb.append("${pad}  ... -> ...\n")
+                if (node.elseBranch != null) sb.append("${pad}  else -> ...\n")
+                sb.append("${pad}}\n")
+            }
+            is KtFor -> sb.append("${pad}for(${node.variable} in ...) { ... }\n")
+            is KtWhile -> sb.append("${pad}while(...) { ... }\n")
+            is KtObject -> {
+                val label = if (node.isCompanion) "companion object" else "object"
+                val n = node.name ?: ""
+                sb.append("${pad}$label $n { ${node.members.size} members }\n")
+            }
+            is KtInterface -> sb.append("${pad}interface ${node.name} { ${node.members.size} members }\n")
+            is KtEnum -> {
+                val consts = node.constants.joinToString(", ")
+                sb.append("${pad}enum class ${node.name} { $consts; ${node.members.size} members }\n")
             }
             else -> sb.append("${pad}${node.javaClass.simpleName}\n")
         }

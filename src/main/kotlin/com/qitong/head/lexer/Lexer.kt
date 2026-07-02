@@ -4,6 +4,8 @@ import com.qitong.head.ast.Pos
 
 enum class TokType {
     FUN, VAL, VAR, CLASS, DATA, IF, ELSE, RETURN,
+    WHEN, FOR, WHILE,
+    OBJECT, INTERFACE, ENUM, COMPANION, OVERRIDE,
     IMPORT, PACKAGE,
     INT_LIT, STR_LIT, BOOL_LIT,
     IDENT,
@@ -13,7 +15,7 @@ enum class TokType {
     LPAREN, RPAREN,
     LBRACE, RBRACE,
     LBRACK, RBRACK,
-    COLON, COMMA, DOT, ARROW,
+    COLON, COMMA, DOT, ARROW, SEMICOLON,
     AT,
     EOF
 }
@@ -34,6 +36,10 @@ class Lexer(private val src: String) {
         "class" to TokType.CLASS, "data" to TokType.DATA,
         "if" to TokType.IF, "else" to TokType.ELSE,
         "return" to TokType.RETURN,
+        "when" to TokType.WHEN, "for" to TokType.FOR, "while" to TokType.WHILE,
+        "object" to TokType.OBJECT, "interface" to TokType.INTERFACE,
+        "enum" to TokType.ENUM, "companion" to TokType.COMPANION,
+        "override" to TokType.OVERRIDE,
         "import" to TokType.IMPORT, "package" to TokType.PACKAGE,
         "true" to TokType.BOOL_LIT, "false" to TokType.BOOL_LIT
     )
@@ -74,6 +80,7 @@ class Lexer(private val src: String) {
                 ':' -> { advance(); tokens += tok(TokType.COLON, ":", start) }
                 ',' -> { advance(); tokens += tok(TokType.COMMA, ",", start) }
                 '.' -> { advance(); tokens += tok(TokType.DOT, ".", start) }
+                ';' -> { advance(); tokens += tok(TokType.SEMICOLON, ";", start) }
                 '=' -> tokens += readEq(start)
                 '!' -> tokens += readBang(start)
                 '<' -> tokens += readLt(start)

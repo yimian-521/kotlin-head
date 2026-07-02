@@ -32,6 +32,7 @@ class Parser(private val tokens: List<Token>) {
             if (t == IMPORT || t == AT) break
             if (t == DATA && tokens.getOrNull(pos + 1)?.type == CLASS) break
             if (t == FUN || t == VAL || t == VAR || t == CLASS) break
+            if (t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION) break
             advance()
         }
     }
@@ -64,6 +65,7 @@ class Parser(private val tokens: List<Token>) {
     private fun isDeclarationStart(): Boolean {
         val t = peek().type
         return t == FUN || t == VAL || t == VAR || t == CLASS || t == DATA || t == AT || t == EOF
+            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION
     }
 
     // ─── 声明 ───
@@ -86,7 +88,7 @@ class Parser(private val tokens: List<Token>) {
             expect(CLASS); advance()
             val name = advance().text
             val start = dataKw.pos
-            val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList()
+            val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList<KtDecl>()
             val end = lastPos()
             return KtClass(name, listOf("data", "public"), members, Span(start, end))
         }
@@ -100,6 +102,12 @@ class Parser(private val tokens: List<Token>) {
             skipToNextDecl()
             return null
         }
+        // object / companion object ...
+        if (matchType(OBJECT) || matchType(COMPANION)) return parseObject()
+        // interface ...
+        if (matchType(INTERFACE)) return parseInterface()
+        // enum class ...
+        if (matchType(ENUM)) return parseEnum()
         // 不认识的关键字 → 跳过整段
         val t = peek()
         warnSkip("${t.type} ${t.text}", Capabilities.expectedFor(t.text))
@@ -204,8 +212,132 @@ class Parser(private val tokens: List<Token>) {
         return KtVal(name, type, value, Span(kw.pos, lastPos()))
     }
 
+    // ─── v0.4 新增声明 ───
+    private fun parseObject(): KtDecl {
+        val isCompanion = if (matchType(COMPANION)) { advance(); true } else false
+        val kw = if (isCompanion) advance() else advance() // object
+        val name: String? = if (checkType(IDENT)) {
+            val n = advance().text
+            if (checkType(LBRACE)) n else { /* 不是名称，回退 */ pos--; null }
+        } else null
+        val start = kw.pos
+        val members = if (checkType(LBRACE)) {
+            advance() // {
+            val ms = mutableListOf<KtDecl>()
+            while (!check(RBRACE)) {
+                skipAnnotations()
+                if (check(RBRACE)) break
+                parseDeclaration()?.let { ms += it }
+                if (checkType(COMMA) || checkType(SEMICOLON)) advance()
+            }
+            advance() // }
+            ms
+                } else emptyList<KtDecl>()
+        return KtObject(name, isCompanion, members, Span(start, lastPos()))
+    }
+
+    private fun parseInterface(): KtDecl {
+        val kw = advance() // interface
+        val name = advance().text
+        val start = kw.pos
+        val members = if (checkType(LBRACE)) {
+            advance()
+            val ms = mutableListOf<KtDecl>()
+            while (!check(RBRACE)) {
+                skipAnnotations()
+                if (check(RBRACE)) break
+                if (matchType(FUN)) {
+                    skipAnnotations() // ★ 跳过 @Query 等注解
+                    val f = parseFun()
+                    ms += f
+                } else if (matchType(VAL) || matchType(VAR)) {
+                    ms += parseVal()
+                } else advance()
+            }
+            advance()
+            ms
+                } else emptyList<KtDecl>()
+        return KtInterface(name, members, Span(start, lastPos()))
+    }
+
+    private fun parseEnum(): KtDecl {
+        val kw = advance() // enum
+        if (matchType(CLASS)) advance() // class
+        val name = advance().text
+        val start = kw.pos
+        val constants = mutableListOf<String>()
+        val members = mutableListOf<KtDecl>()
+        if (checkType(LBRACE)) {
+            advance()
+            // 先读常量列表
+            while (!check(RBRACE) && !checkType(SEMICOLON)) {
+                if (checkType(COMMA)) { advance(); continue }
+                if (checkType(IDENT)) { constants += advance().text; continue }
+                advance()
+            }
+            if (checkType(SEMICOLON)) advance()
+            // 再读成员
+            while (!check(RBRACE)) {
+                skipAnnotations()
+                if (check(RBRACE)) break
+                parseDeclaration()?.let { members += it }
+            }
+            advance()
+        }
+        return KtEnum(name, constants, members, Span(start, lastPos()))
+    }
+
     // ─── 表达式（递归下降，按优先级） ───
-    private fun parseExpression(): KtExpr = parseIf()
+    private fun parseExpression(): KtExpr = parseWhen()
+    
+    private fun parseWhen(): KtExpr {
+        if (!matchType(WHEN)) return parseFor()
+        val kw = advance() // when
+        val subject = if (checkType(LPAREN)) {
+            advance(); val s = parseExpression()
+            expect(RPAREN); advance(); s
+        } else null
+        expect(LBRACE); advance()
+        val branches = mutableListOf<KtWhenBranch>()
+        var elseBranch: KtExpr? = null
+        while (!check(RBRACE)) {
+            if (match("else")) {
+                advance()
+                expect(ARROW); advance()
+                elseBranch = if (checkType(LBRACE)) parseBlockBody() else parseExpression()
+                break
+            }
+            val cond = parseExpression()
+            expect(ARROW); advance()
+            val body = if (checkType(LBRACE)) parseBlockBody() else parseExpression()
+            branches += KtWhenBranch(cond, body, Span(kw.pos, lastPos()))
+            if (checkType(COMMA)) advance()
+        }
+        advance() // }
+        return KtWhen(subject, branches, elseBranch, Span(kw.pos, lastPos()))
+    }
+    
+    private fun parseFor(): KtExpr {
+        if (!matchType(FOR)) return parseWhile()
+        advance() // for
+        expect(LPAREN); advance()
+        val variable = advance().text // 变量名
+        if (match("in")) advance() // in
+        val iterable = parseExpression()
+        expect(RPAREN); advance()
+        val body = if (checkType(LBRACE)) parseBlockBody() else parseExpression()
+        return KtFor(variable, iterable, body, Span(lastPos(), lastPos()))
+    }
+    
+    private fun parseWhile(): KtExpr {
+        if (!matchType(WHILE)) return parseIf()
+        val kw = advance() // while
+        expect(LPAREN); advance()
+        val cond = parseExpression()
+        expect(RPAREN); advance()
+        val body = if (checkType(LBRACE)) parseBlockBody() else parseExpression()
+        return KtWhile(cond, body, Span(kw.pos, lastPos()))
+    }
 
     private fun parseIf(): KtExpr {
         if (!matchType(IF)) return parseBinary()
@@ -288,7 +420,7 @@ class Parser(private val tokens: List<Token>) {
         expect(RBRACE); advance()
         val params = if (captured != null) {
             listOf(KtParam("it", null, Span(captured.span.start, captured.span.end)))
-        } else emptyList()
+                } else emptyList<KtParam>()
         return KtLambda(params, body, Span(start, lastPos()))
     }
 

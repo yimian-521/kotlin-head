@@ -94,3 +94,50 @@ data class KtBlock(
     val statements: List<KtNode>,  // KtDecl | KtExpr
     val blockSpan: Span
 ) : KtExpr(blockSpan)
+
+// ─── v0.4 新增 ───
+data class KtWhen(
+    val subject: KtExpr?,         // when(x) 中的 x，或 null（when { }）
+    val branches: List<KtWhenBranch>,
+    val elseBranch: KtExpr?,
+    val whenSpan: Span
+) : KtExpr(whenSpan)
+
+data class KtWhenBranch(
+    val condition: KtExpr,
+    val body: KtExpr,
+    val branchSpan: Span
+)
+
+data class KtFor(
+    val variable: String,
+    val iterable: KtExpr,
+    val body: KtExpr,
+    val forSpan: Span
+) : KtExpr(forSpan)
+
+data class KtWhile(
+    val condition: KtExpr,
+    val body: KtExpr,
+    val whileSpan: Span
+) : KtExpr(whileSpan)
+
+data class KtObject(
+    val name: String?,
+    val isCompanion: Boolean,
+    val members: List<KtDecl>,
+    val objectSpan: Span
+) : KtDecl(objectSpan)
+
+data class KtInterface(
+    val name: String,
+    val members: List<KtDecl>,
+    val interfaceSpan: Span
+) : KtDecl(interfaceSpan)
+
+data class KtEnum(
+    val name: String,
+    val constants: List<String>,
+    val members: List<KtDecl>,
+    val enumSpan: Span
+) : KtDecl(enumSpan)
