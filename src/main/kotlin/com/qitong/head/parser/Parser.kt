@@ -62,12 +62,11 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    private fun isDeclarationStart(): Boolean {
-        val t = peek().type
-        return t == FUN || t == VAL || t == VAR || t == CLASS || t == AT || t == EOF
-            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION
-            || (t == DATA && tokens.getOrNull(pos + 1)?.type == CLASS)
-    }
+    private fun isDeclarationStart(t: TokType): Boolean =
+        t == FUN || t == VAL || t == VAR || t == CLASS || t == AT || t == EOF
+            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION || t == DATA
+
+    private fun isDeclarationStart(): Boolean = isDeclarationStart(peek().type)
 
     // ─── 声明 ───
     private val parseDiags = mutableListOf<TypeChecker.Diag>()
@@ -122,9 +121,11 @@ class Parser(private val tokens: List<Token>) {
 
     /** 跳到下一个声明开始，不抛异常。遇到花括号跳过整块 */
     private fun skipToNextDecl() {
+        // ★ 先跳过当前 token，避免死在原位（调用方已验证它是声明标记）
+        advance()
         while (!isEof()) {
             val t = peek().type
-            if (t == DATA || t == CLASS || t == FUN || t == VAL || t == VAR || t == AT || t == EOF) break
+            if (isDeclarationStart(t)) break
             if (t == LBRACE) {
                 advance() // {
                 var depth = 1
