@@ -19,7 +19,7 @@ import java.io.File
  */
 object Main {
 
-    const val VERSION = "0.4.1-dev"
+    const val VERSION = "0.4.2-dev"
 
     private val dev = DevMode.boot()
 

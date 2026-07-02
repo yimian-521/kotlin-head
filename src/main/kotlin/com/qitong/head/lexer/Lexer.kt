@@ -10,6 +10,7 @@ enum class TokType {
     INT_LIT, STR_LIT, BOOL_LIT,
     IDENT,
     PLUS, MINUS, STAR, SLASH,
+    AND, OR, NOT,
     EQ, EQEQ, BANGEQ,
     LT, GT, LTEQ, GTEQ,
     LPAREN, RPAREN,
@@ -71,6 +72,18 @@ class Lexer(private val src: String) {
                     } else tok(TokType.MINUS, "-", start)
                 }
                 '*' -> { advance(); tokens += tok(TokType.STAR, "*", start) }
+                '&' -> {
+                    advance()
+                    tokens += if (peek() == '&') {
+                        advance(); tok(TokType.AND, "&&", start)
+                    } else tok(TokType.IDENT, "&", start)
+                }
+                '|' -> {
+                    advance()
+                    tokens += if (peek() == '|') {
+                        advance(); tok(TokType.OR, "||", start)
+                    } else tok(TokType.IDENT, "|", start)
+                }
                 '(' -> { advance(); tokens += tok(TokType.LPAREN, "(", start) }
                 ')' -> { advance(); tokens += tok(TokType.RPAREN, ")", start) }
                 '{' -> { advance(); tokens += tok(TokType.LBRACE, "{", start) }

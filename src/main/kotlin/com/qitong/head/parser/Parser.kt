@@ -176,6 +176,19 @@ class Parser(private val tokens: List<Token>) {
             var pType: String? = null
             if (checkType(COLON)) { advance(); pType = advance().text }
             params += KtParam(pName, pType, Span(lastPos(), lastPos()))
+            // ★ 跳过参数默认值 = expr
+            if (checkType(EQ)) {
+                advance() // =
+                var depth = 0
+                while (!isEof() && !(check(RPAREN) && depth == 0) && !(checkType(COMMA) && depth == 0)) {
+                    val tt = peek().type
+                    if (tt == LPAREN) { advance(); depth++ }
+                    else if (tt == RPAREN) {
+                        if (depth > 0) { advance(); depth-- }
+                        else break
+                    } else advance()
+                }
+            }
         }
         expect(RPAREN); advance()
         var returnType: String? = null
@@ -385,9 +398,19 @@ class Parser(private val tokens: List<Token>) {
             STR_LIT -> { advance(); KtLitStr(t.text, Span(t.pos, lastPos())) }
             BOOL_LIT -> { advance(); KtLitBool(t.text == "true", Span(t.pos, lastPos())) }
             IDENT -> {
-                val name = t.text; val start = t.pos; advance()
-                if (checkType(LPAREN)) parseCall(KtRef(name, Span(start, lastPos())))
-                else KtRef(name, Span(start, start))
+                val start = t.pos
+                val sb = StringBuilder(t.text)
+                advance()
+                // ★ v0.4.2: 链式成员访问 a.b.c()
+                while (checkType(DOT)) {
+                    advance() // DOT
+                    if (checkType(IDENT)) {
+                        sb.append('.').append(advance().text)
+                    } else break
+                }
+                val fullName = sb.toString()
+                if (checkType(LPAREN)) parseCall(KtRef(fullName, Span(start, lastPos())))
+                else KtRef(fullName, Span(start, start))
             }
             LPAREN -> parseParenOrLambda()
             LBRACE -> parseLambda()
@@ -400,6 +423,13 @@ class Parser(private val tokens: List<Token>) {
         val args = mutableListOf<KtExpr>()
         while (!check(RPAREN)) {
             if (checkType(COMMA)) { advance(); continue }
+            // ★ 命名参数拦截：IDENT = value → 吃 IDENT+EQ，只存值
+            if (checkType(IDENT) && peekNext()?.type == EQ) {
+                advance() // 参数名
+                advance() // EQ
+                args += parseExpression()
+                continue
+            }
             args += parseExpression()
         }
         expect(RPAREN); advance()
@@ -448,10 +478,12 @@ class Parser(private val tokens: List<Token>) {
 
     // 运算符优先级
     private fun curPrec(): Int? = when (peek().type) {
-        EQEQ, BANGEQ -> 1
-        LT, GT, LTEQ, GTEQ -> 2
-        PLUS, MINUS -> 3
-        STAR, SLASH -> 4
+        OR -> 1
+        AND -> 2
+        EQEQ, BANGEQ -> 3
+        LT, GT, LTEQ, GTEQ -> 4
+        PLUS, MINUS -> 5
+        STAR, SLASH -> 6
         else -> null
     }
 }
