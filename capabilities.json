@@ -1,17 +1,37 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
+  "project": "kotlin-head",
+  "version": "0.3.0",
+  "capabilities": {
+    "lexing": { "status": "supported", "notes": "~160行，关键字/运算符/字面量/标识符/注解跳过/块注释" },
+    "parsing": { "status": "partial", "notes": "model层5/5通过(5/32)。object/enum/interface/when/for/while 待支持" },
+    "ast": { "status": "supported", "notes": "~87行，完整声明+表达式节点" },
+    "type_checking": { "status": "partial", "notes": "基本符号表+类型绑定，泛型待支持" },
+    "diagnostic": { "status": "supported", "notes": "~40行，错误收集与格式化输出" },
+    "hed_interaction": { "status": "supported", "notes": "按钮式终端交互。15种行为模式，AI+人同读。首个HED实例" },
+    "tdl_documents": { "status": "supported", "notes": "三文档联动(CHANGELOG+BUGS+capabilities)。首个TDL实例" },
+    "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" }
+  },
+  "bugs_active": 3,
+  "bugs_resolved": 1,
   "roadmap": {
-    "v0.2.0": {
-      "keywords": ["object", "enum", "interface", "when", "for", "while", "companion", "by"],
-      "desc": "基本声明与控制流"
-    },
     "v0.3.0": {
+      "done": "HED/TDL双格式落地（格式体系里程碑，编译器代码未变）",
+      "keywords": [],
+      "desc": "格式命名+宪法+行为模式+语言适配层"
+    },
+    "v0.4.0": {
+      "keywords": ["object", "enum", "interface", "when", "for", "while", "companion", "by"],
+      "desc": "基本声明与控制流（原v0.2.0计划延后）"
+    },
+    "v0.5.0": {
       "keywords": ["lambda", "suspend", "generic", "sealed", "inner"],
       "desc": "Lambda / 协程 / 泛型 / 密封类"
     },
-    "v0.4.0": {
+    "v0.6.0": {
       "keywords": ["inline", "operator", "infix", "tailrec", "annotation", "typealias"],
       "desc": "修饰符与注解完整支持"
     }
   }
+}
 }
