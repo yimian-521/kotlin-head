@@ -141,3 +141,9 @@ data class KtEnum(
     val members: List<KtDecl>,
     val enumSpan: Span
 ) : KtDecl(enumSpan)
+
+data class KtPrefixExpr(
+    val op: String,
+    val operand: KtExpr,
+    val prefixSpan: Span
+) : KtExpr(prefixSpan)

@@ -83,6 +83,8 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun parseDeclaration(): KtDecl? {
+        // ★ v0.4.3: 容忍修饰符
+        while (peek().type == IDENT && peek().text in setOf("private", "internal", "public", "protected")) advance()
         // data class ...
         if (match("data")) {
             val dataKw = advance()
@@ -397,7 +399,13 @@ class Parser(private val tokens: List<Token>) {
             INT_LIT -> { advance(); KtLitInt(t.text.toInt(), Span(t.pos, lastPos())) }
             STR_LIT -> { advance(); KtLitStr(t.text, Span(t.pos, lastPos())) }
             BOOL_LIT -> { advance(); KtLitBool(t.text == "true", Span(t.pos, lastPos())) }
-            IDENT -> {
+            NOT -> {
+            val start = peek().pos
+            advance() // !
+            val operand = parseExpression() // 高优先级，NOT作为前缀
+            KtPrefixExpr("!", operand, Span(start, operand.span.end))
+        }
+        IDENT -> {
                 val start = t.pos
                 val sb = StringBuilder(t.text)
                 advance()
@@ -482,8 +490,9 @@ class Parser(private val tokens: List<Token>) {
         AND -> 2
         EQEQ, BANGEQ -> 3
         LT, GT, LTEQ, GTEQ -> 4
-        PLUS, MINUS -> 5
-        STAR, SLASH -> 6
+        AS -> 5
+        PLUS, MINUS -> 6
+        STAR, SLASH -> 7
         else -> null
     }
 }

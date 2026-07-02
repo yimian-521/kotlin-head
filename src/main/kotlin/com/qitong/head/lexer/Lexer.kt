@@ -6,7 +6,7 @@ enum class TokType {
     FUN, VAL, VAR, CLASS, DATA, IF, ELSE, RETURN,
     WHEN, FOR, WHILE,
     OBJECT, INTERFACE, ENUM, COMPANION, OVERRIDE,
-    IMPORT, PACKAGE,
+    IMPORT, PACKAGE, AS,
     INT_LIT, STR_LIT, BOOL_LIT,
     IDENT,
     PLUS, MINUS, STAR, SLASH,
@@ -42,6 +42,7 @@ class Lexer(private val src: String) {
         "enum" to TokType.ENUM, "companion" to TokType.COMPANION,
         "override" to TokType.OVERRIDE,
         "import" to TokType.IMPORT, "package" to TokType.PACKAGE,
+        "as" to TokType.AS,
         "true" to TokType.BOOL_LIT, "false" to TokType.BOOL_LIT
     )
 
@@ -171,7 +172,7 @@ class Lexer(private val src: String) {
         advance()
         return if (peek() == '=') {
             advance(); tok(TokType.BANGEQ, "!=", start)
-        } else tok(TokType.IDENT, "!", start)
+        } else tok(TokType.NOT, "!", start)
     }
 
     private fun readLt(start: Pos): Token {
