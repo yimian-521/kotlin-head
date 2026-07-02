@@ -64,8 +64,9 @@ class Parser(private val tokens: List<Token>) {
 
     private fun isDeclarationStart(): Boolean {
         val t = peek().type
-        return t == FUN || t == VAL || t == VAR || t == CLASS || t == DATA || t == AT || t == EOF
+        return t == FUN || t == VAL || t == VAR || t == CLASS || t == AT || t == EOF
             || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION
+            || (t == DATA && tokens.getOrNull(pos + 1)?.type == CLASS)
     }
 
     // ─── 声明 ───
@@ -161,6 +162,10 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun parseFun(): KtDecl {
+        // ★ v0.4.1: 容忍 suspend/override/open 等修饰符
+        while (match("suspend") || match("override") || match("open") || match("abstract") || match("private") || match("internal") || match("public")) {
+            advance()
+        }
         val funKw = advance() // fun
         val name = advance().text
         expect(LPAREN); advance()
@@ -203,6 +208,10 @@ class Parser(private val tokens: List<Token>) {
     }
 
     private fun parseVal(): KtDecl {
+        // ★ v0.4.1: 容忍 override/private 等修饰符
+        while (match("override") || match("private") || match("internal") || match("public") || match("open") || match("abstract") || match("lateinit") || match("const")) {
+            advance()
+        }
         val kw = advance() // val / var
         val name = advance().text
         var type: String? = null
