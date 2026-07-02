@@ -18,7 +18,10 @@
 
 ## 当前版本
 
-**v0.5.1-dev** — class正解析+继承+LT/GT归位+尾部lambda，綦桐17/30 AST零崩溃
+**v0.5.3** — 生态警示：发现 Kotlin 平台类型 T! × 结构化并发叠加漏洞 🔴
+
+> v0.5.2 三刀语义修复（`<T>`/`by`/`=`）+ v0.5.3 生态级发现。回归测试 32/32 全绿。
+> kotlin-head 因零依赖架构天然免疫该漏洞。详见 [KOTLIN_T_BUG_ADVISORY.md](./KOTLIN_T_BUG_ADVISORY.md)
 
 | 模块 | 行数 | 职责 |
 |------|------|------|
@@ -26,9 +29,9 @@
 | Parser | ~700 | 递归下降 + 容错跳过 + 尾部lambda |
 | AST | ~95 | Kt 节点定义（KtClass/KtCall等） |
 | TypeChecker | ~110 | 符号表 + 类型绑定 |
-| Diagnostic | ~80 | 四级诊断 + 版本路线图 🔮 |
+| Diagnostic | ~75 | 四级诊断 + 版本路线图 |
 | BugScanner | ~55 | AST 结构模式检测 |
-| Main | ~350 | 按钮终端 + 模拟运行 + VERSION |
+| Main | ~340 | 按钮终端 + 模拟运行 |
 | DevMode | ~130 | 存储层（独立 jar） |
 
 ## 许可
@@ -58,6 +61,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 - [CHANGELOG](./CHANGELOG.md) — 版本功能清单
 - [BUGS](./BUGS.md) — 战场病历（每条 bug 来自真实代码触发）
 - [capabilities.json](./capabilities.json) — 版本路线图（自动生成诊断标签）
+- [KOTLIN_T_BUG_ADVISORY.md](./KOTLIN_T_BUG_ADVISORY.md) — Kotlin 叠加漏洞公告
 
 ## 路线图
 
@@ -66,8 +70,8 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.1.0 ✅ | data class / fun / val / if / 二进制运算 / 字面量 |
 | v0.2.0 ✅ | 三级诊断 + BugScanner + 模拟运行 + 容错跳过 |
 | v0.3.0 ✅ | HED/TDL 双格式落地 + 15种按钮行为模式 |
-| v0.4.5 ✅ | object/enum/interface/when/for/while + 命名参数 + &&/|| — 綦桐 23/30 |
-| v0.5.0 ✅ | class正解析 + 继承 + LT/GT归位 + 尾部lambda — 綦桐 17/30 AST零崩溃 |
-| v0.5.1 ✅ | 尾部lambda正解析 — MainActivity从崩溃→9诊断 |
-| v0.5.2 🚧 | 泛型 `<T>` 正解析 + `by` 委托 + 赋值语句 |
+| v0.5.1 ✅ | class正解析+继承+LT/GT归位+尾部lambda，綦桐17/30 AST零崩溃 |
+| v0.5.2 ✅ | `<T>`/`by`/`=` 三刀语义修复 + Skill 3.2「看位置不分类」 |
+| v0.5.3 ✅ | 生态警示：Kotlin 平台类型×结构化并发叠加漏洞 + Skill 3.3「看交叉不看标签」 |
+| v0.6.0 | Lambda / 泛型 / suspend 完整支持 |
 | v1.0.0 | 32/32 綦桐文件全通过 |
