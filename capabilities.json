@@ -1,36 +1,49 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.3.0",
+  "version": "0.5.3",
   "capabilities": {
-    "lexing": { "status": "supported", "notes": "~160行，关键字/运算符/字面量/标识符/注解跳过/块注释" },
-    "parsing": { "status": "partial", "notes": "model层5/5通过(5/32)。object/enum/interface/when/for/while 待支持" },
-    "ast": { "status": "supported", "notes": "~87行，完整声明+表达式节点" },
+    "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
+    "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
+    "ast": { "status": "supported", "notes": "~95行，KtClass/KtCall等完整声明+表达式节点" },
     "type_checking": { "status": "partial", "notes": "基本符号表+类型绑定，泛型待支持" },
-    "diagnostic": { "status": "supported", "notes": "~40行，错误收集与格式化输出" },
+    "diagnostic": { "status": "supported", "notes": "~75行，四级诊断+版本路线图" },
+    "bug_scanner": { "status": "supported", "notes": "~55行，AST结构模式检测" },
     "hed_interaction": { "status": "supported", "notes": "按钮式终端交互。15种行为模式，AI+人同读。首个HED实例" },
     "tdl_documents": { "status": "supported", "notes": "三文档联动(CHANGELOG+BUGS+capabilities)。首个TDL实例" },
-    "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" }
+    "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" },
+    "ecosystem_advisory": { "status": "discovered", "notes": "Kotlin平台类型T!×结构化并发叠加漏洞。kotlin-head零依赖天然免疫。详见KOTLIN_T_BUG_ADVISORY.md" }
   },
-  "bugs_active": 3,
-  "bugs_resolved": 1,
+  "bugs_active": 0,
+  "bugs_resolved": 7,
   "roadmap": {
     "v0.3.0": {
-      "done": "HED/TDL双格式落地（格式体系里程碑，编译器代码未变）",
+      "done": "HED/TDL双格式落地",
       "keywords": [],
       "desc": "格式命名+宪法+行为模式+语言适配层"
     },
-    "v0.4.0": {
-      "keywords": ["object", "enum", "interface", "when", "for", "while", "companion", "by"],
-      "desc": "基本声明与控制流（原v0.2.0计划延后）"
+    "v0.5.1": {
+      "done": "class正解析+继承+LT/GT归位+尾部lambda。綦桐17/30 AST零崩溃",
+      "keywords": ["class", "inheritance", "tail_lambda"],
+      "desc": "class声明完整解析+继承关系+LT/GT泛型归位+尾部lambda正解析"
     },
-    "v0.5.0": {
-      "keywords": ["lambda", "suspend", "generic", "sealed", "inner"],
-      "desc": "Lambda / 协程 / 泛型 / 密封类"
+    "v0.5.2": {
+      "done": "<T>/by/=三刀语义修复+Skill 3.2「看位置不分类」",
+      "keywords": ["generic", "delegate", "assignment", "position", "classification"],
+      "desc": "三处核心语义歧义修复：泛型声明与调用/委托与迭代/赋值与默认值"
+    },
+    "v0.5.3": {
+      "done": "生态警示：Kotlin叠加漏洞发现+Skill 3.3「看交叉不看标签」",
+      "keywords": ["platform_type", "structured_concurrency", "silent_corruption"],
+      "desc": "发现Kotlin官方两个设计特性叠加产生毁灭级漏洞。零依赖天然免疫"
     },
     "v0.6.0": {
-      "keywords": ["inline", "operator", "infix", "tailrec", "annotation", "typealias"],
-      "desc": "修饰符与注解完整支持"
+      "keywords": ["lambda", "suspend", "generic_full", "sealed", "inner", "inline", "operator", "infix"],
+      "desc": "Lambda / 协程 / 泛型完整支持 / 密封类/内部类/修饰符"
+    },
+    "v1.0.0": {
+      "keywords": [],
+      "desc": "32/32 綦桐文件全通过"
     }
   }
 }
