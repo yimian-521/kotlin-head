@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-**v0.2.0** — 三层诊断 + BugScanner + 模拟运行
+**v0.3.0** — HED/TDL 双格式落地
 
 | 模块 | 行数 | 职责 |
 |------|------|------|
@@ -65,6 +65,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 |------|------|
 | v0.1.0 ✅ | data class / fun / val / if / 二进制运算 / 字面量 |
 | v0.2.0 ✅ | 三级诊断 + BugScanner + 模拟运行 + 容错跳过 |
-| v0.3.0 🔜 | object / enum / interface / when / for / while |
-| v0.4.0 | Lambda / 泛型 / suspend |
+| v0.3.0 ✅ | HED/TDL 双格式落地 + 15种按钮行为模式 |
+| v0.4.0 🔜 | object / enum / interface / when / for / while |
+| v0.5.0 | Lambda / 泛型 / suspend |
 | v1.0.0 | 32/32 綦桐文件全通过 |
