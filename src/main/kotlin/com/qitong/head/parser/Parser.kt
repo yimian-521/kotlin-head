@@ -405,12 +405,28 @@ class Parser(private val tokens: List<Token>) {
             val operand = parseExpression() // 高优先级，NOT作为前缀
             KtPrefixExpr("!", operand, Span(start, operand.span.end))
         }
-        RETURN -> {
-            val kw = advance()
-            val v = if (check(RBRACE) || isEof()) null else parseExpression()
-            KtReturn(v, Span(kw.pos, lastPos()))
-        }
-        IDENT -> {
+RETURN -> {
+                val kw = advance()
+                val v = if (check(RBRACE) || isEof()) null else parseExpression()
+                KtReturn(v, Span(kw.pos, lastPos()))
+            }
+            TRY -> {
+                val kw = advance() // try
+                warnSkip("try-catch", "v0.5.0")
+                // 跳过 try 体和 catch/finally
+                var depth = 0
+                while (!isEof()) {
+                    val tt = peek().type
+                    if (tt == LBRACE) { advance(); depth++ }
+                    else if (tt == RBRACE) {
+                        advance()
+                        if (depth > 0) depth--
+                        if (depth == 0 && !matchType(CATCH) && !matchType(FINALLY)) break
+                    } else advance()
+                }
+                KtLitBool(true, Span(kw.pos, lastPos()))
+            }
+            IDENT -> {
                 val start = t.pos
                 val sb = StringBuilder(t.text)
                 advance()
@@ -427,6 +443,13 @@ class Parser(private val tokens: List<Token>) {
             }
             LPAREN -> parseParenOrLambda()
             LBRACE -> parseLambda()
+            DOT -> {
+                // ★ v0.4.4: 表达式级成员访问残留 DOT 容忍
+                warnSkip("DOT后缀", "表达式级成员访问")
+                advance() // DOT
+                if (checkType(IDENT)) advance() // 成员名
+                KtLitBool(true, Span(t.pos, lastPos()))
+            }
             else -> throw error("unexpected token: ${t.type} (${t.text})")
         }
     }

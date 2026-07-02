@@ -1,0 +1,11 @@
+--- a/src/main/kotlin/com/qitong/head/lexer/Lexer.kt
++++ b/src/main/kotlin/com/qitong/head/lexer/Lexer.kt
+@@ -8,6 +8,7 @@
+     IMPORT, PACKAGE, AS,
++    TRY, CATCH, FINALLY,
+     INT_LIT, STR_LIT, BOOL_LIT,
+@@ -43,6 +44,7 @@
+         "import" to TokType.IMPORT, "package" to TokType.PACKAGE,
+         "as" to TokType.AS,
++        "try" to TokType.TRY, "catch" to TokType.CATCH, "finally" to TokType.FINALLY,
+         "true" to TokType.BOOL_LIT, "false" to TokType.BOOL_LIT

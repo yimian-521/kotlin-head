@@ -7,6 +7,7 @@ enum class TokType {
     WHEN, FOR, WHILE,
     OBJECT, INTERFACE, ENUM, COMPANION, OVERRIDE,
     IMPORT, PACKAGE, AS,
+    TRY, CATCH, FINALLY,
     INT_LIT, STR_LIT, BOOL_LIT,
     IDENT,
     PLUS, MINUS, STAR, SLASH,
@@ -43,6 +44,7 @@ class Lexer(private val src: String) {
         "override" to TokType.OVERRIDE,
         "import" to TokType.IMPORT, "package" to TokType.PACKAGE,
         "as" to TokType.AS,
+        "try" to TokType.TRY, "catch" to TokType.CATCH, "finally" to TokType.FINALLY,
         "true" to TokType.BOOL_LIT, "false" to TokType.BOOL_LIT
     )
 
