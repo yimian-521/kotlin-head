@@ -520,6 +520,12 @@ RETURN -> {
                 val fullName = sb.toString()
                 var expr: KtExpr = if (checkType(LPAREN)) parseCall(KtRef(fullName, Span(start, lastPos())))
                                    else KtRef(fullName, Span(start, start))
+                // ★ v0.5: 尾部 lambda —— Surface(...) { } 或 GatewayTheme { }
+                if (checkType(LBRACE)) {
+                    val lambda = parseLambda()
+                    val args = if (expr is KtCall) expr.args + lambda else listOf(lambda)
+                    expr = KtCall(expr, args, Span(expr.span.start, lambda.span.end))
+                }
                 // 调用后继续链式 .member 或 .call()
                 while (checkType(DOT)) {
                     advance() // DOT
@@ -527,6 +533,12 @@ RETURN -> {
                         val member = advance().text
                         expr = if (checkType(LPAREN)) parseCall(KtRef(member, Span(start, lastPos())))
                                else KtRef(member, Span(start, lastPos()))
+                        // ★ 尾部 lambda 同样适用于链式调用
+                        if (checkType(LBRACE)) {
+                            val lambda = parseLambda()
+                            val args = if (expr is KtCall) expr.args + lambda else listOf(lambda)
+                            expr = KtCall(expr, args, Span(expr.span.start, lambda.span.end))
+                        }
                     } else break
                 }
                 expr
