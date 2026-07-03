@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -85,6 +85,11 @@
         "seam_b": "类型推断链碰到未知外部库会断→标<?>降级，不装懂。铁律：推断的归推断，未知标<?>。不静默崩溃。",
         "output": "结构化分析报告：AST视图+类型绑定+混淆恢复标注+风险标注（T!叠加等）"
       }
+    },
+    "v0.6.1": {
+      "done": "按钮菜单同步：+Bug扫描入口/+能力路线图/+反编译管线展示，核心编译器不动。Main.kt VERSION 0.4.5-dev→0.6.1",
+      "keywords": ["hed_menu", "bug_scanner_ui", "roadmap_ui", "decomp_ui"],
+      "desc": "HED交互按钮更新——版本号+新增三个页面入口，编译器核心零改动"
     },
     "v1.0.0": {
       "keywords": [],
