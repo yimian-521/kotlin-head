@@ -38,8 +38,52 @@
       "desc": "发现Kotlin官方两个设计特性叠加产生毁灭级漏洞。零依赖天然免疫"
     },
     "v0.6.0": {
-      "keywords": ["lambda", "suspend", "generic_full", "sealed", "inner", "inline", "operator", "infix"],
-      "desc": "Lambda / 协程 / 泛型完整支持 / 密封类/内部类/修饰符"
+      "keywords": ["lambda", "suspend", "generic_full", "sealed", "inner", "inline", "operator", "infix", "decompilation", "stage_contract"],
+      "desc": "Lambda/协程/泛型完整 + 反编译管线 + 阶段间契约（Stage Contract）",
+      "stage_contract": {
+        "_comment": "四阶段双向契约。经免免全量审核修正。核心三原则：不静默、不甩锅、不断链。",
+        "lexer_to_parser": {
+          "declare": [
+            "Token消歧义选择（<泛型/小于、{Lambda/块、*乘法/星投影、@注解/标签、::成员引用/类引用、->Lambda箭头/when箭头、?可空/Elvis前半、!!非空断言）",
+            "字符串内结构精确化（${...}嵌套边界、\"\"\"原始字符串$转义、\\uXXXX合法性、转义序列完整性）"
+          ],
+          "no_skip": "Lexer不跳过不可识别字符——标记为「Lexer未决」原样传给Parser。上游不替下游判死刑。",
+          "verify": "Parser卡住时向所有已完成阶段广播查询（跨阶段查询总线），不只回查Lexer"
+        },
+        "parser_to_ast": {
+          "declare": [
+            "尽力解析标记——由Parser在归约时写入AST节点，非AST自判",
+            "歧义绑定选择（a.b属性访问vs包路径——方向对，不动）"
+          ],
+          "no_skip": "恢复跳过区间不能直接跳过——不确定的一律保留为ERROR节点传给Diagnostic",
+          "verify": "子树类型不匹配本质上不归AST管，是TypeChecker的事。AST可借力Parser但不主责"
+        },
+        "ast_to_typechecker": {
+          "declare": [
+            "推断vs显式标注不分开标记——只标两者是否一致。冲突→警告，一致→无需区分",
+            "平台类型T!标记——方向对",
+            "外部依赖盲区——思路对，但不单独标记。需跨源协作防骗，否则标<?>降级"
+          ],
+          "verify": "推断链断裂时回查上游，但需附加排除日志（候选列表+筛选依据+落选原因），不只是断裂节点+依赖链+回退"
+        },
+        "typechecker_to_diagnostic": {
+          "declare": [
+            "隐式转换路径——方向对，不加协作（内部闭环）",
+            "推理链断裂详情——加排除日志：候选列表+筛选依据+最终落选原因",
+            "跨阶段冲突——方向对，不改"
+          ],
+          "verify": "Diagnostic汇总可稍微管宽一点（下游症状作参考信号），但铁律：不把下游症状当根因报"
+        }
+      },
+      "decompilation_pipeline": {
+        "_comment": "反编译管线。经免免指出两条接缝后修正。",
+        "flow": "APK→(unzip)→dex→(jadx)→Kt源码→kotlin-head AST→语义复原输出",
+        "core_insight": "编译器为编译必须看懂源码→AST已暴露所有结构→语义复原=把AST已算出的类型/调用链/继承关系翻译回源码",
+        "not_formatting": "不是pretty-print格式化。格式化=a.b(c)→a.b(c)。语义复原=a.b(c)→GatewayService.sendMessage(Callback)",
+        "seam_a": "jadx吐出的不一定是标准Kotlin（Java残留语法、匿名类展开、混淆后非标准结构）→Lexer/Parser优雅降级，不炸管道",
+        "seam_b": "类型推断链碰到未知外部库会断→标<?>降级，不装懂。铁律：推断的归推断，未知标<?>。不静默崩溃。",
+        "output": "结构化分析报告：AST视图+类型绑定+混淆恢复标注+风险标注（T!叠加等）"
+      }
     },
     "v1.0.0": {
       "keywords": [],
