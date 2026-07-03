@@ -1,340 +1,299 @@
 /**
- * github-sop v0.1.0 — GitHub 发版助手
- * stdin JSON-RPC，内置 token + SSH + 仓库信息
+ * github-sop v0.2.0 — GitHub 发版助手（多仓库 + 私有开关）
+ * stdin JSON-RPC + HED按钮交互，token外部配置
  * 免免 & 望安，2026-07-04
  * 
- * Actions: release / status / check / help
+ * Actions: status / check / release / repos / switch / toggle_private / help
  */
 
-// ═══════════ 配置（内置） ═══════════
 const CONFIG_FILE = "/home/.github_sop_config.json";
+const fs = require("fs");
 
 function loadConfig() {
-    const fs = require("fs");
-    try {
-        return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
-    } catch(e) {
-        return null;
-    }
+    try { return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8")); }
+    catch(e) { return null; }
 }
 
-const CONFIG = loadConfig();
+function saveConfig(cfg) {
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(cfg, null, 2));
+}
+
+let CONFIG = loadConfig();
 if (!CONFIG) {
-    console.error("请先创建配置文件: " + CONFIG_FILE);
-    console.error('示例: {"repo":"yimian-521/kotlin-head","token":"ghp_xxx","localDir":"...","branch":"main"}');
+    console.error("请先创建: " + CONFIG_FILE);
+    console.error('{"token":"ghp_xxx","repos":[{"repo":"y/n","localDir":"/sdcard/...","branch":"main"}],"current":"y/n","allow_private":false}');
     process.exit(1);
 }
 
-// 自动推导
-CONFIG.apiBase = CONFIG.apiBase || `https://api.github.com/repos/${CONFIG.repo}`;
-CONFIG.tmpDir = CONFIG.tmpDir || `/tmp/${CONFIG.repo.split("/")[1]}`;
-CONFIG.sshRemote = CONFIG.sshRemote || `git@github.com:${CONFIG.repo}.git`;
-CONFIG.gitUser = CONFIG.gitUser || CONFIG.repo.split("/")[0];
-CONFIG.gitEmail = CONFIG.gitEmail || `${CONFIG.gitUser}@github`;
+CONFIG.repos = CONFIG.repos || [];
+CONFIG.allow_private = CONFIG.allow_private || false;
+if (!CONFIG.current && CONFIG.repos.length > 0) CONFIG.current = CONFIG.repos[0].repo;
 
-// ═══════════ 工具函数 ═══════════
+function currentRepo() {
+    const r = CONFIG.repos.find(x => x.repo === CONFIG.current);
+    if (!r) throw new Error("未配置仓库: " + CONFIG.current);
+    r.apiBase = `https://api.github.com/repos/${r.repo}`;
+    r.tmpDir = `/tmp/${r.repo.split("/")[1]}`;
+    r.sshRemote = `git@github.com:${r.repo}.git`;
+    r.gitUser = r.repo.split("/")[0];
+    r.gitEmail = `${r.gitUser}@github`;
+    return r;
+}
+
 const { execSync } = require("child_process");
 
-function exec(cmd, timeoutMs) {
+function exec(cmd, t) {
     try {
-        const out = execSync(cmd, { timeout: timeoutMs || 15000, encoding: "utf8", maxBuffer: 10*1024*1024 });
-        return { ok: true, out: out.trim(), code: 0 };
+        const out = execSync(cmd, { timeout: t || 15000, encoding: "utf8", maxBuffer: 10*1024*1024 });
+        return { ok: true, out: out.trim() };
     } catch(e) {
-        return { ok: false, out: (e.stdout || "") + (e.stderr || "") + e.message, code: e.status || -1 };
+        return { ok: false, out: (e.stdout || "") + (e.stderr || "") + e.message };
     }
 }
 
-function http(method, path, body) {
-    const url = path.startsWith("http") ? path : CONFIG.apiBase + path;
+function http(method, path, body, base) {
+    const apiBase = base || currentRepo().apiBase;
+    const url = path.startsWith("http") ? path : apiBase + path;
     const bodyStr = body ? `-d '${JSON.stringify(body).replace(/'/g, "'\\''")}'` : "";
     const cmd = `curl -s -w "\\n%{http_code}" -X ${method} "${url}" -H "Authorization: Bearer ${CONFIG.token}" -H "Accept: application/vnd.github+json" -H "Content-Type: application/json" ${bodyStr}`;
     const r = exec(cmd, 15000);
     if (!r.ok) return { ok: false, error: r.out };
     const lines = r.out.split("\n");
-    const statusCode = parseInt(lines[lines.length - 1]) || 0;
-    const jsonStr = lines.slice(0, -1).join("\n").trim();
-    try { 
-        const data = jsonStr ? JSON.parse(jsonStr) : {};
-        return { ok: statusCode >= 200 && statusCode < 300, data, code: statusCode };
-    } catch(e) { 
-        return { ok: false, error: jsonStr.substring(0, 200), code: statusCode }; 
-    }
+    const code = parseInt(lines[lines.length - 1]) || 0;
+    const json = lines.slice(0, -1).join("\n").trim();
+    try { return { ok: code >= 200 && code < 300, data: json ? JSON.parse(json) : {}, code }; }
+    catch(e) { return { ok: false, error: json.substring(0, 200), code }; }
 }
 
 // ═══════════ Actions ═══════════
 
 function action_status() {
+    const r = currentRepo();
     const latest = http("GET", "/releases/latest");
-    const repo = http("GET", "");
-    let localVer = "无法读取";
+    let localVer = "无";
     try {
-        const cap = require("fs").readFileSync(CONFIG.localDir + "capabilities.json", "utf8");
-        const m = cap.match(/"version"\s*:\s*"([^"]+)"/);
+        const m = fs.readFileSync(r.localDir + "capabilities.json", "utf8").match(/"version"\s*:\s*"([^"]+)"/);
         if (m) localVer = m[1];
     } catch(e) {}
-
     return {
-        github: {
-            latest_release: latest.ok ? latest.data.tag_name : "获取失败",
-            prerelease: latest.ok ? latest.data.prerelease : "?",
-            repo_desc: repo.ok ? (repo.data.description || "").substring(0, 80) : "获取失败"
-        },
-        local: {
-            version: localVer,
-            dir: CONFIG.localDir
-        }
+        repo: r.repo,
+        allow_private: CONFIG.allow_private,
+        github: { latest: latest.ok ? latest.data.tag_name : "?", prerelease: latest.ok ? latest.data.prerelease : "?" },
+        local: { version: localVer }
     };
 }
 
-function action_check() {
-    const diffs = [];
-    // 检查本地 vs 远端 capabilities.json
-    const remoteCap = http("GET", "/contents/capabilities.json");
-    const localCap = exec(`cat ${CONFIG.localDir}capabilities.json`);
-    
-    if (remoteCap.ok && localCap.ok) {
-        const remoteVer = (remoteCap.data.content ? 
-            Buffer.from(remoteCap.data.content, 'base64').toString() : "").match(/"version"\s*:\s*"([^"]+)"/);
-        const localVer = localCap.out.match(/"version"\s*:\s*"([^"]+)"/);
-        if (remoteVer && localVer && remoteVer[1] !== localVer[1]) {
-            diffs.push({ file: "capabilities.json", remote: remoteVer[1], local: localVer[1] });
-        }
+function action_repos() {
+    const url = `https://api.github.com/user/repos?per_page=50&sort=updated&type=${CONFIG.allow_private ? "all" : "public"}`;
+    const result = http("GET", url);
+    if (!result.ok) return { error: "获取失败" };
+    const configured = new Set(CONFIG.repos.map(r => r.repo));
+    const repos = result.data.map(r => ({
+        name: r.full_name,
+        private: r.private,
+        desc: (r.description || "").substring(0, 80),
+        configured: configured.has(r.full_name),
+        current: r.full_name === CONFIG.current,
+        branch: r.default_branch
+    }));
+    return { repos, count: repos.length, allow_private: CONFIG.allow_private };
+}
+
+function action_switch(repoName) {
+    let existing = CONFIG.repos.find(r => r.repo === repoName);
+    if (!existing) {
+        const info = http("GET", "", null, `https://api.github.com/repos/${repoName}`);
+        if (!info.ok) return { error: "无权限或不存在: " + repoName };
+        existing = {
+            repo: repoName,
+            localDir: `/sdcard/Download/Operit/search_vault/${repoName.split("/")[1]}/`,
+            branch: info.data.default_branch || "main"
+        };
+        CONFIG.repos.push(existing);
     }
-    
-    return { diffs, count: diffs.length };
+    CONFIG.current = repoName;
+    saveConfig(CONFIG);
+    return { switched: repoName, total: CONFIG.repos.length };
+}
+
+function action_check() {
+    const r = currentRepo();
+    const diffs = [];
+    const remoteCap = http("GET", "/contents/capabilities.json");
+    try {
+        const localCap = fs.readFileSync(r.localDir + "capabilities.json", "utf8");
+        if (remoteCap.ok && remoteCap.data.content) {
+            const rv = Buffer.from(remoteCap.data.content, 'base64').toString().match(/"version"\s*:\s*"([^"]+)"/);
+            const lv = localCap.match(/"version"\s*:\s*"([^"]+)"/);
+            if (rv && lv && rv[1] !== lv[1]) diffs.push({ file: "capabilities.json", remote: rv[1], local: lv[1] });
+        }
+    } catch(e) {}
+    return { repo: r.repo, diffs, count: diffs.length };
 }
 
 function action_release(params) {
+    const r = currentRepo();
     const steps = [];
-    const version = params.version || "";
-    const title = params.title || version;
-    const body = params.body || "";
-    
-    if (!version) return { error: "缺少 version 参数" };
-    
-    // 第一步：复制本地文件
-    const cp1 = exec(`cp ${CONFIG.localDir}capabilities.json ${CONFIG.localDir}CHANGELOG.md ${CONFIG.localDir}README.md ${CONFIG.tmpDir}/ 2>/dev/null`);
-    steps.push({ step: 1, action: "复制本地文件", ok: cp1.ok });
-    
-    // 第二步：git clone + push
-    const push = exec(`cd /tmp && rm -rf kotlin-head && git clone ${CONFIG.sshRemote} && cp ${CONFIG.localDir}capabilities.json ${CONFIG.localDir}CHANGELOG.md ${CONFIG.localDir}README.md ${CONFIG.tmpDir}/ && cd ${CONFIG.tmpDir} && git config user.email "${CONFIG.gitEmail}" && git config user.name "${CONFIG.gitUser}" && git add -A && git commit -m "v${version}: ${title}" && git push origin ${CONFIG.branch}`);
-    steps.push({ step: 2, action: "git push", ok: push.ok, detail: push.out.substring(0, 200) });
-    
-    // 第三步：tag
-    const tag = exec(`cd ${CONFIG.tmpDir} && git tag -a v${version} -m 'v${version}: ${title}' && git push origin v${version}`);
-    steps.push({ step: 3, action: "打 tag", ok: tag.ok });
-    
-    // 第四步：创建 Release
-    const rel = http("POST", "/releases", {
-        tag_name: `v${version}`,
-        name: `v${version} — ${title}`,
-        body: body,
-        prerelease: true
-    });
-    const releaseId = rel.ok ? rel.data.id : null;
-    steps.push({ step: 4, action: "创建 Release", ok: rel.ok, release_id: releaseId });
-    
-    // 第五步：正式发行 + Latest
-    if (releaseId) {
-        const patch = http("PATCH", `/releases/${releaseId}`, { prerelease: false, make_latest: "true" });
-        steps.push({ step: 5, action: "正式发行 + Latest", ok: patch.ok });
-    }
-    
-    // 第六步：仓库描述
-    const desc = http("PATCH", "", { description: `v${version} — ${title}` });
-    steps.push({ step: 6, action: "仓库描述", ok: desc.ok });
-    
-    return { version, steps, all_ok: steps.every(s => s.ok) };
+    const v = params.version || "", t = params.title || v, b = params.body || "";
+    if (!v) return { error: "缺少 version" };
+
+    steps.push({ s: 1, n: "复制文件", ok: exec(`cp ${r.localDir}capabilities.json ${r.localDir}CHANGELOG.md ${r.localDir}README.md ${r.tmpDir}/ 2>/dev/null`).ok });
+    steps.push({ s: 2, n: "git push", ok: exec(`cd /tmp && rm -rf ${r.tmpDir.split("/")[2]} && git clone ${r.sshRemote} && cp ${r.localDir}capabilities.json ${r.localDir}CHANGELOG.md ${r.localDir}README.md ${r.tmpDir}/ && cd ${r.tmpDir} && git config user.email "${r.gitEmail}" && git config user.name "${r.gitUser}" && git add -A && git commit -m "v${v}: ${t}" && git push origin ${r.branch}`).ok });
+    steps.push({ s: 3, n: "tag", ok: exec(`cd ${r.tmpDir} && git tag -a v${v} -m 'v${v}: ${t}' && git push origin v${v}`).ok });
+
+    const rel = http("POST", "/releases", { tag_name: `v${v}`, name: `v${v} — ${t}`, body: b, prerelease: true });
+    steps.push({ s: 4, n: "Release", ok: rel.ok, id: rel.ok ? rel.data.id : null });
+
+    if (rel.ok) steps.push({ s: 5, n: "正式+Latest", ok: http("PATCH", `/releases/${rel.data.id}`, { prerelease: false, make_latest: "true" }).ok });
+    steps.push({ s: 6, n: "描述", ok: http("PATCH", "", { description: `v${v} — ${t}` }).ok });
+
+    return { repo: r.repo, version: v, steps };
 }
 
-// ═══════════ HED 交互 ═══════════
-function renderMain() {
-    console.log("╔════════════════════════════╗");
-    console.log("║   GitHub 发版助手 v0.1.0  ║");
-    console.log("╚════════════════════════════╝");
-    console.log("═══ " + CONFIG.repo + " ═══");
-    console.log("[1] 查看当前状态");
-    console.log("[2] 差异检查（本地 vs 远端）");
-    console.log("[3] 发布新版本（七步SOP）");
-    console.log("[4] 查看 SOP 手册");
-    console.log("[h] 帮助  [q] 退出");
+function action_toggle_private() {
+    CONFIG.allow_private = !CONFIG.allow_private;
+    saveConfig(CONFIG);
+    return { allow_private: CONFIG.allow_private };
 }
 
-function renderHelp() {
-    console.log("═══ SOP 七步 ═══");
-    console.log("1. 更新本地三文件（capabilities/CHANGELOG/README）");
-    console.log("2. git clone + cp + commit + push（SSH）");
-    console.log("3. git tag + push tag");
-    console.log("4. POST /releases 创建 Release");
-    console.log("5. PATCH prerelease:false + make_latest:true");
-    console.log("6. PATCH 仓库描述");
-    console.log("7. README 路线图 🏗️→✅");
-    console.log("");
-    console.log("═══ stdin JSON-RPC ═══");
-    console.log('{"action":"status"}     → 查看状态');
-    console.log('{"action":"check"}      → 差异检查');
-    console.log('{"action":"release","version":"0.6.4","title":"标题","body":"内容"}  → 发版');
-    console.log('{"action":"help"}       → 帮助');
-}
-
-function renderSOP() {
-    console.log("═══ 完整 SOP 手册 ═══");
-    console.log("Token: " + CONFIG.token.substring(0, 10) + "...");
-    console.log("SSH:  ~/.ssh/id_ed25519_github");
-    console.log("仓库: " + CONFIG.repo + " (" + CONFIG.branch + ")");
-    console.log("");
-    console.log("手动发版步骤:");
-    console.log("第二步: cd /tmp && rm -rf kotlin-head && git clone " + CONFIG.sshRemote);
-    console.log("        cp 三文件到 /tmp/kotlin-head/ && git config + commit + push");
-    console.log("第四步: POST " + CONFIG.apiBase + "/releases");
-    console.log("        Headers: Authorization: token <token> + Accept: application/vnd.github+json");
-    console.log("第五步: PATCH " + CONFIG.apiBase + "/releases/{id}");
-    console.log("        Body: {prerelease:false, make_latest:\"true\"}");
-    console.log("第六步: PATCH " + CONFIG.apiBase + " → Body: {description:\"...\"}");
-}
-
-// ═══════════ 主入口 ═══════════
+// ═══════════ JSON-RPC ═══════════
 function main(input) {
-    const req = JSON.parse(input);
-    const action = req.action || "status";
-    
-    switch(action) {
-        case "status":  return JSON.stringify(action_status(), null, 2);
-        case "check":   return JSON.stringify(action_check(), null, 2);
-        case "release": return JSON.stringify(action_release(req), null, 2);
-        case "help":    return JSON.stringify({ help: "stdin JSON-RPC: status / check / release / help" });
-        default:        return JSON.stringify({ error: "未知 action: " + action });
+    const req = typeof input === "string" ? JSON.parse(input) : input;
+    switch(req.action) {
+        case "status":     return JSON.stringify(action_status(), null, 2);
+        case "check":      return JSON.stringify(action_check(), null, 2);
+        case "release":    return JSON.stringify(action_release(req), null, 2);
+        case "repos":      return JSON.stringify(action_repos(), null, 2);
+        case "switch":     return JSON.stringify(action_switch(req.repo), null, 2);
+        case "toggle_private": return JSON.stringify(action_toggle_private(), null, 2);
+        default:           return JSON.stringify({ error: "未知 action" });
     }
 }
 
-// 判断运行模式
+// ═══════════ HED ═══════════
 const args = process.argv.slice(2);
-const isJsonMode = args.includes("--json") || !process.stdin.isTTY;
+const jsonMode = args.includes("--json") || !process.stdin.isTTY;
 
-if (isJsonMode) {
-    // stdin JSON-RPC 模式
+if (jsonMode) {
     let input = "";
-    process.stdin.on("data", chunk => input += chunk);
-    process.stdin.on("end", () => {
-        try { console.log(main(input)); }
-        catch(e) { console.log(JSON.stringify({ error: e.message })); }
-    });
+    process.stdin.on("data", d => input += d);
+    process.stdin.on("end", () => { try { console.log(main(input)); } catch(e) { console.log(JSON.stringify({ error: e.message })); } });
 } else {
-    // HED 交互模式
-    const readline = require("readline");
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, prompt: "github> " });
-    
-    let page = "main";
-    
+    const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
+    let page = "main", relV = "", relT = "", relB = "";
+
     function render() {
         console.log("");
         switch(page) {
             case "main":
+                const r = currentRepo();
                 console.log("╔════════════════════════════╗");
-                console.log("║   GitHub 发版助手 v0.1.0  ║");
+                console.log("║   GitHub 发版助手 v0.2.0  ║");
                 console.log("╚════════════════════════════╝");
-                console.log("═══ " + CONFIG.repo + " ═══");
-                console.log("");
-                console.log(" [1] 查看当前状态");
-                console.log(" [2] 差异检查（本地 vs 远端）");
-                console.log(" [3] 发布新版本（七步SOP）");
-                console.log(" [4] 查看 SOP 手册");
+                console.log("═══ " + r.repo + " ═══");
+                console.log(" [1] 状态  [2] 差异  [3] 发版");
+                console.log(" [4] SOP   [5] 换仓库  [6] 列表");
                 console.log(" [q] 退出");
                 break;
             case "status":
                 const s = action_status();
-                console.log("═══ 当前状态 ═══");
-                console.log("远端 Latest: " + s.github.latest_release + (s.github.prerelease ? " (pre-release)" : " ✅正式"));
-                console.log("本地版本:    " + s.local.version);
-                console.log("仓库描述:    " + s.github.repo_desc);
-                console.log("");
-                console.log(" [b] 返回  [q] 退出");
+                console.log("═══ " + s.repo + " ═══");
+                console.log("远端: " + s.github.latest + (s.github.prerelease ? " (pre)" : " ✅"));
+                console.log("本地: " + s.local.version);
+                console.log("\n [b] 返回  [q] 退出");
                 break;
             case "check":
                 const c = action_check();
-                if (c.count === 0) console.log("✅ 本地与远端一致，无差异。");
-                else {
-                    console.log("⚠️ 发现 " + c.count + " 处差异：");
-                    c.diffs.forEach(d => console.log("  - " + d.file + ": 本地" + d.local + " vs 远端" + d.remote));
-                }
-                console.log("");
-                console.log(" [b] 返回  [q] 退出");
+                console.log(c.count === 0 ? "✅ 一致" : "⚠️ " + c.count + " 处差异");
+                c.diffs.forEach(d => console.log("  " + d.file + ": 本地" + d.local + " vs 远端" + d.remote));
+                console.log("\n [b] 返回  [q] 退出");
+                break;
+            case "repos_list":
+                const repos = action_repos();
+                console.log("═══ 仓库列表 ═══");
+                console.log("私有: " + (CONFIG.allow_private ? "✅" : "❌") + "  [0]切换");
+                repos.repos.forEach((r, i) => {
+                    const mark = r.configured ? "📁" : "  ";
+                    const priv = r.private ? "🔒" : "🌐";
+                    console.log(` [${i+1}] ${mark}${priv} ${r.name}${r.current ? " ←" : ""}`);
+                });
+                console.log("\n输入编号切换，[b]返回 [q]退出");
                 break;
             case "release":
-                console.log("═══ 发布新版本 ═══");
-                console.log("输入版本号（如 0.6.4）：");
+                console.log("═══ 发版 ═══\n输入版本号：");
                 break;
-            case "release_title":
+            case "rel_title":
                 console.log("输入标题：");
                 break;
-            case "release_body":
-                console.log("输入内容（一行）：");
+            case "rel_body":
+                console.log("输入内容：");
                 break;
             case "sop":
-                console.log("═══ SOP 七步 ═══");
-                console.log("1. 更新本地三文件（capabilities/CHANGELOG/README）");
-                console.log("2. git clone + cp + commit + push（SSH）");
-                console.log("3. git tag + push tag");
-                console.log("4. POST /releases 创建 Release");
-                console.log("5. PATCH prerelease:false + make_latest:true");
-                console.log("6. PATCH 仓库描述");
-                console.log("7. README 路线图 🏗️→✅");
-                console.log("");
-                console.log("Token: " + CONFIG.token.substring(0, 10) + "...");
-                console.log("仓库: " + CONFIG.repo);
-                console.log(" [b] 返回  [q] 退出");
+                console.log("═══ SOP ═══");
+                console.log("1.更新三文件 2.git push 3.tag");
+                console.log("4.Release 5.正式+Latest 6.描述 7.路线图✅");
+                console.log("\n [b] 返回  [q] 退出");
                 break;
         }
     }
-    
-    // 发版暂存
-    let relVersion = "", relTitle = "", relBody = "";
-    
+
     rl.on("line", (line) => {
-        const input = line.trim().toLowerCase();
-        
-        if (input === "q" || input === "quit") { console.log("再见。"); rl.close(); return; }
-        
-        if (page.startsWith("release")) {
-            if (page === "release") { relVersion = line.trim(); page = "release_title"; render(); return; }
-            if (page === "release_title") { relTitle = line.trim(); page = "release_body"; render(); return; }
-            if (page === "release_body") {
-                relBody = line.trim();
-                console.log("");
-                console.log("═══ 确认发版 ═══");
-                console.log("版本: v" + relVersion);
-                console.log("标题: " + relTitle);
-                console.log("内容: " + relBody.substring(0, 60) + (relBody.length > 60 ? "..." : ""));
-                console.log("");
-                console.log("确认执行七步SOP？[y/N]");
-                page = "release_confirm";
-                return;
+        const i = line.trim().toLowerCase();
+        if (i === "q") { rl.close(); return; }
+
+        if (page.startsWith("rel_")) {
+            if (page === "release") { relV = line.trim(); page = "rel_title"; render(); return; }
+            if (page === "rel_title") { relT = line.trim(); page = "rel_body"; render(); return; }
+            if (page === "rel_body") {
+                relB = line.trim();
+                console.log("\n═══ 确认 ═══");
+                console.log("v" + relV + " — " + relT);
+                console.log("确认？[y/N]");
+                page = "rel_confirm"; return;
             }
-            if (page === "release_confirm") {
-                if (input === "y" || input === "yes") {
-                    console.log("执行中...");
-                    const result = action_release({ version: relVersion, title: relTitle, body: relBody });
-                    console.log(JSON.stringify(result, null, 2));
-                } else {
-                    console.log("已取消。");
+            if (page === "rel_confirm") {
+                if (i === "y") console.log(JSON.stringify(action_release({ version: relV, title: relT, body: relB }), null, 2));
+                else console.log("已取消。");
+                page = "main"; render(); return;
+            }
+        }
+
+        if (page === "repos_list") {
+            if (i === "b") { page = "main"; render(); return; }
+            if (i === "0") { action_toggle_private(); page = "repos_list"; renderRepoList(); return; }
+            const idx = parseInt(i) - 1;
+            if (idx >= 0) {
+                const repos = action_repos();
+                if (repos.repos && repos.repos[idx]) {
+                    const r = action_switch(repos.repos[idx].name);
+                    console.log(r.error ? "❌" : "✅ " + r.switched);
                 }
                 page = "main"; render(); return;
             }
         }
-        
-        if (input === "b" || input === "back") { page = "main"; render(); return; }
-        
-        switch(input) {
-            case "1": case "status":  page = "status"; break;
-            case "2": case "check":   page = "check"; break;
-            case "3": case "release": page = "release"; break;
-            case "4": case "sop":     page = "sop"; break;
-            default: console.log("? 未知按钮: " + input); break;
+
+        if (i === "b") { page = "main"; render(); return; }
+        switch(i) {
+            case "1": page = "status"; break;
+            case "2": page = "check"; break;
+            case "3": page = "release"; break;
+            case "4": page = "sop"; break;
+            case "5": case "6": page = "repos_list"; renderRepoList(); return;
+            default: console.log("?"); break;
         }
         render();
     });
-    
+
+    function renderRepoList() {
+        const repos = action_repos();
+        repos.repos.forEach((r, i) => {
+            const c = r.configured ? "📁" : "  ";
+            const p = r.private ? "🔒" : "🌐";
+            console.log(` [${i+1}] ${c}${p} ${r.name}${r.current ? " ←" : ""}`);
+        });
+        console.log("\n [0] 私有:" + (CONFIG.allow_private ? "关" : "开") + " [b]返回 [q]退出");
+    }
+
     rl.on("close", () => process.exit(0));
     render();
-    rl.prompt();
 }
