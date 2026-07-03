@@ -75,5 +75,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.5.1 ✅ | class正解析+继承+LT/GT归位+尾部lambda，綦桐17/30 AST零崩溃 |
 | v0.5.2 ✅ | `<T>`/`by`/`=` 三刀语义修复 + Skill 3.2「看位置不分类」 |
 | v0.5.3 ✅ | 生态警示：Kotlin 平台类型×结构化并发叠加漏洞 + Skill 3.3「看交叉不看标签」 |
-| v0.6.0 🏗️ | 设计蓝图定稿：Stage Contract + 反编译管线 + 綦桐3.4.4-9分析（编码待启动） |
+| v0.6.0 ✅ | 设计蓝图定稿：Stage Contract + 反编译管线 + 綦桐3.4.4-9分析（编码待启动） |
 | v1.0.0 | 32/32 綦桐文件全通过 |
