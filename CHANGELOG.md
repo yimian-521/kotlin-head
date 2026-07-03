@@ -1,5 +1,21 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.7.0 (2026-07-04) — 架构三刀 🔪🎯
+> 编译器核心首次动刀。不是打补丁，是改架构。
+
+**泛型 `<T>` 专用路径**：`parseTypeArgs` — IDENT 后面跟 `<` 的永远不走 `parseBinary` 运算符路线。从身份上就不被当成变量名。嵌套泛型 `Map<String, Int>` 支持。
+
+**链式调用递归嵌套**：`KtMemberAccess` — `a.b().c` 不是"先记 a 再拼 .b 再拼 .c"，而是递归嵌套的 AST 节点。结构本身就是记忆，不需要外力记住。
+
+**修饰符不吞**：`KtFun`/`KtVal` 加 `modifiers: List<String>` 字段。`suspend`/`override`/`private` 等修饰符留在列表里，不吞。
+
+**排查方法论 — Skill 3.3.2「按身份排查错误」**：suspend 是 IDENT 类型 → `skipPackage` 停止条件缺 `IDENT` → 被当包名跳过。按身份查，非穷举。穷举法依赖报错信号，身份法不依赖——静默链类 bug 的克星。
+
+**改动清单**：
+- AST：`KtRef` 加 `typeArgs`、`KtFun`/`KtVal` 加 `modifiers`、新增 `KtMemberAccess`
+- Parser：`parseTypeArgs` + `skipBracketed` + `readTypeName`、IDENT 分支链式递归重写、`skipPackage` 停止条件加 `IDENT`、`parseDeclaration` 识别 `suspend` 入口
+- Main：`formatAst` 适配新节点 + 修饰符显示
+
 ## v0.6.3 (2026-07-04) — 免免修正版 🩺
 > 静默链四裂缝精准修复方案。免免直觉修正——不是补丁打更多，是补丁打在正确的位置。
 

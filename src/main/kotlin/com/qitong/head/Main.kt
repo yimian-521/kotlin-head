@@ -19,7 +19,7 @@ import java.io.File
  */
 object Main {
 
-    const val VERSION = "0.6.3"
+    const val VERSION = "0.7.0"
 
     private val dev = DevMode.boot()
 
@@ -247,10 +247,10 @@ object Main {
             for (f in lastFindings) {
                 val icon = when (f.severity) {
                     BugScanner.Severity.HIGH -> "🔴"
-                    BugScanner.Severity.MED -> "🟡"
+                    BugScanner.Severity.MEDIUM -> "🟡"
                     BugScanner.Severity.LOW -> "⚪"
                 }
-                println("  $icon ${f.description} | ${f.location}")
+                println("  $icon ${f.message} | ${f.span}")
             }
         }
         println()
@@ -386,18 +386,20 @@ object Main {
                 sb.append("${pad}class ${node.name}")
                 if (node.modifiers.isNotEmpty()) sb.append(" (${node.modifiers.joinToString()})")
                 sb.append("\n")
-                for (m in node.members) sb.append(formatAst(m, indent + 1))
+for (m in node.members) sb.append(formatAst(m, indent + 1))
             }
             is KtFun -> {
+                val mods = if (node.modifiers.isNotEmpty()) "(${node.modifiers.joinToString()}) " else ""
                 val params = node.params.joinToString(", ") { "${it.name}:${it.type ?: "?"}" }
                 val ret = node.returnType ?: "?"
-                sb.append("${pad}fun ${node.name}($params): $ret")
+                sb.append("${pad}${mods}fun ${node.name}($params): $ret")
                 if (node.body != null) sb.append(" { ... }")
                 sb.append("\n")
             }
             is KtVal -> {
+                val mods = if (node.modifiers.isNotEmpty()) "(${node.modifiers.joinToString()}) " else ""
                 val t = node.type ?: "?"
-                sb.append("${pad}val ${node.name}: $t")
+                sb.append("${pad}${mods}val ${node.name}: $t")
                 if (node.value != null) sb.append(" = ...")
                 sb.append("\n")
             }
@@ -410,6 +412,7 @@ object Main {
                 val args = node.args.joinToString(", ") { "..." }
                 sb.append("${pad}call($args)\n")
             }
+            is KtMemberAccess -> sb.append("${pad}${node.member}\n")
             is KtBinary -> sb.append("${pad}binary(${node.op})\n")
             is KtLambda -> sb.append("${pad}lambda\n")
             is KtRef -> sb.append("${pad}ref:${node.name}\n")

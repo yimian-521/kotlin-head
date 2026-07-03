@@ -25,7 +25,6 @@ sealed class KtDecl(span: Span) : KtNode(span)
 data class KtClass(
     val name: String,
     val modifiers: List<String>,  // public / data / sealed ...
-    val superClass: String? = null, // ★ v0.5: 继承 : SuperClass(args)
     val members: List<KtDecl>,
     val classSpan: Span
 ) : KtDecl(classSpan)
@@ -35,6 +34,7 @@ data class KtFun(
     val params: List<KtParam>,
     val returnType: String?,     // null = 未声明（推断）
     val body: KtExpr?,
+    val modifiers: List<String>, // ★ v0.7.0: 不吞修饰符
     val funSpan: Span
 ) : KtDecl(funSpan)
 
@@ -42,6 +42,7 @@ data class KtVal(
     val name: String,
     val type: String?,
     val value: KtExpr?,
+    val modifiers: List<String>, // ★ v0.7.0: 不吞修饰符
     val valSpan: Span
 ) : KtDecl(valSpan)
 
@@ -58,7 +59,7 @@ data class KtLitInt(val value: Int, val litSpan: Span) : KtExpr(litSpan)
 data class KtLitStr(val value: String, val litSpan: Span) : KtExpr(litSpan)
 data class KtLitBool(val value: Boolean, val litSpan: Span) : KtExpr(litSpan)
 
-data class KtRef(val name: String, val refSpan: Span) : KtExpr(refSpan)
+data class KtRef(val name: String, val typeArgs: List<KtRef>? = null, val refSpan: Span) : KtExpr(refSpan)
 
 data class KtBinary(
     val left: KtExpr,
@@ -72,6 +73,13 @@ data class KtCall(
     val args: List<KtExpr>,
     val callSpan: Span
 ) : KtExpr(callSpan)
+
+// ★ v0.7.0: 链式成员访问 a.b().c — 递归嵌套，结构就是记忆
+data class KtMemberAccess(
+    val target: KtExpr,       // 左边的表达式
+    val member: String,       // 右边的成员名
+    val accessSpan: Span
+) : KtExpr(accessSpan)
 
 data class KtIf(
     val cond: KtExpr,

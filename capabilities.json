@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -100,6 +100,11 @@
       "done": "免免修正版：四裂缝修复方案——护照制T! + 吸烟者体检 + 看门狗IO断电 + 三色隔离标签",
       "keywords": ["passport_type", "health_check", "watchdog_io", "triage_isolation"],
       "desc": "静默链四裂缝精准修复：T!特征识别替代全量安检、危险操作前无感体检替代全量isActive、外部看门狗强制关IO句柄替代自觉检查、SupervisorJob三色隔离分类替代静默吞异常"
+    },
+    "v0.7.0": {
+      "done": "架构三刀：泛型专用路径+链式递归嵌套+修饰符不吞。Skill 3.3.2「按身份排查错误」",
+      "keywords": ["generics", "member_access", "modifiers", "identity_debug"],
+      "desc": "泛型<T>从源头不走进运算符、链式a.b().c递归KtMemberAccess嵌套、KtFun/KtVal加modifiers列表不吞修饰符。排查方法论创新：按身份（类型/特征）查错误替代穷举法——suspend是IDENT类型→skipPackage缺IDENT停止条件→一眼锁定"
     },
     "v1.0.0": {
       "keywords": [],
