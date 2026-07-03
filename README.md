@@ -18,10 +18,12 @@
 
 ## 当前版本
 
-**v0.5.3** — 生态警示：发现 Kotlin 平台类型 T! × 结构化并发叠加漏洞 🔴
+**v0.6.0** — 🏗️ 设计蓝图定稿：阶段间契约（Stage Contract）+ 反编译管线 + 綦桐 3.4.4-9 逆向分析
 
-> v0.5.2 三刀语义修复（`<T>`/`by`/`=`）+ v0.5.3 生态级发现。回归测试 32/32 全绿。
-> kotlin-head 因零依赖架构天然免疫该漏洞。详见 [KOTLIN_T_BUG_ADVISORY.md](./KOTLIN_T_BUG_ADVISORY.md)
+> 四阶段双向声明+验证，经免免全量审核修正。核心三原则：不静默、不甩锅、不断链。
+> 反编译管线：APK→dex→jadx→Kt源码→kotlin-head AST→语义复原输出。
+> 两条接缝：jadx非标准Kt优雅降级 + 推断链断裂标&lt;?&gt;。详见 [CHANGELOG](./CHANGELOG.md)
+> 綦桐 3.4.4-9 APK 使用 apk_reverse 内置 jadx 完成逆向，确认新增 ProxyProfile + ProviderTokenSummary + AppLanguage。
 
 | 模块 | 行数 | 职责 |
 |------|------|------|
@@ -73,5 +75,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.5.1 ✅ | class正解析+继承+LT/GT归位+尾部lambda，綦桐17/30 AST零崩溃 |
 | v0.5.2 ✅ | `<T>`/`by`/`=` 三刀语义修复 + Skill 3.2「看位置不分类」 |
 | v0.5.3 ✅ | 生态警示：Kotlin 平台类型×结构化并发叠加漏洞 + Skill 3.3「看交叉不看标签」 |
-| v0.6.0 | Lambda / 泛型 / suspend 完整支持 |
+| v0.6.0 🏗️ | 设计蓝图定稿：Stage Contract + 反编译管线 + 綦桐3.4.4-9分析（编码待启动） |
 | v1.0.0 | 32/32 綦桐文件全通过 |
