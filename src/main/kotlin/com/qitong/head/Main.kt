@@ -19,7 +19,7 @@ import java.io.File
  */
 object Main {
 
-    const val VERSION = "0.5.2-dev"
+    const val VERSION = "0.6.1"
 
     private val dev = DevMode.boot()
 
@@ -33,7 +33,7 @@ object Main {
     @JvmStatic
     fun main(args: Array<String>) {
         println("╔════════════════════════════╗")
-        println("║   有头编译器 kotlin-head   ║")
+        println("║ 有头编译器 kotlin-head v$VERSION ║")
         println("╚════════════════════════════╝")
         println()
 
@@ -140,6 +140,9 @@ object Main {
             "diag" -> renderDiag()
             "sim" -> renderSim()
             "admin" -> renderAdmin()
+            "bugs" -> renderBugs()
+            "roadmap" -> renderRoadmap()
+            "decomp" -> renderDecomp()
             else -> { page = "main"; renderMain() }
         }
     }
@@ -201,6 +204,9 @@ object Main {
         println("  [3] 重新编译")
         println("  [4] 模拟运行")
         println("  [5] 管理员")
+        println("  [6] Bug 扫描 (${lastFindings.size})")
+        println("  [7] 能力路线图")
+        println("  [8] 反编译管线")
         println("  [q] 退出")
     }
 
@@ -231,6 +237,62 @@ object Main {
         println("  [2] 清除所有缓存")
     }
 
+    // ─── 新页面 v0.6.1 ───
+    private fun renderBugs() {
+        println("═══ Bug 扫描 ═══")
+        println()
+        if (lastFindings.isEmpty()) {
+            println("  ✓ 未发现已知 Bug 模式")
+        } else {
+            for (f in lastFindings) {
+                val icon = when (f.severity) {
+                    BugScanner.Severity.HIGH -> "🔴"
+                    BugScanner.Severity.MED -> "🟡"
+                    BugScanner.Severity.LOW -> "⚪"
+                }
+                println("  $icon ${f.description} | ${f.location}")
+            }
+        }
+        println()
+        println("  Kotlin 叠加漏洞（T!×结构化并发）：kotlin-head 零依赖天然免疫")
+        println()
+        println("  [1] 返回主页")
+    }
+
+    private fun renderRoadmap() {
+        println("═══ 能力路线图 ═══")
+        println()
+        println("  当前: v$VERSION — Stage Contract + 反编译管线")
+        println()
+        println("  v0.1.0 ✅ data class / fun / val / if / 字面量")
+        println("  v0.2.0 ✅ 三级诊断 + BugScanner + 容错跳过")
+        println("  v0.3.0 ✅ HED/TDL 双格式落地")
+        println("  v0.5.1 ✅ class正解析+继承+LT/GT归位+尾部lambda")
+        println("  v0.5.2 ✅ <T>/by/= 三刀语义修复 + 看位置不分类")
+        println("  v0.5.3 ✅ T!×结构化并发叠加漏洞发现")
+        println("  v0.6.0 ✅ Stage Contract + 反编译管线 + 綦桐3.4.4-9分析")
+        println("  v1.0.0   32/32 綦桐文件全通过")
+        println()
+        println("  [1] 返回主页")
+    }
+
+    private fun renderDecomp() {
+        println("═══ 反编译管线 ═══")
+        println()
+        println("  APK → dex → jadx → Kt源码 → kotlin-head AST → 语义复原")
+        println()
+        println("  核心洞察（免免原创）：")
+        println("  编译器为编译必须看懂源码 → AST已暴露所有结构")
+        println("  → 语义复原 = 把AST已算出的类型/调用链翻译回源码")
+        println()
+        println("  接缝A: jadx吐出非标准Kotlin → 优雅降级，不炸管道")
+        println("  接缝B: 推断链碰未知外部库 → 标<?>，不装懂")
+        println()
+        println("  已在綦桐3.4.4-9 APK验证：apk_reverse + jadx + strings")
+        println()
+        println("  [1] 返回主页")
+    }
+
     // ─── 输入处理 ───
     private fun handle(input: String) {
         // AI 匹配按钮名（不用数字）
@@ -242,6 +304,9 @@ object Main {
             "管理员", "admin", "管理" -> "5"
             "返回主页", "back", "主页", "main", "返回" -> "1"
             "清除所有缓存", "清除缓存", "clearcache" -> "2"
+            "bug扫描", "bug", "bugs", "扫描" -> "6"
+            "能力路线图", "路线图", "roadmap", "版本" -> "7"
+            "反编译管线", "反编译", "decomp", "decompilation" -> "8"
             else -> input
         }
 
@@ -251,6 +316,9 @@ object Main {
             "diag" -> handleDiag(byLabel)
             "sim" -> handleSim(byLabel)
             "admin" -> handleAdmin(byLabel)
+            "bugs" -> if (byLabel == "1") page = "main"
+            "roadmap" -> if (byLabel == "1") page = "main"
+            "decomp" -> if (byLabel == "1") page = "main"
         }
         saveSession()
     }
@@ -267,6 +335,9 @@ object Main {
             }
             "4" -> page = "sim"
             "5" -> page = "admin"
+            "6" -> page = "bugs"
+            "7" -> page = "roadmap"
+            "8" -> page = "decomp"
             else -> println("  ? 未知按钮: $key")
         }
     }
