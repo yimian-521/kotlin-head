@@ -172,7 +172,7 @@ function main(input) {
 
 // ═══════════ HED ═══════════
 const args = process.argv.slice(2);
-const jsonMode = args.includes("--json") || !process.stdin.isTTY;
+const jsonMode = args.includes("--json");
 
 if (jsonMode) {
     let input = "";
