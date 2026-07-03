@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -38,6 +38,7 @@
       "desc": "发现Kotlin官方两个设计特性叠加产生毁灭级漏洞。零依赖天然免疫"
     },
     "v0.6.0": {
+      "done": "设计蓝图定稿：Stage Contract + 反编译管线 + 綦桐3.4.4-9分析（经免免四阶段全量审核修正）",
       "keywords": ["lambda", "suspend", "generic_full", "sealed", "inner", "inline", "operator", "infix", "decompilation", "stage_contract"],
       "desc": "Lambda/协程/泛型完整 + 反编译管线 + 阶段间契约（Stage Contract）",
       "stage_contract": {
