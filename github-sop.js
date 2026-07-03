@@ -179,121 +179,105 @@ if (jsonMode) {
     process.stdin.on("data", d => input += d);
     process.stdin.on("end", () => { try { console.log(main(input)); } catch(e) { console.log(JSON.stringify({ error: e.message })); } });
 } else {
-    const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
-    let page = "main", relV = "", relT = "", relB = "";
+    console.log("╔════════════════════════════╗");
+    console.log("║   GitHub 发版助手 v0.2.0  ║");
+    console.log("╚════════════════════════════╝");
+    const r = currentRepo();
+    console.log("═══ " + r.repo + " ═══");
+    console.log(" [1] 状态  [2] 差异  [3] 发版");
+    console.log(" [4] SOP   [5] 换仓库  [6] 列表");
+    console.log(" [q] 退出\n");
 
-    function render() {
-        console.log("");
-        switch(page) {
-            case "main":
-                const r = currentRepo();
-                console.log("╔════════════════════════════╗");
-                console.log("║   GitHub 发版助手 v0.2.0  ║");
-                console.log("╚════════════════════════════╝");
-                console.log("═══ " + r.repo + " ═══");
-                console.log(" [1] 状态  [2] 差异  [3] 发版");
-                console.log(" [4] SOP   [5] 换仓库  [6] 列表");
-                console.log(" [q] 退出");
-                break;
-            case "status":
-                const s = action_status();
-                console.log("═══ " + s.repo + " ═══");
-                console.log("远端: " + s.github.latest + (s.github.prerelease ? " (pre)" : " ✅"));
-                console.log("本地: " + s.local.version);
-                console.log("\n [b] 返回  [q] 退出");
-                break;
-            case "check":
-                const c = action_check();
-                console.log(c.count === 0 ? "✅ 一致" : "⚠️ " + c.count + " 处差异");
-                c.diffs.forEach(d => console.log("  " + d.file + ": 本地" + d.local + " vs 远端" + d.remote));
-                console.log("\n [b] 返回  [q] 退出");
-                break;
-            case "repos_list":
-                const repos = action_repos();
-                console.log("═══ 仓库列表 ═══");
-                console.log("私有: " + (CONFIG.allow_private ? "✅" : "❌") + "  [0]切换");
-                repos.repos.forEach((r, i) => {
-                    const mark = r.configured ? "📁" : "  ";
-                    const priv = r.private ? "🔒" : "🌐";
-                    console.log(` [${i+1}] ${mark}${priv} ${r.name}${r.current ? " ←" : ""}`);
-                });
-                console.log("\n输入编号切换，[b]返回 [q]退出");
-                break;
-            case "release":
-                console.log("═══ 发版 ═══\n输入版本号：");
-                break;
-            case "rel_title":
-                console.log("输入标题：");
-                break;
-            case "rel_body":
-                console.log("输入内容：");
-                break;
-            case "sop":
-                console.log("═══ SOP ═══");
-                console.log("1.更新三文件 2.git push 3.tag");
-                console.log("4.Release 5.正式+Latest 6.描述 7.路线图✅");
-                console.log("\n [b] 返回  [q] 退出");
-                break;
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.on("data", (buf) => {
+        const key = buf.toString().trim().toLowerCase();
+        if (key === "q" || key === "\u0003") { process.stdout.write("\n再见 👋\n"); process.exit(0); }
+        switch(key) {
+            case "1": renderStatus(); break;
+            case "2": renderCheck(); break;
+            case "3": promptRelease(); break;
+            case "4": renderSop(); break;
+            case "5": promptSwitch(); break;
+            case "6": renderRepoList(); break;
+            default: process.stdout.write("按 1-6 或 q\n"); break;
         }
-    }
-
-    rl.on("line", (line) => {
-        const i = line.trim().toLowerCase();
-        if (i === "q") { rl.close(); return; }
-
-        if (page.startsWith("rel_")) {
-            if (page === "release") { relV = line.trim(); page = "rel_title"; render(); return; }
-            if (page === "rel_title") { relT = line.trim(); page = "rel_body"; render(); return; }
-            if (page === "rel_body") {
-                relB = line.trim();
-                console.log("\n═══ 确认 ═══");
-                console.log("v" + relV + " — " + relT);
-                console.log("确认？[y/N]");
-                page = "rel_confirm"; return;
-            }
-            if (page === "rel_confirm") {
-                if (i === "y") console.log(JSON.stringify(action_release({ version: relV, title: relT, body: relB }), null, 2));
-                else console.log("已取消。");
-                page = "main"; render(); return;
-            }
-        }
-
-        if (page === "repos_list") {
-            if (i === "b") { page = "main"; render(); return; }
-            if (i === "0") { action_toggle_private(); page = "repos_list"; renderRepoList(); return; }
-            const idx = parseInt(i) - 1;
-            if (idx >= 0) {
-                const repos = action_repos();
-                if (repos.repos && repos.repos[idx]) {
-                    const r = action_switch(repos.repos[idx].name);
-                    console.log(r.error ? "❌" : "✅ " + r.switched);
-                }
-                page = "main"; render(); return;
-            }
-        }
-
-        if (i === "b") { page = "main"; render(); return; }
-        switch(i) {
-            case "1": page = "status"; break;
-            case "2": page = "check"; break;
-            case "3": page = "release"; break;
-            case "4": page = "sop"; break;
-            case "5": case "6": page = "repos_list"; renderRepoList(); return;
-            default: console.log("?"); break;
-        }
-        render();
     });
 
-    function renderRepoList() {
+    function renderStatus() {
+        const s = action_status();
+        process.stdout.write("\n═══ " + s.repo + " ═══\n");
+        process.stdout.write("远端: " + s.github.latest + (s.github.prerelease ? " (pre)" : " ✅") + "\n");
+        process.stdout.write("本地: " + s.local.version + "\n\n");
+        process.stdout.write("按任意键返回主菜单...");
+        process.stdin.once("data", () => renderMain());
+    }
+    function renderCheck() {
+        const c = action_check();
+        process.stdout.write("\n═══ 差异检查 ═══\n");
+        if (c.count === 0) process.stdout.write("✅ 远端与本地一致\n");
+        else c.diffs.forEach(d => process.stdout.write("  " + d.file + ": 本地" + d.local + " vs 远端" + d.remote + "\n"));
+        process.stdout.write("\n按任意键返回主菜单...");
+        process.stdin.once("data", () => renderMain());
+    }
+    function renderSop() {
+        process.stdout.write("\n═══ 七步 SOP ═══\n");
+        process.stdout.write("1.更新三文件 2.git push 3.tag\n");
+        process.stdout.write("4.Release 5.正式+Latest 6.描述 7.路线图✅\n");
+        process.stdout.write("\n按任意键返回主菜单...");
+        process.stdin.once("data", () => renderMain());
+    }
+    function promptRelease() {
+        process.stdout.write("\n═══ 发版 ═══\n输入版本号: ");
+        process.stdin.once("data", (b) => {
+            const v = b.toString().trim();
+            process.stdout.write("输入标题: ");
+            process.stdin.once("data", (b2) => {
+                const t = b2.toString().trim();
+                process.stdout.write("输入内容: ");
+                process.stdin.once("data", (b3) => {
+                    const body = b3.toString().trim();
+                    process.stdout.write("\nv" + v + " — " + t + "\n确认？[y/N] ");
+                    process.stdin.once("data", (b4) => {
+                        if (b4.toString().trim().toLowerCase() === "y") {
+                            process.stdout.write("\n" + JSON.stringify(action_release({ version: v, title: t, body: body }), null, 2) + "\n");
+                        } else process.stdout.write("已取消。\n");
+                        process.stdout.write("\n按任意键返回主菜单...");
+                        process.stdin.once("data", () => renderMain());
+                    });
+                });
+            });
+        });
+    }
+    function promptSwitch() {
         const repos = action_repos();
+        process.stdout.write("\n═══ 仓库列表 ═══\n");
         repos.repos.forEach((r, i) => {
             const c = r.configured ? "📁" : "  ";
             const p = r.private ? "🔒" : "🌐";
-            console.log(` [${i+1}] ${c}${p} ${r.name}${r.current ? " ←" : ""}`);
+            process.stdout.write(` [${i+1}] ${c}${p} ${r.name}${r.current ? " ←" : ""}\n`);
         });
-        console.log("\n [0] 私有:" + (CONFIG.allow_private ? "关" : "开") + " [b]返回 [q]退出");
+        process.stdout.write("\n输入编号切换 (b=返回): ");
+        process.stdin.once("data", (b) => {
+            const k = b.toString().trim().toLowerCase();
+            if (k === "b") { renderMain(); return; }
+            const idx = parseInt(k) - 1;
+            if (idx >= 0 && repos.repos[idx]) {
+                const sw = action_switch(repos.repos[idx].name);
+                process.stdout.write(sw.error ? "❌ " + sw.error + "\n" : "✅ " + sw.switched + "\n");
+            }
+            renderMain();
+        });
     }
-
-    rl.on("close", () => process.exit(0));
-    render();
+    function renderRepoList() { promptSwitch(); }
+    function renderMain() {
+        const r2 = currentRepo();
+        process.stdout.write("\n╔════════════════════════════╗\n");
+        process.stdout.write("║   GitHub 发版助手 v0.2.0  ║\n");
+        process.stdout.write("╚════════════════════════════╝\n");
+        process.stdout.write("═══ " + r2.repo + " ═══\n");
+        process.stdout.write(" [1] 状态  [2] 差异  [3] 发版\n");
+        process.stdout.write(" [4] SOP   [5] 换仓库  [6] 列表\n");
+        process.stdout.write(" [q] 退出\n\n");
+    }
 }
