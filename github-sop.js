@@ -207,15 +207,134 @@ function main(input) {
     }
 }
 
-// 直接运行时进入 HED 交互
-if (typeof __hed_mode !== "undefined" || process.argv.includes("--hed")) {
-    renderMain();
-} else {
-    // 从 stdin 读取 JSON
+// 判断运行模式
+const args = process.argv.slice(2);
+const isJsonMode = args.includes("--json") || !process.stdin.isTTY;
+
+if (isJsonMode) {
+    // stdin JSON-RPC 模式
     let input = "";
     process.stdin.on("data", chunk => input += chunk);
     process.stdin.on("end", () => {
         try { console.log(main(input)); }
         catch(e) { console.log(JSON.stringify({ error: e.message })); }
     });
+} else {
+    // HED 交互模式
+    const readline = require("readline");
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, prompt: "github> " });
+    
+    let page = "main";
+    
+    function render() {
+        console.log("");
+        switch(page) {
+            case "main":
+                console.log("╔════════════════════════════╗");
+                console.log("║   GitHub 发版助手 v0.1.0  ║");
+                console.log("╚════════════════════════════╝");
+                console.log("═══ " + CONFIG.repo + " ═══");
+                console.log("");
+                console.log(" [1] 查看当前状态");
+                console.log(" [2] 差异检查（本地 vs 远端）");
+                console.log(" [3] 发布新版本（七步SOP）");
+                console.log(" [4] 查看 SOP 手册");
+                console.log(" [q] 退出");
+                break;
+            case "status":
+                const s = action_status();
+                console.log("═══ 当前状态 ═══");
+                console.log("远端 Latest: " + s.github.latest_release + (s.github.prerelease ? " (pre-release)" : " ✅正式"));
+                console.log("本地版本:    " + s.local.version);
+                console.log("仓库描述:    " + s.github.repo_desc);
+                console.log("");
+                console.log(" [b] 返回  [q] 退出");
+                break;
+            case "check":
+                const c = action_check();
+                if (c.count === 0) console.log("✅ 本地与远端一致，无差异。");
+                else {
+                    console.log("⚠️ 发现 " + c.count + " 处差异：");
+                    c.diffs.forEach(d => console.log("  - " + d.file + ": 本地" + d.local + " vs 远端" + d.remote));
+                }
+                console.log("");
+                console.log(" [b] 返回  [q] 退出");
+                break;
+            case "release":
+                console.log("═══ 发布新版本 ═══");
+                console.log("输入版本号（如 0.6.4）：");
+                break;
+            case "release_title":
+                console.log("输入标题：");
+                break;
+            case "release_body":
+                console.log("输入内容（一行）：");
+                break;
+            case "sop":
+                console.log("═══ SOP 七步 ═══");
+                console.log("1. 更新本地三文件（capabilities/CHANGELOG/README）");
+                console.log("2. git clone + cp + commit + push（SSH）");
+                console.log("3. git tag + push tag");
+                console.log("4. POST /releases 创建 Release");
+                console.log("5. PATCH prerelease:false + make_latest:true");
+                console.log("6. PATCH 仓库描述");
+                console.log("7. README 路线图 🏗️→✅");
+                console.log("");
+                console.log("Token: " + CONFIG.token.substring(0, 10) + "...");
+                console.log("仓库: " + CONFIG.repo);
+                console.log(" [b] 返回  [q] 退出");
+                break;
+        }
+    }
+    
+    // 发版暂存
+    let relVersion = "", relTitle = "", relBody = "";
+    
+    rl.on("line", (line) => {
+        const input = line.trim().toLowerCase();
+        
+        if (input === "q" || input === "quit") { console.log("再见。"); rl.close(); return; }
+        
+        if (page.startsWith("release")) {
+            if (page === "release") { relVersion = line.trim(); page = "release_title"; render(); return; }
+            if (page === "release_title") { relTitle = line.trim(); page = "release_body"; render(); return; }
+            if (page === "release_body") {
+                relBody = line.trim();
+                console.log("");
+                console.log("═══ 确认发版 ═══");
+                console.log("版本: v" + relVersion);
+                console.log("标题: " + relTitle);
+                console.log("内容: " + relBody.substring(0, 60) + (relBody.length > 60 ? "..." : ""));
+                console.log("");
+                console.log("确认执行七步SOP？[y/N]");
+                page = "release_confirm";
+                return;
+            }
+            if (page === "release_confirm") {
+                if (input === "y" || input === "yes") {
+                    console.log("执行中...");
+                    const result = action_release({ version: relVersion, title: relTitle, body: relBody });
+                    console.log(JSON.stringify(result, null, 2));
+                } else {
+                    console.log("已取消。");
+                }
+                page = "main"; render(); return;
+            }
+        }
+        
+        if (input === "b" || input === "back") { page = "main"; render(); return; }
+        
+        switch(input) {
+            case "1": case "status":  page = "status"; break;
+            case "2": case "check":   page = "check"; break;
+            case "3": case "release": page = "release"; break;
+            case "4": case "sop":     page = "sop"; break;
+            default: console.log("? 未知按钮: " + input); break;
+        }
+        render();
+    });
+    
+    rl.on("close", () => process.exit(0));
+    render();
+    rl.prompt();
 }
