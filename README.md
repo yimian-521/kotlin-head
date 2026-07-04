@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-&gt;**v0.8.5** — 🏰⚔️ 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动。进程树全面武装。
+&gt;**v0.9.0** — 🔀🧬 第三种混合编译。LiveDeclarationGraph声明级活图，不是全量不是增量——一个活的全局大脑，只动需要动的手指。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -81,4 +81,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.8.2 ✅ | IR中间表示 + Pass优化管线 + 动态专业集数路由 + EventBus全管线接通 |
 | v0.8.3 ✅ | AsyncIO归指挥官 + 依赖图staging + import接通 |
 | v0.8.5 ✅ | 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动 |
+| v0.9.0 ✅ | LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播） |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
