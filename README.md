@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-&gt;**v0.9.0** — 🔀🧬 第三种混合编译。LiveDeclarationGraph声明级活图，不是全量不是增量——一个活的全局大脑，只动需要动的手指。
+&gt;**v0.9.1** — 🐛🔍 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)。进程树3领域×5检测=15报告全通过。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 

@@ -1,5 +1,19 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.9.1 (2026-07-04) — 检测进程全武装 + BugScanner冷门标准库 🐛🔍
+
+> 进程树全面测评通过 + 12条Kotlin冷门编译器bug收录。
+
+**检测进程修复**：五种风格全部自动挂载到每个指挥官。dispatch前后通知检测进程观察。哨兵新增dispatch_done守门节点。
+
+**BugScanner v0.9.1**：12条Kotlin冷门编译器bug规则——
+KT-TAILREC-OPEN / KT-DATA-COPY-ANN / KT-SEALED-REFLECT / KT-CROSSINLINE-RETURN /
+KT-REIFIED-TRAP / KT-PUBAPI-LEAK / KT-LAZY-THREAD / KT-NONLOCAL-RETURN /
+KT-PLATFORM-BANG / KT-DELEGATE-TRAP / KT-TYPE-DEGRADE / KT-WHEN-EXHAUSTIVE
+
+**进程树全面测评**：3个领域(crud-generator/serializer/di) ×5种检测进程
+=15份独立报告全部通过。哨兵/胆小/勇敢/抽样/趋势五种风格各有不同观察策略。
+
 ## v0.9.0 (2026-07-04) — 第三种混合编译 🔀🧬
 
 > 不是全量，不是增量。是融合两者的第三种编译策略——声明级活图 + 浅提取 + 被动传播。
