@@ -116,7 +116,17 @@
       "keywords": ["eventbus", "async_io", "dependency_graph", "stream", "event_loop", "npm_style"],
       "desc": "EventBus：事件通道（EventEmitter一发多收）+流式通道（Stream/pipe链式串联）+工作通道（Worker Pool）。异步I/O：文件读取走独立线程池不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。eventbus/包297行编译零错误"
     },
-    "v1.0.0": {
+    "v0.8.2": {
+    "done": "IR中间表示+Pass优化管线(死代码消除/常量折叠/内联展开)+动态专业集数路由+EventBus全管线接通+Parser skipPackage修复",
+    "keywords": ["IR", "Pass", "死代码消除", "常量折叠", "内联展开", "动态专业集数路由"],
+    "desc": "model层5/5通过"
+  },
+  "v0.8.3": {
+    "done": "AsyncIO归指挥官+依赖图staging(snapshot/stage/commit)+import接通+冲突检测广播。角色不塌缩",
+    "keywords": ["AsyncIO", "staging", "依赖图", "角色不塌缩"],
+    "desc": "model层5/5通过"
+  },
+  "v1.0.0": {
       "keywords": [],
       "desc": "32/32 綦桐文件全通过"
     }
