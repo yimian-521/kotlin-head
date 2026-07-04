@@ -3,6 +3,7 @@ package com.qitong.head.parser
 import com.qitong.head.ast.*
 import com.qitong.head.checker.TypeChecker
 import com.qitong.head.internal.Capabilities
+import com.qitong.head.eventbus.DependencyGraph
 import com.qitong.head.lexer.Token
 import com.qitong.head.lexer.TokType
 import com.qitong.head.lexer.TokType.*
@@ -17,9 +18,9 @@ class Parser(private val tokens: List<Token>) {
         skipImports()
         val decls = mutableListOf<KtDecl>()
         while (!isEof()) {
-            skipAnnotations()
+            val anns = parseAnnotations()
             if (isEof()) break
-            parseDeclaration()?.let { decls += it }
+            parseDeclaration(anns)?.let { decls += it }
         }
         return KtFile(null, decls)
     }
@@ -27,11 +28,13 @@ class Parser(private val tokens: List<Token>) {
     private fun skipPackage() {
         if (matchType(PACKAGE)) advance()
         // 读到 import 或声明开始（data class / fun / val / @ 等）
+        // ★ v0.8.2-fix: 包声明可能是 com.qtwl.gateway.data.model，多个IDENT用DOT连接
+        // IDENT 不能触发 break——它是包名的一部分，不是声明开始
         while (!isEof()) {
             val t = peek().type
             if (t == IMPORT || t == AT) break
             if (t == DATA && tokens.getOrNull(pos + 1)?.type == CLASS) break
-            if (t == FUN || t == VAL || t == VAR || t == CLASS || t == IDENT) break
+            if (t == FUN || t == VAL || t == VAR || t == CLASS) break
             if (t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION) break
             advance()
         }
@@ -40,31 +43,61 @@ class Parser(private val tokens: List<Token>) {
     private fun skipImports() {
         while (matchType(IMPORT)) {
             advance()
-            while (!isEof() && peek().type != IMPORT && !isDeclarationStart()) advance()
-        }
-    }
-
-    private fun skipAnnotations() {
-        while (matchType(AT)) {
-            advance() // @
-            advance() // 注解名
-            if (checkType(LPAREN)) {
+            // v0.8.3: 收集 import 路径，注册到依赖图
+            val sb = StringBuilder()
+            val startPos = pos
+            while (!isEof() && peek().type != IMPORT && !isDeclarationStart()) {
+                sb.append(peek().text)
                 advance()
-                var depth = 1
-                while (depth > 0 && !isEof()) {
-                    when (peek().type) {
-                        LPAREN -> { advance(); depth++ }
-                        RPAREN -> { advance(); depth-- }
-                        else -> advance()
-                    }
-                }
+            }
+            val importPath = sb.toString()
+            if (importPath.isNotEmpty()) {
+                DependencyGraph.registerImport(importPath.replace(".", "/"), "current_file")
             }
         }
     }
 
+    private fun parseAnnotations(): List<KtAnnotation> {
+        val anns = mutableListOf<KtAnnotation>()
+        while (matchType(AT)) {
+            val start = peek().pos
+            advance() // @
+            val name = advance().text
+            val args = mutableListOf<String>()
+            if (checkType(LPAREN)) {
+                advance()
+                var depth = 1
+                val sb = StringBuilder()
+                while (depth > 0 && !isEof()) {
+                    val t = peek()
+                    when (t.type) {
+                        LPAREN -> { sb.append(t.text); advance(); depth++ }
+                        RPAREN -> {
+                            depth--
+                            if (depth > 0) { sb.append(t.text); advance() }
+                            else advance()
+                        }
+                        COMMA -> {
+                            if (depth == 1) {
+                                args += sb.toString().trim()
+                                sb.clear()
+                                advance()
+                            } else { sb.append(t.text); advance() }
+                        }
+                        else -> { sb.append(t.text); advance() }
+                    }
+                }
+                val last = sb.toString().trim()
+                if (last.isNotEmpty()) args += last
+            }
+            anns += KtAnnotation(name, args, Span(start, lastPos()))
+        }
+        return anns
+    }
+
     private fun isDeclarationStart(t: TokType): Boolean =
         t == FUN || t == VAL || t == VAR || t == CLASS || t == AT || t == EOF
-            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION || t == DATA
+            || t == OBJECT || t == INTERFACE || t == ENUM || t == COMPANION
 
     private fun isDeclarationStart(): Boolean = isDeclarationStart(peek().type)
 
@@ -81,7 +114,7 @@ class Parser(private val tokens: List<Token>) {
         parseDiags += TypeChecker.Diag(level, msg, pos)
     }
 
-    private fun parseDeclaration(): KtDecl? {
+    private fun parseDeclaration(anns: List<KtAnnotation> = emptyList()): KtDecl? {
         // ★ v0.4.3: 容忍修饰符
         while (peek().type == IDENT && peek().text in setOf("private", "internal", "public", "protected")) advance()
         // data class ...
@@ -92,12 +125,12 @@ class Parser(private val tokens: List<Token>) {
             val start = dataKw.pos
             val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList<KtDecl>()
             val end = lastPos()
-            return KtClass(name, listOf("data", "public"), members, Span(start, end))
+            return KtClass(name, listOf("data", "public"), anns, members, Span(start, end))
         }
         // fun ...（含 suspend 等前缀修饰符）
-        if (matchType(FUN) || match("suspend")) return parseFun()
+        if (matchType(FUN) || match("suspend")) return parseFun(anns)
         // val / var ...
-        if (matchType(VAL) || matchType(VAR)) return parseVal()
+        if (matchType(VAL) || matchType(VAR)) return parseVal(anns)
         // class (non-data) ...
         if (matchType(CLASS)) {
             warnSkip("class ${peekNext()?.text ?: "?"}", "v0.2.0")
@@ -168,13 +201,13 @@ class Parser(private val tokens: List<Token>) {
                     else advance()
                 }
             }
-            members += KtVal(name, type, null, emptyList(), Span(lastPos(), lastPos()))
+            members += KtVal(name, type, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
         expect(RPAREN); advance()
         return members
     }
 
-    private fun parseFun(): KtDecl {
+    private fun parseFun(anns: List<KtAnnotation> = emptyList()): KtDecl {
         // ★ v0.7.0: 收集修饰符，不吞
         val mods = mutableListOf<String>()
         while (match("suspend") || match("override") || match("open") || match("abstract") || match("private") || match("internal") || match("public")) {
@@ -208,7 +241,7 @@ class Parser(private val tokens: List<Token>) {
         var returnType: String? = null
         if (checkType(COLON)) { advance(); returnType = readTypeName() }
         val body = if (checkType(EQ)) parseExprBody() else if (checkType(LBRACE)) parseBlockBody() else null
-        return KtFun(name, params, returnType, body, mods, Span(funKw.pos, lastPos()))
+        return KtFun(name, params, returnType, body, mods, anns, Span(funKw.pos, lastPos()))
     }
 
     private fun parseExprBody(): KtExpr? {
@@ -254,7 +287,7 @@ class Parser(private val tokens: List<Token>) {
         }
     }
 
-    private fun parseVal(): KtDecl {
+    private fun parseVal(anns: List<KtAnnotation> = emptyList()): KtDecl {
         // ★ v0.7.0: 收集修饰符，不吞
         val mods = mutableListOf<String>()
         while (match("override") || match("private") || match("internal") || match("public") || match("open") || match("abstract") || match("lateinit") || match("const")) {
@@ -266,7 +299,7 @@ class Parser(private val tokens: List<Token>) {
         if (checkType(COLON)) { advance(); type = readTypeName() }
         var value: KtExpr? = null
         if (checkType(EQ)) { advance(); value = parseExpression() }
-        return KtVal(name, type, value, mods, Span(kw.pos, lastPos()))
+        return KtVal(name, type, value, mods, anns, Span(kw.pos, lastPos()))
     }
 
     // ─── v0.4 新增声明 ───
@@ -282,7 +315,7 @@ class Parser(private val tokens: List<Token>) {
             advance() // {
             val ms = mutableListOf<KtDecl>()
             while (!check(RBRACE)) {
-                skipAnnotations()
+                parseAnnotations()
                 if (check(RBRACE)) break
                 parseDeclaration()?.let { ms += it }
                 if (checkType(COMMA) || checkType(SEMICOLON)) advance()
@@ -301,10 +334,10 @@ class Parser(private val tokens: List<Token>) {
             advance()
             val ms = mutableListOf<KtDecl>()
             while (!check(RBRACE)) {
-                skipAnnotations()
+                parseAnnotations()
                 if (check(RBRACE)) break
                 if (matchType(FUN)) {
-                    skipAnnotations() // ★ 跳过 @Query 等注解
+                    parseAnnotations() // ★ parse + discard for now
                     val f = parseFun()
                     ms += f
                 } else if (matchType(VAL) || matchType(VAR)) {
@@ -335,7 +368,7 @@ class Parser(private val tokens: List<Token>) {
             if (checkType(SEMICOLON)) advance()
             // 再读成员
             while (!check(RBRACE)) {
-                skipAnnotations()
+                parseAnnotations()
                 if (check(RBRACE)) break
                 parseDeclaration()?.let { members += it }
             }
