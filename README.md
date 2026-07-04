@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-**v0.8.1** — 🔌🌊 EventBus三种通道 + 异步I/O + 依赖图解析。Node.js 事件驱动/流式管道/npm依赖树能力适配
+>**v0.8.3** — 🎯📦 AsyncIO归指挥官 + 依赖图staging。角色不塌缩，"看见"和"动"时间隔离。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -78,4 +78,6 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.7.0 ✅ | 綦桐 32/32 全通过（三刀架构验证） |
 | v0.8.0 ✅ | 四层进程树 + 领域自动划分 + 三层容错 |
 | v0.8.1 ✅ | EventBus三种通道 + 异步I/O + 依赖图解析（Node.js能力适配）|
+| v0.8.2 ✅ | IR中间表示 + Pass优化管线 + 动态专业集数路由 + EventBus全管线接通 |
+| v0.8.3 ✅ | AsyncIO归指挥官 + 依赖图staging + import接通 |
 | v1.0.0 | 能力全面超越 javac/Node.js 官方工具链 |
