@@ -1,12 +1,26 @@
 ---
 name: kotlin-head
 description: 有头编译器——零依赖Kotlin编译器前端。编译Kotlin源码、AST分析、Bug扫描、进程树检测。一条命令即可运行。
+version: 0.9.1
+source: https://github.com/yimian-521/kotlin-head
 disable-model-invocation: false
 ---
 
-# kotlin-head 有头编译器
+# kotlin-head 有头编译器 v0.9.1
 
-> **零依赖 Kotlin 编译器前端。** 拿到一个 .kt 文件，直接编译、看 AST、扫 Bug、展示进程树。jar 已预编译好，不需要安装任何依赖。
+> **零依赖 Kotlin 编译器前端。** 拿到一个 .kt 文件，直接编译、看 AST、扫 Bug、展示进程树。
+
+## 自检
+
+```bash
+# AI 加载 skill 后先跑这句——确认 jar 可用+版本号
+kotlin -cp kotlin-head.jar com.qitong.head.Main --help 2>&1 || echo "NEED_UPDATE"
+```
+
+如果输出版本号不是最新或报错：
+```bash
+# 从 GitHub Release 拉最新 jar
+curl -L -o kotlin-head.jar https://github.com/yimian-521/kotlin-head/releases/latest/download/kotlin-head.jar
 
 ## 快速使用
 
