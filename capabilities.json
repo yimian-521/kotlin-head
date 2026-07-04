@@ -137,6 +137,11 @@
      "keywords": ["live_declaration_graph", "mixed_compilation", "shallow_extract", "propagation", "decl_level"],
      "desc": "声明级活图持续维护，变更传播只动受影响声明。循环依赖浅提取跳过body可随时展开。图和AST同源指挥官管图。第一次加量不加价，之后零遍历"
    },
+   "v0.9.1": {
+     "done": "检测进程五风格全挂载+BugScanner冷门bug标准库(12条Kotlin规则)+进程树全面测评(3领域×5检测=15报告全通过)",
+     "keywords": ["watch_process", "bug_scanner", "kotlin_bugs", "process_testing"],
+     "desc": "五种检测进程自动挂载并验证。12条Kotlin冷门编译器bug。3领域×5检测=15报告。哨兵新增dispatch_done守门节点"
+   },
   "v1.0.0": {
       "keywords": [],
       "desc": "32/32 綦桐文件全通过"
