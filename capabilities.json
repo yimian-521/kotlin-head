@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -105,6 +105,11 @@
       "done": "架构三刀：泛型专用路径+链式递归嵌套+修饰符不吞。Skill 3.3.2「按身份排查错误」",
       "keywords": ["generics", "member_access", "modifiers", "identity_debug"],
       "desc": "泛型<T>从源头不走进运算符、链式a.b().c递归KtMemberAccess嵌套、KtFun/KtVal加modifiers列表不吞修饰符。排查方法论创新：按身份（类型/特征）查错误替代穷举法——suspend是IDENT类型→skipPackage缺IDENT停止条件→一眼锁定"
+    },
+    "v0.8.0": {
+      "done": "四层进程树架构：插拔式进程树+领域自动划分+协同协议+三层容错+复制性引用。綦桐32/32保持通过",
+      "keywords": ["process_tree", "commander", "annotation_triage", "collaboration", "fault_tolerance", "copy_reference"],
+      "desc": "主进程→指挥官→子进程→进程体四层插拔式架构。领域划分三层：反向排除+标签匹配+依赖图分簇。协同三模式：分片/流水线/竞合。容错三层判断：局部继续/成功一半分报/架构才停。复制性引用：Git clone不是mount。process/包611行编译零警告"
     },
     "v1.0.0": {
       "keywords": [],
