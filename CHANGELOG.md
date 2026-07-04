@@ -1,3 +1,24 @@
+## v0.11.0 (2026-07-04) — 卡巴斯基式容错 🛡️🔧
+
+> 不认识的不杀，跳过但标注原因。不是误杀，是精准跳过。
+
+**綦桐 v3.5.0 benchmark**：30/30 全通过（模型+DAO+UI+网络+工具 全层）。
+
+**地狱文件验证**：115行全语法轰炸→零崩溃，138行三件套(T!/结构化并发/阻塞IO)+12条BugScanner触发→零崩溃。
+
+**🔧透明容错**：warnSkip新增autoFix标签，自动容错处标注「不跳过将导致编译崩溃」。
+
+**容错架构**：
+- parsePrimary: throw→warnSkip(表达式容错)
+- parseBlockBody: 表达式异常→try-catch+pos回退
+- parseFile: 声明解析失败→skipToNextDecl继续
+- 索引访问[]: 括号深度跟踪跳过
+- 尾部lambda: parseCall认)后{为lambda参数
+- 安全调用?.: ?被Lexer拆为IDENT(?)，特殊处理吞掉
+- peek/advance: 边界保护防数组越界
+
+**BugScanner触发验证**：12条冷门Kotlin编译器bug全部触发不崩溃。
+
 # CHANGELOG — kotlin-head 有头编译器
 
 ## v0.10.0 (2026-07-04) — 头标库运行时 🏗️📦
