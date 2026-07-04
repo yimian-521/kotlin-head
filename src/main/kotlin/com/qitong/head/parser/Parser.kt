@@ -21,7 +21,7 @@ class Parser(private val tokens: List<Token>) {
             val anns = try { parseAnnotations() } catch (_: Exception) { emptyList<KtAnnotation>() }
             if (isEof()) break
             try { parseDeclaration(anns)?.let { decls += it } }
-            catch (_: Exception) { warnSkip("decl", "skip"); skipToNextDecl() }
+            catch (_: Exception) { warnSkip("decl", "skip", autoFix = true); skipToNextDecl() }
         }
         return KtFile(null, decls)
     }
@@ -108,10 +108,13 @@ class Parser(private val tokens: List<Token>) {
     /** Parser 层的诊断（WARNING/SKIPPED/EXPECTED），最终合并到 Diagnostic */
     fun parserDiags(): List<TypeChecker.Diag> = parseDiags.toList()
 
-    private fun warnSkip(reason: String, expected: String? = null) {
+    private fun warnSkip(reason: String, expected: String? = null, autoFix: Boolean = false) {
         val pos = peek().pos
         val level = if (expected != null) TypeChecker.DiagLevel.EXPECTED else TypeChecker.DiagLevel.WARN
-        val msg = if (expected != null) "跳过: $reason —— 🔮 $expected" else "跳过: $reason"
+        val prefix = if (autoFix) "🔧 [自动容错] " else ""
+        val suffix = if (autoFix) "（不跳过将导致编译崩溃）" else ""
+        val msg = if (expected != null) "${prefix}跳过: $reason —— 🔮 $expected$suffix"
+                  else "${prefix}跳过: $reason$suffix"
         parseDiags += TypeChecker.Diag(level, msg, pos)
     }
 
@@ -550,7 +553,7 @@ RETURN -> {
             }
             else -> {
                 val t = peek()
-                warnSkip("${t.type} ${t.text}", "表达式容错")
+                warnSkip("${t.type} ${t.text}", "表达式容错", autoFix = true)
                 advance()
                 KtLitBool(true, Span(t.pos, lastPos()))
             }
