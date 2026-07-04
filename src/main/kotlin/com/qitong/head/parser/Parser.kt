@@ -123,58 +123,95 @@ class Parser(private val tokens: List<Token>) {
         while (peek().type == IDENT && peek().text in setOf("private", "internal", "public", "protected")) advance()
         // data class ...
         if (match("data")) {
-            val dataKw = advance()
-            expect(CLASS); advance()
-            val name = advance().text
-            val start = dataKw.pos
-            val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList<KtDecl>()
-            val end = lastPos()
-            return KtClass(name, listOf("data", "public"), anns, members, Span(start, end))
+            return try {
+                val dataKw = advance()
+                expect(CLASS); advance()
+                val name = advance().text
+                val start = dataKw.pos
+                val members = if (check(LPAREN)) parsePrimaryCtorMembers() else emptyList<KtDecl>()
+                val end = lastPos()
+                KtClass(name, listOf("data", "public"), anns, members, Span(start, end))
+            } catch (_: Exception) {
+                warnSkip("data class", "解析异常", autoFix = true)
+                skipToNextDecl()
+                KtClass("?data", emptyList(), emptyList(), emptyList(), Span(lastPos(), lastPos()))
+            }
         }
         // fun ...（含 suspend 等前缀修饰符）
-        if (matchType(FUN) || match("suspend")) return parseFun(anns)
+        if (matchType(FUN) || match("suspend")) return try { parseFun(anns) } catch (_: Exception) {
+            warnSkip("fun", "解析异常", autoFix = true)
+            skipToNextDecl()
+            KtFun("?fun", emptyList(), null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
+        }
         // val / var ...
-        if (matchType(VAL) || matchType(VAR)) return parseVal(anns)
+        if (matchType(VAL) || matchType(VAR)) return try { parseVal(anns) } catch (_: Exception) {
+            warnSkip("val/var", "解析异常", autoFix = true)
+            skipToNextDecl()
+            KtVal("?val", null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
+        }
         // class (non-data) ...
         if (matchType(CLASS)) {
             warnSkip("class ${peekNext()?.text ?: "?"}", "v0.2.0")
             skipToNextDecl()
-            return null
+            return KtClass("?class", emptyList(), emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
         // object / companion object ...
-        if (matchType(OBJECT) || matchType(COMPANION)) return parseObject()
+        if (matchType(OBJECT) || matchType(COMPANION)) return try { parseObject() } catch (_: Exception) {
+            warnSkip("object", "解析异常", autoFix = true)
+            skipToNextDecl()
+            KtObject("?obj", false, emptyList(), Span(lastPos(), lastPos()))
+        }
         // interface ...
-        if (matchType(INTERFACE)) return parseInterface()
+        if (matchType(INTERFACE)) return try { parseInterface() } catch (_: Exception) {
+            warnSkip("interface", "解析异常", autoFix = true)
+            skipToNextDecl()
+            KtInterface("?iface", emptyList(), Span(lastPos(), lastPos()))
+        }
         // enum class ...
-        if (matchType(ENUM)) return parseEnum()
+        if (matchType(ENUM)) return try { parseEnum() } catch (_: Exception) {
+            warnSkip("enum", "解析异常", autoFix = true)
+            skipToNextDecl()
+            KtEnum("?enum", emptyList(), emptyList(), Span(lastPos(), lastPos()))
+        }
         // 不认识的关键字 → 跳过整段
         val t = peek()
         warnSkip("${t.type} ${t.text}", Capabilities.expectedFor(t.text))
         skipToNextDecl()
-        return null
+        return KtVal("?unk", null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
     }
 
     private fun peekNext(): Token? = tokens.getOrNull(pos + 1)
 
-    /** 跳到下一个声明开始，不抛异常。遇到花括号跳过整块 */
+    /** 跳到下一个声明开始，不抛异常。遇到花括号跳过整块（v0.11.1-a: 花括号泛滥检测+声明边界+独立上限） */
     private fun skipToNextDecl() {
-        // ★ 先跳过当前 token，避免死在原位（调用方已验证它是声明标记）
         advance()
-        while (!isEof()) {
+        var totalSkips = 0
+        while (!isEof() && totalSkips < 2000) {
+            totalSkips++
             val t = peek().type
             if (isDeclarationStart(t)) break
             if (t == LBRACE) {
-                advance() // {
+                advance()
                 var depth = 1
-                while (depth > 0 && !isEof()) {
-                    when (peek().type) {
-                        LBRACE -> { advance(); depth++ }
-                        RBRACE -> { advance(); depth-- }
-                        else -> advance()
+                var braceSkips = 0
+                var consecLbrace = 0  // ★ 连续 LBRACE 计数器——检测花括号泛滥
+                while (depth > 0 && !isEof() && totalSkips < 2000 && braceSkips < 300) {
+                    if (depth > 60) { warnSkip("花括号嵌套过深(>$depth)", "略过整块"); break }
+                    val tt = peek().type
+                    if (isDeclarationStart(tt)) break
+                    when (tt) {
+                        LBRACE -> {
+                            consecLbrace++
+                            if (consecLbrace >= 5) { warnSkip("花括号泛滥(连续${consecLbrace}个{)", "防吞全文件", autoFix = true); advance(); depth = 0 }
+                            advance(); depth++; totalSkips++; braceSkips++
+                        }
+                        RBRACE -> { consecLbrace = 0; advance(); depth--; totalSkips++; braceSkips++ }
+                        else -> { consecLbrace = 0; advance(); totalSkips++; braceSkips++ }
                     }
                 }
             } else advance()
         }
+        if (totalSkips >= 2000) warnSkip("跳过超限(2000 token)，强制截断", "防吞全文件", autoFix = true)
     }
 
     private fun parsePrimaryCtorMembers(): List<KtDecl> {
