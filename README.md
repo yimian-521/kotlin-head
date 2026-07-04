@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-&gt;**v0.10.0** -- 头标库运行时：HList/HMap/HString替代kotlin-stdlib。全源码长期状态换头标库。 — 🐛🔍 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)。进程树3领域×5检测=15报告全通过。
+&gt;**v0.10.0** — 🏗️📦 头标库运行时：HList/HMap/HString自实现替代kotlin-stdlib。全源码长期状态换头标库，146处println→hPrintln。编译零错误。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
