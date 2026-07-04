@@ -91,5 +91,37 @@ kotlin-head v0.11.0 满足此定义。
 | 🔲 安全沙箱 | 恶意 .kt 文件编译过程隔离，防止共享内存侧信道 | v0.13.0 |
 | 🔲 形式化不变量 | LiveDeclarationGraph 为基础：Parser 在任意 token 序列下不抛未捕获异常（Coq/Isabelle 可验证） | v1.0.0 |
 
+## 9. 实证数据（可复现）
+
+### 构建确定性
+```
+SHA256:  4972eff4a2e1c852767a8b4f36fd2875eb34bbe45b7a6b2677565a14a9beb1cd
+Size:    3,522,249 bytes (含 kotlin-stdlib)
+Source:  32 Kotlin files, 0 third-party dependencies
+```
+
+### 测试覆盖矩阵
+
+| 容错机制 | 地狱v2 (115行) | 地狱v3 (138行) | 綦桐v3.5.0 (30文件) |
+|---------|:---:|:---:|:---:|
+| parsePrimary warnSkip | ✅ ARROW/FOR/LBRACK | ✅ !! / by lazy | ✅ |
+| parseBlockBody try-catch | ✅ for体内异常 | ✅ try体内T! | ✅ |
+| parseFile 顶层try-catch | ✅ sealed class | ✅ internal class | ✅ |
+| 索引访问 [] 跳过 | ✅ 嵌套索引 | ✅ map["key"] | ✅ |
+| 尾部lambda | ✅ stuff{} / build{} | ✅ launch{} | ✅ |
+| 安全调用 ?. 特殊处理 | ✅ a?.b?.c | ✅ user?.name | ✅ |
+| peek/advance边界保护 | ✅ 数组越界防护 | ✅ | ✅ |
+| when逗号分隔 | ✅ | ✅ 1,2,3-> | N/A |
+| emptyList类型推断 | ✅ | ✅ | ✅ |
+| 🔧透明容错标注 | ✅ 42处标注 | ✅ 17处标注 | ✅ |
+
+### 量化指标
+
+| 测试 | 声明确认 | 跳过 | 待解锁 | 崩溃 |
+|------|---------|------|--------|------|
+| 地狱v2 | 22 | 19 | 42 | 0 |
+| 地狱v3 | 12 | 5 | 17 | 0 |
+| 綦桐v3.5.0 | 30/30 | 0 | 0 | 0 |
+
 ---
 v0.11.0 | 2026-07-04 | 免免 & 望安
