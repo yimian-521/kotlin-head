@@ -1,5 +1,21 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.8.3 (2026-07-04) — AsyncIO 归位 + 依赖图 staging 🎯📦
+> 角色不塌缩：文件读取归指挥官。依赖图"看见"和"动"时间隔离。
+
+**AsyncIO 归指挥官**：主进程不下场读文件。ProcessCoordinator 订阅 `"file"` 频道 + `scheduleFileRead()`。角色不塌缩——读文件是执行层的事。
+
+**依赖图 staging area**：`snapshot()` 只读快照 + `stage()` 可写副本 + `commit()` 合并。编译期间读快照改 staging，结束才合。"看见"和"动"拆成两个时间层。
+
+**依赖图接通 import**：Parser.skipImports 自动调用 `DependencyGraph.registerImport`。compile() 中 `snapshot()` → 解析 →冲突检测 → `commit()`。
+
+**改动清单**：
+- ProcessCoordinator.kt：+40行（import EventBus/AsyncIO，file频道订阅 + scheduleFileRead/scheduleFileReads）
+- DependencyGraph.kt：+38行（StagingData/snapshot/stage/commit + registerImport 隔离写入）
+- Main.kt：VERSION 0.8.2→0.8.3，compile() 加 snapshot/commit +冲突检测广播
+- Parser.kt：skipImports 接入 DependencyGraph.registerImport
+- 綦桐 benchmark：model 层 5/5 保持通过 ✅
+
 ## v0.8.2 (2026-07-04) — IR + Pass 优化管线 🔬⚡
 > 中间表示 + 优化Pass + 动态专业集数路由 + 全管线 EventBus 接通。
 
