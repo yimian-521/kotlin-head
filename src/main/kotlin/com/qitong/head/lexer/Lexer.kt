@@ -128,7 +128,7 @@ class Lexer(private val src: String) {
         val sb = StringBuilder()
         while (i < src.length && (src[i].isLetterOrDigit() || src[i] == '_')) { sb.append(src[i]); advance() }
         val text = sb.toString()
-        val type = keywords.get(text) ?: TokType.IDENT
+        val type = keywords.getExact(text) ?: TokType.IDENT
         return Token(type, text, start)
     }
 
