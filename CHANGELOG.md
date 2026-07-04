@@ -1,5 +1,22 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.8.1 (2026-07-04) — EventBus 三种通道 🔌🌊
+> Node.js 事件驱动 / 流式管道 / npm 依赖树 —— 能力适配到 Kotlin 编译器。
+
+**EventBus 三种通道（专业模组）**：
+- 事件通道（EventEmitter）：一发多收，订阅者独立处理。即时广播接替的物理载体
+- 流式通道（Stream/pipe）：数据经 transform 链串联，上一个输出是下一个输入
+- 工作通道（Worker Pool）：一发一收，CPU密集型扔给线程池
+
+**异步 I/O**：文件读取走独立线程池，主循环不卡。读完通过 "file" 频道敲门
+
+**依赖图解析**：import解析→冲突检测→"dep"频道联动HED/TDL/进程树
+
+**改动清单**：
+- 新增 `eventbus/` 包：EventBus.kt（146行）+ AsyncIO.kt（49行）+ DependencyGraph.kt（102行）= 297行
+- Main.kt：VERSION 0.8.0→0.8.1
+- capabilities.json：v0.8.1 条目
+
 ## v0.8.0 (2026-07-04) — 四层进程树 🏗️🌳
 > 注解处理从扁平黑盒变为透明仪表盘。四层插拔式进程树 + 领域自动划分 + 三层容错。
 
