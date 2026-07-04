@@ -18,7 +18,7 @@ class Parser(private val tokens: List<Token>) {
         skipImports()
         val decls = mutableListOf<KtDecl>()
         while (!isEof()) {
-            val anns = try { parseAnnotations() } catch (_: Exception) { emptyList() }
+            val anns = try { parseAnnotations() } catch (_: Exception) { emptyList<KtAnnotation>() }
             if (isEof()) break
             try { parseDeclaration(anns)?.let { decls += it } }
             catch (_: Exception) { warnSkip("decl", "skip"); skipToNextDecl() }
@@ -519,6 +519,10 @@ RETURN -> {
                 // 函数调用
                 if (checkType(LPAREN)) expr = parseCall(expr)
                 if (checkType(LBRACK)) { advance(); var bd=1; while(bd>0&&!isEof()){when(peek().type){LBRACK->{advance();bd++} RBRACK->{advance();bd--} else->advance()}} }
+                // ★ v0.11.0: 安全调用 ?.——? 被 Lexer 拆成 IDENT(?)，吞掉让 DOT 循环正常进入
+                if (checkType(IDENT) && peek().text == "?" && peekNext()?.type == DOT) {
+                    advance() // ?
+                }
                 // ★ v0.7.0: 链式 .member — 递归嵌套，结构就是记忆
                 while (checkType(DOT)) {
                     advance() // DOT
