@@ -18,9 +18,10 @@ class Parser(private val tokens: List<Token>) {
         skipImports()
         val decls = mutableListOf<KtDecl>()
         while (!isEof()) {
-            val anns = parseAnnotations()
+            val anns = try { parseAnnotations() } catch (_: Exception) { emptyList() }
             if (isEof()) break
-            parseDeclaration(anns)?.let { decls += it }
+            try { parseDeclaration(anns)?.let { decls += it } }
+            catch (_: Exception) { warnSkip("decl", "skip"); skipToNextDecl() }
         }
         return KtFile(null, decls)
     }
@@ -28,11 +29,8 @@ class Parser(private val tokens: List<Token>) {
     private fun skipPackage() {
         if (matchType(PACKAGE)) advance()
         // 读到 import 或声明开始（data class / fun / val / @ 等）
-        // ★ v0.10.0: data 的三种身份
-    //   data + CLASS → data class 声明 → 停止（声明开始）
-    //   data + DOT   → 包名/import路径的一部分 → 继续
-    //   data + 其他   → 不当声明处理 → 继续
-    // 规则：data 本身不是声明开始，只有 data class 才是。
+        // ★ v0.8.2-fix: 包声明可能是 com.qtwl.gateway.data.model，多个IDENT用DOT连接
+        // IDENT 不能触发 break——它是包名的一部分，不是声明开始
         while (!isEof()) {
             val t = peek().type
             if (t == IMPORT || t == AT) break
@@ -263,7 +261,7 @@ class Parser(private val tokens: List<Token>) {
                     val v = if (check(RBRACE)) null else parseExpression()
                     stmts += KtReturn(v, Span(kw.pos, lastPos()))
                 }
-                else -> stmts += parseExpression()
+                else -> { val saved = pos; try { stmts += parseExpression() } catch (_: Exception) { pos = saved; advance() } }
             }
         }
         val end = advance().pos  // }
@@ -520,6 +518,7 @@ RETURN -> {
                 }
                 // 函数调用
                 if (checkType(LPAREN)) expr = parseCall(expr)
+                if (checkType(LBRACK)) { advance(); var bd=1; while(bd>0&&!isEof()){when(peek().type){LBRACK->{advance();bd++} RBRACK->{advance();bd--} else->advance()}} }
                 // ★ v0.7.0: 链式 .member — 递归嵌套，结构就是记忆
                 while (checkType(DOT)) {
                     advance() // DOT
@@ -545,7 +544,12 @@ RETURN -> {
                 if (checkType(IDENT)) advance() // 成员名
                 KtLitBool(true, Span(t.pos, lastPos()))
             }
-            else -> throw error("unexpected token: ${t.type} (${t.text})")
+            else -> {
+                val t = peek()
+                warnSkip("${t.type} ${t.text}", "表达式容错")
+                advance()
+                KtLitBool(true, Span(t.pos, lastPos()))
+            }
         }
     }
 
@@ -587,6 +591,7 @@ RETURN -> {
             args += parseExpression()
         }
         expect(RPAREN); advance()
+        if (checkType(LBRACE)) args += parseLambda()
         return KtCall(target, args, Span(target.span.start, lastPos()))
     }
 
@@ -623,11 +628,11 @@ RETURN -> {
     }
 
     // ─── 辅助 ───
-    private fun peek() = tokens[pos]
-    private fun advance() = tokens[pos++]
-    private fun isEof() = peek().type == EOF
-    private fun check(type: TokType) = peek().type == type
-    private fun checkType(type: TokType) = peek().type == type
+    private fun peek() = if (pos < tokens.size) tokens[pos] else tokens.last()
+    private fun advance() = if (pos < tokens.size) tokens[pos++] else tokens.last().also { pos++ }
+    private fun isEof() = pos >= tokens.size || peek().type == EOF
+    private fun check(type: TokType) = !isEof() && peek().type == type
+    private fun checkType(type: TokType) = check(type)
     private fun match(text: String) = peek().text == text
     private fun matchType(type: TokType) = peek().type == type
     private fun expect(type: TokType) { if (!check(type)) throw error("expected $type, got ${peek().type}") }
