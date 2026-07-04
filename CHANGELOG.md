@@ -1,5 +1,32 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.8.2 (2026-07-04) — IR + Pass 优化管线 🔬⚡
+> 中间表示 + 优化Pass + 动态专业集数路由 + 全管线 EventBus 接通。
+
+**IR 中间表示**：AST → 三地址码 IR。15种指令（Binary/Unary/Call/Load/Store/Lit/CondJump/Jump/Return/Alloc/FieldAccess/Label/Comment）。换语言不换 IR。
+
+**Pass 优化管线**：三件套走 EventBus 流式通道串联——
+- 死代码消除：去掉 dest 从未被引用的指令
+- 常量折叠：编译期计算 `3+4→7`，字符串拼接折叠
+- 内联展开：≤3条指令的函数调用替换为函数体
+
+**动态+专业集数路由（免免设计）**：不是通用路由表——每种通道自带专业调度逻辑。任务→匹配通道类型→通道内部用自己的专业路由。三种通道不交叉不混合。
+
+**EventBus 全管线接通**：
+- compile() 每个阶段发射事件（lex/parse/typecheck/ir）
+- 进程树失败走 "error" 频道广播
+- Pass 链注册到流式通道 "ir-pass"
+- 依赖图 "dep" 频道 HED/TDL/进程树三方订阅
+- HED [0] EventBus 状态页（频道订阅关系 + IR 模块信息）
+
+**Parser 修复**：skipPackage 不再把 `IDENT` 当声明开始——包声明 `com.qtwl.gateway.data.model` 中多个 IDENT 被正确跳过。
+
+**改动清单**：
+- 新增 `ir/IR.kt`（74行）+ `pass/Pass.kt`（187行）= 261行
+- Main.kt：VERSION 0.8.1→0.8.2，initEventBus() + IrGenerator + renderEventBus()
+- Parser.kt：skipPackage 移除 IDENT 断点 + parseAnnotations 升级
+- 綦桐 benchmark：model 层 5/5 保持通过 ✅
+
 ## v0.8.1 (2026-07-04) — EventBus 三种通道 🔌🌊
 > Node.js 事件驱动 / 流式管道 / npm 依赖树 —— 能力适配到 Kotlin 编译器。
 
