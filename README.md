@@ -19,7 +19,7 @@
 ## 当前版本
 
 &gt;**v0.10.0** — 🏗️📦 头标库运行时
-| v0.11.0 ✅ | 卡巴斯基式容错——不认识的不杀，跳过但标注原因 |：HList/HMap/HString自实现替代kotlin-stdlib。全源码长期状态换头标库，146处println→hPrintln。编译零错误。
+| v0.11.0 ✅ | 主动容错——不认识的不杀，跳过但标注原因 |：HList/HMap/HString自实现替代kotlin-stdlib。全源码长期状态换头标库，146处println→hPrintln。编译零错误。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -85,5 +85,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.9.0 ✅ | LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播） |
 | v0.9.1 ✅ | 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条) + 进程树3领域×5测评 |
 | v0.10.0 ✅ | 头标库运行时
-| v0.11.0 ✅ | 卡巴斯基式容错——不认识的不杀，跳过但标注原因 |——HList/HMap/HString替代kotlin-stdlib |
+| v0.11.0 ✅ | 主动容错——不认识的不杀，跳过但标注原因 |——HList/HMap/HString替代kotlin-stdlib |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
