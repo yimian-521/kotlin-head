@@ -126,6 +126,12 @@
     "keywords": ["AsyncIO", "staging", "依赖图", "角色不塌缩"],
     "desc": "model层5/5通过"
   },
+  "v0.8.3": {
+    "done": "AsyncIO归指挥官(角色不塌缩)+依赖图staging(snapshot/stage/commit)+import接通+dep频道广播"
+  },
+  "v0.8.5": {
+    "done": "四种指挥官(Bug/侦查/军师/执行)+五种检测进程(胆小/勇敢/抽样/趋势/哨兵)+子进程五职业(侦查/收集)+依赖图被动联动(dep_ready)"
+  },
   "v1.0.0": {
       "keywords": [],
       "desc": "32/32 綦桐文件全通过"
