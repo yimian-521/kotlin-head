@@ -16,7 +16,9 @@
 **角色不塌缩**：SubProcess不写代码，ProcessBody不管调度。层级身份标签烙在创建时，永不可能越级汇报。
 
 **改动清单**：
-- 新增 `process/` 包：ProcessTree.kt（133行）+ ProcessorTag.kt（19行）+ ProcessCoordinator.kt（459行）= 611行
+- 新增 `process/` 包：ProcessTree.kt（133行）+ ProcessorTag.kt（19行）+ ProcessCoordinator.kt（469行）= 621行
+- AST：新增 KtAnnotation 节点，KtClass/KtFun/KtVal 加 annotations 字段
+- Parser：skipAnnotations → parseAnnotations，不再跳过注解而是构建AST节点
 - Main.kt：VERSION 0.7.0→0.8.0，集成 ProcessCoordinator，新增 [9] 进程树页面 + --process flag
 - capabilities.json：v0.8.0 条目
 - 綦桐 benchmark：32/32 保持通过 ✅
