@@ -1,5 +1,35 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.10.0 (2026-07-04) — 头标库运行时 🏗️📦
+
+> 自实现集合+IO替代 kotlin-stdlib。不是平替，是降维。
+
+### 头标库 vs kotlin-stdlib
+
+| | kotlin-stdlib | 头标库 (H*) | 优势 |
+|---|---|---|---|
+| **List** | ArrayList — 容量预留+扩容 | HList — 纯追加，到达顺序即索引 | CPU缓存友好，无碎片 |
+| **Map** | LinkedHashMap — 双链表维护插入序 | HMap — 平行数组 | 内存减半，O(1)+模糊fallback |
+| **查找** | 精确匹配，失败即null | 精确+模糊双层——失败自动找最接近key | 容错内建 |
+| **String** | kotlin.text链式调用层层分配 | HString — 模板解析内建，一次分配 | 无中间对象 |
+| **IO** | kotlin.io.println | hPrintln — 自己IO通道 | 依赖归零 |
+| **并发读** | 需ConcurrentHashMap额外包装 | 零锁——结构本身保证安全 | EventBus遗传 |
+
+### 替换清单（全部长期状态）
+
+- Lexer: keywords HMap + tokens HList
+- DepGraph: deps/fileDeps/stageBuffer HMap
+- LiveDeclGraph: 本就 HMap/HList
+- ProcCoord: commanders/broadcastLog/pendingFiles HMap
+- CommanderImpl: processors/subProcesses/watchProcesses/pendingTasks HList
+- SubProcessImpl: bodies HList
+- ProcessBodyImpl: broadcastMessages HList
+- WatchProcess x5: seen/findings/sampled/history/gateReports HList
+- CommanderType: customTypes HMap
+- Main.kt: 146处 println -> hPrintln
+
+编译零错误，进程树输出一致。
+
 ## v0.9.1 (2026-07-04) — 检测进程全武装 + BugScanner冷门标准库 🐛🔍
 
 > 进程树全面测评通过 + 12条Kotlin冷门编译器bug收录。

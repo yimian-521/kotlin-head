@@ -15,6 +15,7 @@ import com.qitong.head.ir.*
 import com.qitong.head.pass.*
 import com.qitong.head.internal.JsonUtil
 import java.io.File
+import com.qitong.head.runtime.*
 
 /**
  * 有头编译器（kotlin-head）—— 按钮终端主入口。
@@ -26,7 +27,7 @@ import java.io.File
  */
 object Main {
 
-    const val VERSION = "0.9.1"
+    const val VERSION = "0.10.0"
 
     private val dev = DevMode.boot()
 
@@ -44,13 +45,13 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        println("╔════════════════════════════╗")
-        println("║ 有头编译器 kotlin-head v$VERSION ║")
-        println("╚════════════════════════════╝")
-        println()
+        hPrintln("╔════════════════════════════╗")
+        hPrintln("║ 有头编译器 kotlin-head v$VERSION ║")
+        hPrintln("╚════════════════════════════╝")
+        hPrintln()
 
         if (args.isEmpty()) {
-            println("用法: kotlin-head <源码.kt> [--sim|--ast|--diag]")
+            hPrintln("用法: kotlin-head <源码.kt> [--sim|--ast|--diag]")
             return
         }
 
@@ -58,7 +59,7 @@ object Main {
         val flag = args.getOrNull(1) ?: ""
         val file = File(path)
         if (!file.exists()) {
-            println("✖ 文件不存在: $path")
+            hPrintln("✖ 文件不存在: $path")
             return
         }
 
@@ -145,7 +146,7 @@ object Main {
             parser.parseFile()
         } catch (e: Exception) {
             EventBus.emitTo("error", "parse_crashed", mapOf("error" to e.message))
-            println("✖ 解析异常: ${e.message}")
+            hPrintln("✖ 解析异常: ${e.message}")
             null
         }
         EventBus.emitTo("parse", "parse_complete", mapOf("success" to (lastFile != null)))
@@ -476,16 +477,16 @@ object Main {
     // ─── 主循环 ───
     private fun loop() {
         while (true) {
-            println("\n".repeat(2))
+            hPrintln("\n".repeat(2))
             renderPage()
 
-            print("\n> ")
+            hPrint("\n> ")
             val input = readLine() ?: break
             if (input.isBlank()) continue
 
             val cmd = input.trim().toLowerCase()
             if (cmd == "q" || cmd == "quit" || cmd == "exit") {
-                println("再见 👋")
+                hPrintln("再见 👋")
                 return
             }
             handle(cmd)
@@ -525,31 +526,31 @@ object Main {
     data class SimProfile(val name: String, val file: String)
 
     private fun renderSim() {
-        println("═══ 模拟运行 ═══")
-        println("  选一个配置，自动跑编译+诊断")
-        println()
+        hPrintln("═══ 模拟运行 ═══")
+        hPrintln("  选一个配置，自动跑编译+诊断")
+        hPrintln()
         simProfiles.forEachIndexed { i, p ->
-            println("  [${i + 1}] ${p.name}")
+            hPrintln("  [${i + 1}] ${p.name}")
         }
-        println("  [0] 返回主页")
+        hPrintln("  [0] 返回主页")
     }
 
     private fun handleSim(key: String) {
         if (key == "0") { page = "main"; return }
         val idx = key.toIntOrNull()?.minus(1) ?: return
         val profile = simProfiles.getOrNull(idx) ?: return
-        println("  模拟: ${profile.name}")
+        hPrintln("  模拟: ${profile.name}")
         if (profile.file.isEmpty()) {
             compile("")
         } else {
             val f = File(profile.file)
-            if (!f.exists()) { println("  ✖ 文件不存在: ${profile.file}"); return }
+            if (!f.exists()) { hPrintln("  ✖ 文件不存在: ${profile.file}"); return }
             lastSrcPath = profile.file
             lastSrc = f.readText()
             compile(lastSrc)
         }
-        println("  完成 ✓")
-        println("  [1] 查看AST  [2] 查看诊断  [0] 返回")
+        hPrintln("  完成 ✓")
+        hPrintln("  [1] 查看AST  [2] 查看诊断  [0] 返回")
         val input = readLine() ?: ""
         when (input.trim()) {
             "1" -> page = "ast"
@@ -559,54 +560,54 @@ object Main {
     }
 
     private fun renderMain() {
-        println("═══ 主页 ═══  ${lastSrcPath.takeLast(30)}")
-        println()
-        println("  [1] 查看 AST 树")
-        println("  [2] 查看诊断 (${diagSummary()})")
-        println("  [3] 重新编译")
-        println("  [4] 模拟运行")
-        println("  [5] 管理员")
-        println("  [6] Bug 扫描 (${lastFindings.size})")
-        println("  [7] 能力路线图")
-        println("  [8] 反编译管线")
-        println("  [9] 进程树 (${lastProcessReports.size}个领域)")
-        println("  [0] EventBus 状态")
-        println("  [q] 退出")
+        hPrintln("═══ 主页 ═══  ${lastSrcPath.takeLast(30)}")
+        hPrintln()
+        hPrintln("  [1] 查看 AST 树")
+        hPrintln("  [2] 查看诊断 (${diagSummary()})")
+        hPrintln("  [3] 重新编译")
+        hPrintln("  [4] 模拟运行")
+        hPrintln("  [5] 管理员")
+        hPrintln("  [6] Bug 扫描 (${lastFindings.size})")
+        hPrintln("  [7] 能力路线图")
+        hPrintln("  [8] 反编译管线")
+        hPrintln("  [9] 进程树 (${lastProcessReports.size}个领域)")
+        hPrintln("  [0] EventBus 状态")
+        hPrintln("  [q] 退出")
     }
 
     private fun renderAst() {
-        println("═══ AST 视图 ═══")
-        println()
+        hPrintln("═══ AST 视图 ═══")
+        hPrintln()
         if (lastFile == null) {
-            println("  (无 AST —— 编译失败)")
+            hPrintln("  (无 AST —— 编译失败)")
         } else {
-            println(formatAst(lastFile!!))
+            hPrintln(formatAst(lastFile!!))
         }
-        println()
-        println("  [1] 返回主页")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     private fun renderDiag() {
-        println(Diagnostic.from(lastDiags, lastFindings).format(lastFile?.declarations?.size ?: 0))
-        println("  [1] 返回主页")
+        hPrintln(Diagnostic.from(lastDiags, lastFindings).format(lastFile?.declarations?.size ?: 0))
+        hPrintln("  [1] 返回主页")
     }
 
     private fun renderAdmin() {
-        println("═══ 管理员 ═══")
-        println()
-        println("  ~/.kotlin-head/  ← 数据在这，随便看随便改")
-        println("  CRC 校验保护完整性，改坏自动恢复默认值")
-        println()
-        println("  [1] 返回主页")
-        println("  [2] 清除所有缓存")
+        hPrintln("═══ 管理员 ═══")
+        hPrintln()
+        hPrintln("  ~/.kotlin-head/  ← 数据在这，随便看随便改")
+        hPrintln("  CRC 校验保护完整性，改坏自动恢复默认值")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
+        hPrintln("  [2] 清除所有缓存")
     }
 
     // ─── 新页面 v0.6.1 ───
     private fun renderBugs() {
-        println("═══ Bug 扫描 ═══")
-        println()
+        hPrintln("═══ Bug 扫描 ═══")
+        hPrintln()
         if (lastFindings.isEmpty()) {
-            println("  ✓ 未发现已知 Bug 模式")
+            hPrintln("  ✓ 未发现已知 Bug 模式")
         } else {
             for (f in lastFindings) {
                 val icon = when (f.severity) {
@@ -614,67 +615,67 @@ object Main {
                     BugScanner.Severity.MEDIUM -> "🟡"
                     BugScanner.Severity.LOW -> "⚪"
                 }
-                println("  $icon ${f.message} | ${f.span}")
+                hPrintln("  $icon ${f.message} | ${f.span}")
             }
         }
-        println()
-        println("  Kotlin 叠加漏洞（T!×结构化并发）：kotlin-head 零依赖天然免疫")
-        println()
-        println("  [1] 返回主页")
+        hPrintln()
+        hPrintln("  Kotlin 叠加漏洞（T!×结构化并发）：kotlin-head 零依赖天然免疫")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     private fun renderRoadmap() {
-        println("═══ 能力路线图 ═══")
-        println()
-        println("  当前: v$VERSION — Stage Contract + 反编译管线")
-        println()
-        println("  v0.1.0 ✅ data class / fun / val / if / 字面量")
-        println("  v0.2.0 ✅ 三级诊断 + BugScanner + 容错跳过")
-        println("  v0.3.0 ✅ HED/TDL 双格式落地")
-        println("  v0.5.1 ✅ class正解析+继承+LT/GT归位+尾部lambda")
-        println("  v0.5.2 ✅ <T>/by/= 三刀语义修复 + 看位置不分类")
-        println("  v0.5.3 ✅ T!×结构化并发叠加漏洞发现")
-        println("  v0.6.0 ✅ Stage Contract + 反编译管线 + 綦桐3.4.4-9分析")
-        println("  v0.7.0 ✅ 綦桐 32/32 全通过（三刀架构验证）")
-        println("  v0.8.0 ✅ 四层进程树 + 注解领域划分 + 三层容错")
-        println("  v0.8.1 ✅ EventBus三种通道 + 异步I/O + 依赖图解析")
-        println("  v0.8.2 ✅ IR中间表示 + Pass优化管线 + 动态专业集数路由")
-        println("  v0.8.3 ✅ AsyncIO归指挥官 + 依赖图staging + import接通")
-        println("  v0.8.5 ✅ 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动")
-        println("  v0.9.0 ✅ LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播）")
-        println("  v0.9.1 ✅ 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)")
-        println("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
-        println()
-        println("  [1] 返回主页")
+        hPrintln("═══ 能力路线图 ═══")
+        hPrintln()
+        hPrintln("  当前: v$VERSION — Stage Contract + 反编译管线")
+        hPrintln()
+        hPrintln("  v0.1.0 ✅ data class / fun / val / if / 字面量")
+        hPrintln("  v0.2.0 ✅ 三级诊断 + BugScanner + 容错跳过")
+        hPrintln("  v0.3.0 ✅ HED/TDL 双格式落地")
+        hPrintln("  v0.5.1 ✅ class正解析+继承+LT/GT归位+尾部lambda")
+        hPrintln("  v0.5.2 ✅ <T>/by/= 三刀语义修复 + 看位置不分类")
+        hPrintln("  v0.5.3 ✅ T!×结构化并发叠加漏洞发现")
+        hPrintln("  v0.6.0 ✅ Stage Contract + 反编译管线 + 綦桐3.4.4-9分析")
+        hPrintln("  v0.7.0 ✅ 綦桐 32/32 全通过（三刀架构验证）")
+        hPrintln("  v0.8.0 ✅ 四层进程树 + 注解领域划分 + 三层容错")
+        hPrintln("  v0.8.1 ✅ EventBus三种通道 + 异步I/O + 依赖图解析")
+        hPrintln("  v0.8.2 ✅ IR中间表示 + Pass优化管线 + 动态专业集数路由")
+        hPrintln("  v0.8.3 ✅ AsyncIO归指挥官 + 依赖图staging + import接通")
+        hPrintln("  v0.8.5 ✅ 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动")
+        hPrintln("  v0.9.0 ✅ LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播）")
+        hPrintln("  v0.9.1 ✅ 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)")
+        hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     private fun renderDecomp() {
-        println("═══ 反编译管线 ═══")
-        println()
-        println("  APK → dex → jadx → Kt源码 → kotlin-head AST → 语义复原")
-        println()
-        println("  核心洞察（免免原创）：")
-        println("  编译器为编译必须看懂源码 → AST已暴露所有结构")
-        println("  → 语义复原 = 把AST已算出的类型/调用链翻译回源码")
-        println()
-        println("  接缝A: jadx吐出非标准Kotlin → 优雅降级，不炸管道")
-        println("  接缝B: 推断链碰未知外部库 → 标<?>，不装懂")
-        println()
-        println("  已在綦桐3.4.4-9 APK验证：apk_reverse + jadx + strings")
-        println()
-        println("  [1] 返回主页")
+        hPrintln("═══ 反编译管线 ═══")
+        hPrintln()
+        hPrintln("  APK → dex → jadx → Kt源码 → kotlin-head AST → 语义复原")
+        hPrintln()
+        hPrintln("  核心洞察（免免原创）：")
+        hPrintln("  编译器为编译必须看懂源码 → AST已暴露所有结构")
+        hPrintln("  → 语义复原 = 把AST已算出的类型/调用链翻译回源码")
+        hPrintln()
+        hPrintln("  接缝A: jadx吐出非标准Kotlin → 优雅降级，不炸管道")
+        hPrintln("  接缝B: 推断链碰未知外部库 → 标<?>，不装懂")
+        hPrintln()
+        hPrintln("  已在綦桐3.4.4-9 APK验证：apk_reverse + jadx + strings")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     // ─── v0.8.5 进程树页面（树状展示）───
     private fun renderProcess() {
-        println("═══ 进程树（v0.8.5 四层架构 + 检测进程） ═══")
-        println()
+        hPrintln("═══ 进程树（v0.8.5 四层架构 + 检测进程） ═══")
+        hPrintln()
         if (lastProcessReports.isEmpty()) {
-            println("  当前源码未检测到注解，或编译未完成")
-            println("  （注解处理器按标签自动分组：crud-generator / serializer / di / general）")
+            hPrintln("  当前源码未检测到注解，或编译未完成")
+            hPrintln("  （注解处理器按标签自动分组：crud-generator / serializer / di / general）")
         } else {
             // 树状展示：主进程 → 指挥官 → 子进程 → 进程体 + 检测进程
-            println("  kotlin-head v$VERSION  (主进程)")
+            hPrintln("  kotlin-head v$VERSION  (主进程)")
             val cmds = lastProcessReports.entries.toList()
             cmds.forEachIndexed { ci, (tag, report) ->
                 val isLast = ci == cmds.lastIndex
@@ -683,15 +684,15 @@ object Main {
                 
                 val bugIcon = if (report.summary.contains("✖")) "" else ""
                 val watchTag = if (report.watchReports.isNotEmpty()) " · " else ""
-                println("  $branch 指挥官[$tag] · ${report.commanderTypeLabel} · ${report.modeLabel}$watchTag$bugIcon")
-                println("  $indent│ 完成: ${report.completedCount}/${report.totalCount}  ${report.summary}")
+                hPrintln("  $branch 指挥官[$tag] · ${report.commanderTypeLabel} · ${report.modeLabel}$watchTag$bugIcon")
+                hPrintln("  $indent│ 完成: ${report.completedCount}/${report.totalCount}  ${report.summary}")
                 
                 // 子进程层
                 val successes = report.results.count { it is com.qitong.head.process.ProcessResult.Success }
                 val partials = report.results.count { it is com.qitong.head.process.ProcessResult.PartialSuccess }
                 val failures = report.results.count { it is com.qitong.head.process.ProcessResult.Failure }
-                println("  $indent├── 子进程 ×${report.subProcessCount}")
-                println("  $indent│   └── 进程体 梯次: ✓$successes ◐$partials ✖$failures")
+                hPrintln("  $indent├── 子进程 ×${report.subProcessCount}")
+                hPrintln("  $indent│   └── 进程体 梯次: ✓$successes ◐$partials ✖$failures")
                 
                 // 检测进程层（旁路）
                 if (report.watchReports.isNotEmpty()) {
@@ -704,75 +705,75 @@ object Main {
                             wr.suspicionLevel > 0f -> "⚪"
                             else -> "✓"
                         }
-                        println("  $indent$wBranch 检测进程 [$susIcon] 疑点:${(wr.suspicionLevel * 100).toInt()}%")
+                        hPrintln("  $indent$wBranch 检测进程 [$susIcon] 疑点:${(wr.suspicionLevel * 100).toInt()}%")
                         if (wr.anomalies.isNotEmpty()) {
                             wr.anomalies.take(2).forEach { a ->
-                                println("  $wIndent    · $a")
+                                hPrintln("  $wIndent    · $a")
                             }
-                            if (wr.anomalies.size > 2) println("  $wIndent    · …还有 ${wr.anomalies.size - 2} 条")
+                            if (wr.anomalies.size > 2) hPrintln("  $wIndent    · …还有 ${wr.anomalies.size - 2} 条")
                         }
-                        println("  $wIndent    建议: ${wr.recommendation}")
+                        hPrintln("  $wIndent    建议: ${wr.recommendation}")
                     }
                 } else {
-                    println("  $indent└── 检测进程 (未挂载)")
+                    hPrintln("  $indent└── 检测进程 (未挂载)")
                 }
-                println()
+                hPrintln()
             }
-            println("  ─── 架构特性 ───")
-            println("  四层: 主进程 → 指挥官(4种) → 子进程(5种) → 进程体")
-            println("  旁路: 检测进程(5种风格) · 观察不拦截 · 与数据通道隔离")
-            println("  联动: 依赖图 → \"dep_ready\" → 指挥官被动响应")
-            println("  隔离: 领域间零耦合 · 反向排除近邻但标签不同者")
-            println("  传递: 复制性引用 · Git clone不是mount")
-            println("  协同: 分片/流水线/竞合/侦查/收集 · 指挥官自动选")
+            hPrintln("  ─── 架构特性 ───")
+            hPrintln("  四层: 主进程 → 指挥官(4种) → 子进程(5种) → 进程体")
+            hPrintln("  旁路: 检测进程(5种风格) · 观察不拦截 · 与数据通道隔离")
+            hPrintln("  联动: 依赖图 → \"dep_ready\" → 指挥官被动响应")
+            hPrintln("  隔离: 领域间零耦合 · 反向排除近邻但标签不同者")
+            hPrintln("  传递: 复制性引用 · Git clone不是mount")
+            hPrintln("  协同: 分片/流水线/竞合/侦查/收集 · 指挥官自动选")
         }
-        println()
-        println("  [1] 返回主页")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     // ─── v0.8.2 EventBus 状态页 ───
     private fun renderEventBus() {
-        println("═══ EventBus 状态（v0.8.2 动态+专业集数路由） ═══")
-        println()
-        println("  事件循环: ${if (eventBusInit) "✓ 运行中" else "✖ 未初始化"}")
-        println()
+        hPrintln("═══ EventBus 状态（v0.8.2 动态+专业集数路由） ═══")
+        hPrintln()
+        hPrintln("  事件循环: ${if (eventBusInit) "✓ 运行中" else "✖ 未初始化"}")
+        hPrintln()
         // 事件通道
-        println("  ── 事件通道（EventEmitter · 一发多收）──")
+        hPrintln("  ── 事件通道（EventEmitter · 一发多收）──")
         listOf("lex" to "Lex完成", "parse" to "Parse完成", "typecheck" to "类型检查", 
                "ir" to "IR生成", "error" to "错误中心", "dep" to "依赖图", 
                "file" to "文件就绪", "process" to "进程树").forEach { (ch, desc) ->
             val count = try { EventBus.eventChannel(ch).subscriberCount() } catch (_: Exception) { 0 }
-            println("  ${if (count > 0) "●" else "○"} $ch ($desc) · ${count}人订阅")
+            hPrintln("  ${if (count > 0) "●" else "○"} $ch ($desc) · ${count}人订阅")
         }
-        println()
+        hPrintln()
         // 流式通道
-        println("  ── 流式通道（Stream/pipe · 链式串联）──")
+        hPrintln("  ── 流式通道（Stream/pipe · 链式串联）──")
         val passCount = try { EventBus.streamChannel<IRModule>("ir-pass").pipeCount() } catch (_: Exception) { 0 }
-        println("  ● ir-pass · ${passCount}个Pass串联: 死代码消除 → 常量折叠 → 内联展开")
-        println()
+        hPrintln("  ● ir-pass · ${passCount}个Pass串联: 死代码消除 → 常量折叠 → 内联展开")
+        hPrintln()
         // 工作通道
-        println("  ── 工作通道（Worker Pool · 任务池分发）──")
-        println("  ● worker · 4线程池（CPU密集型: 多文件TypeCheck / 注解处理）")
-        println()
+        hPrintln("  ── 工作通道（Worker Pool · 任务池分发）──")
+        hPrintln("  ● worker · 4线程池（CPU密集型: 多文件TypeCheck / 注解处理）")
+        hPrintln()
         // IR 状态
         if (lastIR != null) {
-            println("  ── 当前 IR 模块 ──")
-            println("  名称: ${lastIR!!.name}")
-            println("  函数: ${lastIR!!.functionCount()}个")
-            println("  指令: ${lastIR!!.totalInstructions()}条")
-            lastIR!!.metadata.forEach { (k, v) -> println("  $k: $v") }
+            hPrintln("  ── 当前 IR 模块 ──")
+            hPrintln("  名称: ${lastIR!!.name}")
+            hPrintln("  函数: ${lastIR!!.functionCount()}个")
+            hPrintln("  指令: ${lastIR!!.totalInstructions()}条")
+            lastIR!!.metadata.forEach { (k, v) -> hPrintln("  $k: $v") }
         } else {
-            println("  ── 当前 IR 模块 ──")
-            println("  (未编译或编译失败)")
+            hPrintln("  ── 当前 IR 模块 ──")
+            hPrintln("  (未编译或编译失败)")
         }
-        println()
+        hPrintln()
         // 动态+专业集数路由说明
-        println("  ── 路由策略 ──")
-        println("  任务进来 → 匹配通道类型 → 通道自带专业路由处理")
-        println("  事件通道: 广播式 | 流式通道: 链式串联 | 工作通道: 任务池")
-        println("  不是通用路由表——每条路自带专业调度逻辑，不交叉不混合")
-        println()
-        println("  [1] 返回主页")
+        hPrintln("  ── 路由策略 ──")
+        hPrintln("  任务进来 → 匹配通道类型 → 通道自带专业路由处理")
+        hPrintln("  事件通道: 广播式 | 流式通道: 链式串联 | 工作通道: 任务池")
+        hPrintln("  不是通用路由表——每条路自带专业调度逻辑，不交叉不混合")
+        hPrintln()
+        hPrintln("  [1] 返回主页")
     }
 
     // ─── 输入处理 ───
@@ -812,10 +813,10 @@ object Main {
             "1" -> page = "ast"
             "2" -> page = "diag"
             "3" -> {
-                println("  重新编译中...")
+                hPrintln("  重新编译中...")
                 lastSrc = File(lastSrcPath).readText()
                 compile(lastSrc)
-                println("  完成 ✓")
+                hPrintln("  完成 ✓")
             }
             "4" -> page = "sim"
             "5" -> page = "admin"
@@ -824,7 +825,7 @@ object Main {
             "8" -> page = "decomp"
             "9" -> page = "process"
             "0" -> page = "eventbus"
-            else -> println("  ? 未知按钮: $key")
+            else -> hPrintln("  ? 未知按钮: $key")
         }
     }
 
@@ -842,9 +843,9 @@ object Main {
             "2" -> {
                 val cacheDir = File(System.getProperty("user.home"), ".kotlin-head/cache")
                 cacheDir.listFiles()?.forEach { it.delete() }
-                println("  缓存已清除 ✓")
+                hPrintln("  缓存已清除 ✓")
             }
-            else -> println("  ? 未知按钮: $key")
+            else -> hPrintln("  ? 未知按钮: $key")
         }
     }
 

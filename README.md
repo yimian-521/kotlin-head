@@ -18,7 +18,7 @@
 
 ## 当前版本
 
-&gt;**v0.9.1** — 🐛🔍 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)。进程树3领域×5检测=15报告全通过。
+&gt;**v0.10.0** -- 头标库运行时：HList/HMap/HString替代kotlin-stdlib。全源码长期状态换头标库。 — 🐛🔍 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)。进程树3领域×5检测=15报告全通过。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -83,4 +83,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.8.5 ✅ | 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动 |
 | v0.9.0 ✅ | LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播） |
 | v0.9.1 ✅ | 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条) + 进程树3领域×5测评 |
+| v0.10.0 ✅ | 头标库运行时——HList/HMap/HString替代kotlin-stdlib |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
