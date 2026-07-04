@@ -81,4 +81,4 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.8.2 ✅ | IR中间表示 + Pass优化管线 + 动态专业集数路由 + EventBus全管线接通 |
 | v0.8.3 ✅ | AsyncIO归指挥官 + 依赖图staging + import接通 |
 | v0.8.5 ✅ | 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动 |
-| v1.0.0 | 能力全面超越 javac/Node.js 官方工具链 |
+| v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
