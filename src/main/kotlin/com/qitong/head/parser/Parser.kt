@@ -28,8 +28,11 @@ class Parser(private val tokens: List<Token>) {
     private fun skipPackage() {
         if (matchType(PACKAGE)) advance()
         // 读到 import 或声明开始（data class / fun / val / @ 等）
-        // ★ v0.8.2-fix: 包声明可能是 com.qtwl.gateway.data.model，多个IDENT用DOT连接
-        // IDENT 不能触发 break——它是包名的一部分，不是声明开始
+        // ★ v0.10.0: data 的三种身份
+    //   data + CLASS → data class 声明 → 停止（声明开始）
+    //   data + DOT   → 包名/import路径的一部分 → 继续
+    //   data + 其他   → 不当声明处理 → 继续
+    // 规则：data 本身不是声明开始，只有 data class 才是。
         while (!isEof()) {
             val t = peek().type
             if (t == IMPORT || t == AT) break
