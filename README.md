@@ -82,4 +82,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.8.3 ✅ | AsyncIO归指挥官 + 依赖图staging + import接通 |
 | v0.8.5 ✅ | 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动 |
 | v0.9.0 ✅ | LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播） |
+| v0.9.1 ✅ | 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条) + 进程树3领域×5测评 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
