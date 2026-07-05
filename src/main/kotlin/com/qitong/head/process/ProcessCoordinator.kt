@@ -33,11 +33,65 @@ object ProcessCoordinator {
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 
+    // ★ v0.11.3: 军队池——主动常备+被动应急
+    private val armyPool = HList<ArmyProcess>()
+    private val armyCounter = AtomicInteger(0)
+
+    fun getArmies(): List<ArmyProcess> = armyPool.toList()
+    fun getArmyCount(): Int = armyPool.size
+
     /** v0.11.3: 运行时切换治理风格 */
     fun setStyle(style: MainProcessStyle) {
         activeStyle = style
         broadcastLog.getOrPut("system") { HList<String>() }
             .add("治理风格切换: $style")
+    }
+
+    /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
+    fun prepareArmy(fileSize: Int, fileCount: Int) {
+        val strategy = activeStyle
+        when {
+            strategy == MainProcessStyle.CONSERVATIVE -> return  // 保守不扩编
+            strategy == MainProcessStyle.RENYONG && fileSize < 5000 -> return  // 仁勇小文件不扩
+            fileSize < 1000 && fileCount <= 1 -> return  // 太小不用
+        }
+        val cap = when (strategy) {
+            MainProcessStyle.EMERGENCY -> (fileCount * 5).coerceIn(5, 50)  // 全速铺
+            MainProcessStyle.MARSHAL, MainProcessStyle.FEDERAL -> (fileCount * 3).coerceIn(3, 30)
+            MainProcessStyle.XIAOXIONG -> (fileCount * 4).coerceIn(4, 40)
+            MainProcessStyle.CONTRACT -> (fileCount * 2).coerceIn(2, 20)  // 精打细算
+            else -> (fileCount * 2).coerceIn(1, 20)
+        }
+        val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true)
+        armyPool.add(army)
+        broadcast("system", "⚔️ 主动增派: $army (文件${fileSize}字节×${fileCount}个)")
+    }
+
+    /** v0.11.3: 被动增派——负载超容量时临时扩编 */
+    private fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
+            List<Pair<AnnotationTask, ProcessResult>>? {
+        if (tasks.size <= 3) return null  // 太少不值得扩
+        if (activeStyle == MainProcessStyle.CONSERVATIVE) return null  // 保守不扩
+        
+        // 先看常备军队有没有活的
+        val perm = armyPool.filter { it.isActive() && it.isPermanent() }
+        if (perm.isNotEmpty()) {
+            val army = perm.first()
+            return army.deploy(tasks, commander)
+        }
+        // 没有常备就临时创
+        val cap = (tasks.size / 2).coerceIn(3, 20)
+        val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false)
+        armyPool.add(army)
+        broadcast("system", "⚔️ 被动增派: $army (${tasks.size}个任务)")
+        val results = army.deploy(tasks, commander)
+        army.retire()  // 用完退役
+        return results
+    }
+
+    /** v0.11.3: 退役所有临时军队 */
+    fun retireTemporary() {
+        armyPool.filter { !it.isPermanent() }.forEach { it.retire() }
     }
 
     // ─── 初始化：扫描并注册指挥官 ───
@@ -454,6 +508,12 @@ class CommanderImpl(
     
     fun dispatchTasks(tasks: List<AnnotationTask>): List<Pair<AnnotationTask, ProcessResult>> {
         if (tasks.isEmpty()) return emptyList()
+
+        // v0.11.3: 被动增派——任务过多时走军队并行
+        if (tasks.size > 5) {
+            val armyResults = ProcessCoordinator.deployArmy(this, tasks)
+            if (armyResults != null) return armyResults
+        }
 
         // v0.9.1: 通知检测进程开始
         notifyWatches(ProcessStep(bodyId = "commander", action = "dispatch_start", durationNs = 0))

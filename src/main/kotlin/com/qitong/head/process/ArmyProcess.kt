@@ -1,50 +1,61 @@
 package com.qitong.head.process
 
 import com.qitong.head.runtime.HList
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * 军队进程 —— v0.11.0-a 自适应扩编
+ * 军队进程 —— v0.11.3 主动+被动双模扩编
  *
- * 不是单个干活，是一组协同。高负载时被 ProcessCoordinator 自动创建。
+ * 不是单个干活，是一组协同。高负载时被 ProcessCoordinator 自动创建/唤醒。
  * 每个军队进程内部有自己的子进程组，可并行分摊任务。
+ *
+ * 两层增派：
+ *   被动（应急）：deployArmy — 负载超现有容量时临时扩编，用完退役
+ *   主动（常备）：prepareArmy — 编译前根据源码特征预判，常驻进程树
  */
 class ArmyProcess(
     val id: String,
-    val capacity: Int  // 最大并行任务数
+    val capacity: Int,  // 最大并行任务数
+    val permanent: Boolean = false  // v0.11.3: 常备（主动）还是临时（被动）
 ) {
-    /** 内部的子进程组 */
     private val squad = HList<SubProcessImpl>()
     private var active = true
+    private val subCounter = AtomicInteger(0)
 
-    /** 向军队分派任务——军队内部自动拆分+并行 */
-    fun deploy(tasks: List<AnnotationTask>): List<ProcessResult> {
+    /** 向军队分派任务——创建子进程并行执行 */
+    fun deploy(
+        tasks: List<AnnotationTask>,
+        commander: CommanderImpl
+    ): List<Pair<AnnotationTask, ProcessResult>> {
         if (tasks.isEmpty()) return emptyList()
+        if (!active) return tasks.map { it to ProcessResult.Failure("army退役", true) }
         
-        // 按容量拆分
-        val chunks = tasks.chunked(capacity.coerceAtMost(tasks.size / (squad.size.coerceAtLeast(1))))
+        // 按容量拆分，每 chunk 一个子进程
+        val chunkSize = (tasks.size / capacity.coerceAtMost(tasks.size)).coerceAtLeast(1)
+        val chunks = tasks.chunked(chunkSize)
         
-        return chunks.flatMap { chunk ->
-            chunk.map { task ->
-                try {
-                    ProcessResult.Success(
-                        data = ProcessData(content = "army:$id processed ${task.annotationName}", sourceBodyId = id),
-                        metrics = mapOf("army" to id, "capacity" to capacity)
-                    )
-                } catch (e: Exception) {
-                    ProcessResult.Failure("army:$id failed ${task.annotationName}: ${e.message}", true)
-                }
-            }
+        return chunks.flatMapIndexed { idx, chunk ->
+            val sp = SubProcessImpl(
+                id = ProcessId(commander.id, "army-$id-sub-${subCounter.incrementAndGet()}", ""),
+                tag = commander.tag,
+                mode = CollaborationMode.SHARD,
+                parentCommander = commander,
+                occupation = SubProcessOccupation.SOLDIER,
+                tendency = ProcessTendency.NONE
+            )
+            squad.add(sp)
+            chunk.map { task -> task to sp.delegate(listOf(task.payload)).first() }
         }
     }
 
-    /** 军队当前负载 */
     fun currentLoad(): Int = squad.size
-    
-    /** 是否活跃 */
     fun isActive(): Boolean = active
-    
-    /** 退役 */
     fun retire() { active = false }
     
-    override fun toString(): String = "⚔️ ArmyProcess($id, cap=$capacity, squad=${squad.size}, active=$active)"
+    /** v0.11.3: 重新激活（被动→主动复用） */
+    fun reactivate() { active = true }
+    
+    fun isPermanent(): Boolean = permanent
+
+    override fun toString(): String = "⚔️ ArmyProcess($id, cap=$capacity, squad=${squad.size}, ${if (permanent) "常备" else "临时"})"
 }
