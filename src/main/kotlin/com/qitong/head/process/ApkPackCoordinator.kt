@@ -421,6 +421,95 @@ object ApkPackCoordinator {
         } catch (_: Exception) { "android.jar" }
     }
 
+    // ── v0.11.8: 军师修复模式 ──
+
+    /** 军师修复选项 */
+    enum class FixMode(val label: String) {
+        OVERWRITE("覆盖原项目——军师直接改"),
+        COPY("复制到新目录再改——原项目不动"),
+        CANCEL("拒绝——什么也不做")
+    }
+
+    data class FixResult(
+        val mode: FixMode,
+        val targetPath: String,        // 实际修改的目标路径
+        val originalPath: String,      // 原始路径
+        val fixesApplied: List<String>, // 应用了哪些修复
+        val errors: List<String> = emptyList()
+    )
+
+    /** 生成修复后的项目路径 */
+    fun fixTargetPath(projectDir: String, mode: FixMode): String = when (mode) {
+        FixMode.OVERWRITE -> projectDir
+        FixMode.COPY -> {
+            val base = projectDir.trimEnd('/')
+            val parent = base.substringBeforeLast("/")
+            val name = base.substringAfterLast("/")
+            "$parent/${name}-fixed"
+        }
+        FixMode.CANCEL -> projectDir
+    }
+
+    /** 一键修复——铺地基 */
+    fun applyFixes(projectDir: String, mode: FixMode): FixResult {
+        if (mode == FixMode.CANCEL) {
+            return FixResult(mode, projectDir, projectDir, emptyList(), listOf("用户拒绝修复"))
+        }
+
+        val target = fixTargetPath(projectDir, mode)
+        val fixes = mutableListOf<String>()
+        val errors = mutableListOf<String>()
+
+        // COPY 模式：复制整个项目
+        if (mode == FixMode.COPY) {
+            try {
+                File(projectDir).copyRecursively(File(target), overwrite = true)
+                fixes.add("已复制: $projectDir → $target")
+            } catch (e: Exception) {
+                errors.add("复制失败: ${e.message}")
+                return FixResult(mode, target, projectDir, fixes, errors)
+            }
+        }
+
+        val workDir = File(target)
+
+        // 修复1: 检查并补 Manifest 权限
+        val manifestFile = findFile(workDir, "AndroidManifest.xml")
+        if (manifestFile != null) {
+            var mc = manifestFile.readText()
+            var modified = false
+
+            if ("usesCleartextTraffic" !in mc) {
+                mc = mc.replace("<application", "<application android:usesCleartextTraffic=\"true\"")
+                modified = true
+                fixes.add("Manifest: +usesCleartextTraffic")
+            }
+            if ("FOREGROUND_SERVICE" !in mc) {
+                val permLine = "    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n"
+                mc = mc.replace("<application", "$permLine    <application")
+                modified = true
+                fixes.add("Manifest: +FOREGROUND_SERVICE 权限")
+            }
+            if (modified) manifestFile.writeText(mc)
+        }
+
+        // 修复2: 确保输出目录存在
+        val outDir = File("$target/output")
+        if (!outDir.exists()) {
+            outDir.mkdirs()
+            fixes.add("创建输出目录: output/")
+        }
+
+        // 修复3: 确保 gradlew 可执行
+        val gradlew = File("$target/gradlew")
+        if (gradlew.exists() && !gradlew.canExecute()) {
+            gradlew.setExecutable(true)
+            fixes.add("gradlew → 已授权可执行")
+        }
+
+        return FixResult(mode, target, projectDir, fixes, errors)
+    }
+
     // ── 简报格式化（和 MultiProjectCoordinator 同风格） ──
 
     fun formatReport(report: PackReport): String {
