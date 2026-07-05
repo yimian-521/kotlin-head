@@ -55,8 +55,8 @@ object ProcessCoordinator {
             fileSize < 1000 && fileCount <= 1 -> return  // 太小不用
         }
         val cap = when (strategy) {
-            MainProcessStyle.EMERGENCY -> (fileCount * 5).coerceIn(5, 50)  // 全速铺
-            MainProcessStyle.MARSHAL, MainProcessStyle.FEDERAL -> (fileCount * 3).coerceIn(3, 30)
+            MainProcessStyle.EMERGENCY -> (fileCount * 5).coerceIn(5, 50)
+            MainProcessStyle.FEDERAL -> (fileCount * 3).coerceIn(3, 30)
             MainProcessStyle.XIAOXIONG -> (fileCount * 4).coerceIn(4, 40)
             MainProcessStyle.CONSERVATIVE -> (fileCount * 1).coerceIn(1, 5)  // 小心扩，慢但安全
             MainProcessStyle.CONTRACT -> (fileCount * 2).coerceIn(2, 20)  // 精打细算
@@ -68,7 +68,7 @@ object ProcessCoordinator {
     }
 
     /** v0.11.3: 被动增派——负载超容量时临时扩编 */
-    private fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
+    internal fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
             List<Pair<AnnotationTask, ProcessResult>>? {
         if (tasks.size <= 3) return null  // 太少不值得扩
         if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null  // 保守只在真的多时才扩
@@ -99,6 +99,7 @@ object ProcessCoordinator {
     fun initialize() {
         commanders.clear()
         broadcastLog.clear()
+        armyPool.clear()  // v0.11.3: 清理军队池
 
         // v0.8.3: 指挥官订阅 "file" 频道，接管异步文件读取
         EventBus.subscribe("file", object : EventHandler {
