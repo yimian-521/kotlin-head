@@ -27,7 +27,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.11.0"
+    const val VERSION = "0.11.1"
 
     private val dev = DevMode.boot()
 
