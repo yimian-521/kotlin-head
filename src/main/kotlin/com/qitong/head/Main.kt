@@ -11,6 +11,8 @@ import com.qitong.head.process.ProcessCoordinator
 import com.qitong.head.process.CommanderReport
 import com.qitong.head.process.MainProcessStyle
 import com.qitong.head.process.MultiProjectCoordinator
+import com.qitong.head.process.ApkPackCoordinator
+import com.qitong.head.process.JavaDetectionChannel
 import com.qitong.head.eventbus.*
 import com.qitong.head.eventbus.DependencyGraph
 import com.qitong.head.eventbus.LiveDeclarationGraph
@@ -523,6 +525,7 @@ object Main {
     // v0.11.7: 多项目模式开关
     private var multiProjectEnabled = false
     private var lastMultiReports: List<MultiProjectCoordinator.ProjectReport> = emptyList()
+    private var lastPackReport: ApkPackCoordinator.PackReport? = null
 
     // ─── 按钮渲染 ───
     private fun renderPage() {
@@ -539,6 +542,7 @@ object Main {
             "eventbus" -> renderEventBus()
             "dev" -> renderDev()
             "multiproj" -> renderMultiProject()
+            "pack" -> renderPackPage()
             else -> { page = "main"; renderMain() }
         }
     }
@@ -610,6 +614,7 @@ object Main {
         hPrintln("  [9] 进程树 (${lastProcessReports.size}个领域)")
         hPrintln("  [0] EventBus 状态")
         if (multiProjectEnabled) hPrintln("  [10] 多项目测试")
+        hPrintln("  [11] APK打包")
         hPrintln("  [q] 退出")
     }
 
@@ -846,6 +851,7 @@ object Main {
             "admin" -> handleAdmin(byLabel)
             "dev" -> handleDev(byLabel)
             "multiproj" -> handleMultiProject(byLabel)
+            "pack" -> handlePack(byLabel)
             "bugs" -> if (byLabel == "1") page = "main"
             "roadmap" -> if (byLabel == "1") page = "main"
             "decomp" -> if (byLabel == "1") page = "main"
@@ -873,6 +879,7 @@ object Main {
             "9" -> page = "process"
             "0" -> page = "eventbus"
             "10" -> if (multiProjectEnabled) page = "multiproj"
+            "11" -> page = "pack"
             else -> hPrintln("  ? 未知按钮: $key")
         }
     }
@@ -1131,4 +1138,79 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         }
     }
 
+    // ─── v0.11.8: APK 打包 ───
+
+    private fun renderPackPage() {
+        hPrintln("═══ APK 打包 ═══")
+        hPrintln()
+        val tools = ApkPackCoordinator.checkTools()
+        val allAvailable = tools.allAvailable()
+        hPrintln("  工具检测: ${if (allAvailable) "✓ 全部可用" else "✗ 缺少: ${tools.missing().joinToString()}"}")
+        hPrintln()
+        if (lastPackReport != null) {
+            hPrint(ApkPackCoordinator.formatReport(lastPackReport!!))
+        } else {
+            hPrintln("  输入 Android 项目路径即可打包")
+            hPrintln("  例: /path/to/android-project")
+        }
+        hPrintln()
+        hPrintln("  [1] 返回主页")
+        hPrintln("  [2] 输入项目路径并打包")
+        hPrintln("  [3] 检查工具链")
+        hPrintln("  [4] 仅分析（不打）")
+    }
+
+    private fun handlePack(key: String) {
+        when (key) {
+            "1" -> page = "main"
+            "2" -> {
+                if (!ApkPackCoordinator.checkTools().allAvailable()) {
+                    hPrintln("  ✖ 工具链不完整，无法打包")
+                    hPrintln("  缺少: ${ApkPackCoordinator.checkTools().missing().joinToString()}")
+                    return
+                }
+                hPrintln()
+                hPrintln("  输入 Android 项目路径：")
+                val inp = readLine() ?: return
+                val dir = inp.trim()
+                if (dir.isEmpty() || !File(dir).exists()) {
+                    hPrintln("  ✖ 目录不存在: $dir")
+                    return
+                }
+                hPrintln("  打包中...")
+                val previous = lastPackReport?.passed ?: false
+                val report = ApkPackCoordinator.pack(dir, previousArtifacts = previous)
+                lastPackReport = report
+                hPrintln()
+                hPrint(ApkPackCoordinator.formatReport(report))
+            }
+            "3" -> {
+                val tools = ApkPackCoordinator.checkTools()
+                hPrintln("═══ 工具链检查 ═══")
+                hPrintln("  aapt2:     ${if (tools.aapt2) "✓" else "✗"}")
+                hPrintln("  kotlinc:   ${if (tools.kotlinc) "✓" else "✗"}")
+                hPrintln("  d8:        ${if (tools.d8) "✓" else "✗"}")
+                hPrintln("  zipalign:  ${if (tools.zipalign) "✓" else "✗"}")
+                hPrintln("  apksigner: ${if (tools.apksigner) "✓" else "✗"}")
+                hPrintln("  全部可用: ${if (tools.allAvailable()) "✓" else "✗ 缺少: ${tools.missing().joinToString()}"}")
+            }
+            "4" -> {
+                hPrintln()
+                hPrintln("  输入 Android 项目路径：")
+                val inp = readLine() ?: return
+                val dir = inp.trim()
+                if (dir.isEmpty() || !File(dir).exists()) {
+                    hPrintln("  ✖ 目录不存在: $dir")
+                    return
+                }
+                val diff = ApkPackCoordinator.analyzeDiff(dir)
+                hPrintln()
+                hPrintln("═══ 军师分析 ═══")
+                hPrintln("  原因: ${diff.reason}")
+                hPrintln("  需要跑: ${diff.neededSteps.joinToString { it.label }}")
+                hPrintln("  可跳过: ${diff.skippedSteps.joinToString { it.label }}")
+            }
+            else -> page = "main"
+        }
+    }
 }
