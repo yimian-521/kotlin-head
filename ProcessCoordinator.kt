@@ -113,12 +113,48 @@ object SceneEngine {
         }}
     )
 
-    fun derive(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
+    fun derive(input: SceneInput): Triple<List<SubProcessOccupation>, Float, String> {
         val occs = mutableSetOf<SubProcessOccupation>()
-        val ratio = floatArrayOf(0.35f)  // 默认容量比
-        for (rule in rules) rule.apply(occs, ratio, input)
+        val ratio = floatArrayOf(0.35f)
+        val reasons = mutableListOf<String>()
+        
+        // R1
+        if (input.isHostile) {
+            when (input.hellType) {
+                HellType.SYNTAX -> { occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.ASSAULT); reasons.add("语法地狱") }
+                HellType.TYPE -> { occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.MICRO); reasons.add("类型地狱") }
+                HellType.LINK -> { occs.add(SubProcessOccupation.BURST); occs.add(SubProcessOccupation.SOLDIER); reasons.add("链接地狱") }
+                HellType.MIXED -> { occs.add(SubProcessOccupation.ASSAULT); occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.DIGEST); reasons.add("混合地狱") }
+                HellType.NONE -> {}
+            }
+        }
+        // R2: 綦桐
+        if (input.qitongScore >= 8 && input.isHostile) { ratio[0] *= 1.3f; reasons.add("綦桐") }
+        // R3: 规模
+        when {
+            input.fileSize < 3000 -> { ratio[0] *= 0.5f; reasons.add("微型"); if (occs.isEmpty() && !input.isHostile) occs.add(SubProcessOccupation.GUARD) }
+            input.fileSize < 15000 -> { ratio[0] = 0.4f; reasons.add("轻型"); if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER) }
+            input.fileSize < 50000 -> { ratio[0] = 0.3f; reasons.add("中型"); occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST) }
+            input.fileSize < 200000 -> { ratio[0] = 0.25f; reasons.add("重型"); occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.GUARD) }
+            else -> { ratio[0] = 0.2f; reasons.add("超大型"); occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.GUARD) }
+        }
+        // R4: bug密度
+        if (input.bugDensity >= 0.3f) { occs.add(SubProcessOccupation.BURST); reasons.add("高密bug") }
+        // R5: 批量
+        if (input.isBatch && input.fileSize > 3000) { occs.add(SubProcessOccupation.DIGEST); reasons.add("批量") }
+        // R6: 增量
+        if (input.incremental) { ratio[0] *= 1.5f; occs.remove(SubProcessOccupation.ASSAULT); reasons.add("增量") }
+        // R7: 风格
+        when (input.style) {
+            MainProcessStyle.EMERGENCY -> { occs.clear(); occs.add(SubProcessOccupation.BURST); ratio[0] = 0.6f; reasons.add("紧急") }
+            MainProcessStyle.CONSERVATIVE -> { occs.clear(); occs.add(SubProcessOccupation.GUARD); ratio[0] *= 0.6f; reasons.add("保守") }
+            MainProcessStyle.CONTRACT -> { ratio[0] = (ratio[0] * 0.8f).coerceAtLeast(0.15f); reasons.add("契约") }
+            else -> { if (!reasons.contains("紧急") && !reasons.contains("保守")) reasons.add("联邦") }
+        }
+        
         if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER)
-        return occs.toList() to ratio[0].coerceIn(0.1f, 1f)
+        val brief = reasons.joinToString("·")
+        return Triple(occs.toList(), ratio[0].coerceIn(0.1f, 1f), brief)
     }
 }
 
@@ -137,13 +173,13 @@ object SceneEngine {
         if (fileSize < 500 && fileCount <= 1 && !isHostile) return
         
         val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
-        val (occs, ratio) = SceneEngine.derive(input)
+        val (occs, ratio, brief) = SceneEngine.derive(input)
         
         val estTasks = (fileSize / 500).coerceIn(1, 100)
         val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 主动增派: $army → ${occs.map { it.name }.joinToString("+")}")
+        broadcast("system", "⚔️ 主动增派 [$brief] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
     }
 
     /** v0.11.3: 被动增派——负载超容量时临时扩编 */
