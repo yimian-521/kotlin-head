@@ -33,9 +33,27 @@ object ProcessCoordinator {
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 
+    // ★ v0.11.5: 增派策略——保护老兵还是不管经验
+    var reinforcePolicy: ReinforcePolicy = ReinforcePolicy.PROTECTIVE
+
+    // ★ v0.11.5: 进程身份注册表
+    private val identityRegistry = mutableMapOf<String, ProcessIdentity>()
+    private val pidCounter = AtomicInteger(0)
+
     // ★ v0.11.3: 军队池——主动常备+被动应急
     private val armyPool = HList<ArmyProcess>()
     private val armyCounter = AtomicInteger(0)
+
+    fun registerIdentity(occupation: SubProcessOccupation): ProcessIdentity {
+        val pid = "proc-${pidCounter.incrementAndGet()}"
+        val identity = ProcessIdentity(pid = pid, currentOccupation = occupation)
+        identity.career[occupation] = ExperienceCache(occupation)
+        identityRegistry[pid] = identity
+        return identity
+    }
+
+    fun getIdentity(pid: String): ProcessIdentity? = identityRegistry[pid]
+    fun allIdentities(): List<ProcessIdentity> = identityRegistry.values.toList()
 
     fun getArmies(): List<ArmyProcess> = armyPool.toList()
     fun getArmyCount(): Int = armyPool.size
