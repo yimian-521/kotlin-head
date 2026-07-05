@@ -423,12 +423,17 @@ object ApkPackCoordinator {
 
     // ── v0.11.8: 军师修复模式 ──
 
-    /** 军师修复选项 */
+    /** 军师修复选项——五档渐变，从全改到不改 */
     enum class FixMode(val label: String) {
-        OVERWRITE("覆盖原项目——军师直接改"),
+        OVERWRITE("覆盖原项目——全面修复（优化+升级）"),
         COPY("复制到新目录再改——原项目不动"),
+        OPTIMIZE("表面优化——注释/格式/import，不动逻辑"),
+        UPGRADE("标准升级——权限/配置/结构对齐kotlin-head标准"),
         CANCEL("拒绝——什么也不做")
     }
+
+    /** 判断是否为原地修改（不复制） */
+    fun FixMode.isInPlace(): Boolean = this == FixMode.OVERWRITE || this == FixMode.OPTIMIZE || this == FixMode.UPGRADE
 
     data class FixResult(
         val mode: FixMode,
@@ -440,7 +445,7 @@ object ApkPackCoordinator {
 
     /** 生成修复后的项目路径 */
     fun fixTargetPath(projectDir: String, mode: FixMode): String = when (mode) {
-        FixMode.OVERWRITE -> projectDir
+        FixMode.OVERWRITE, FixMode.OPTIMIZE, FixMode.UPGRADE -> projectDir
         FixMode.COPY -> {
             val base = projectDir.trimEnd('/')
             val parent = base.substringBeforeLast("/")
@@ -450,11 +455,14 @@ object ApkPackCoordinator {
         FixMode.CANCEL -> projectDir
     }
 
-    /** 一键修复——铺地基 */
+    /** 一键修复——按模式铺不同深度的地基 */
     fun applyFixes(projectDir: String, mode: FixMode): FixResult {
         if (mode == FixMode.CANCEL) {
             return FixResult(mode, projectDir, projectDir, emptyList(), listOf("用户拒绝修复"))
         }
+
+        val doOptimize = mode == FixMode.OPTIMIZE || mode == FixMode.OVERWRITE || mode == FixMode.COPY
+        val doUpgrade  = mode == FixMode.UPGRADE  || mode == FixMode.OVERWRITE || mode == FixMode.COPY
 
         val target = fixTargetPath(projectDir, mode)
         val fixes = mutableListOf<String>()
@@ -473,38 +481,70 @@ object ApkPackCoordinator {
 
         val workDir = File(target)
 
-        // 修复1: 检查并补 Manifest 权限
-        val manifestFile = findFile(workDir, "AndroidManifest.xml")
-        if (manifestFile != null) {
-            var mc = manifestFile.readText()
-            var modified = false
+        // ── UPGRADE：权限/配置/结构 ──
+        if (doUpgrade) {
+            val manifestFile = findFile(workDir, "AndroidManifest.xml")
+            if (manifestFile != null) {
+                var mc = manifestFile.readText()
+                var modified = false
+                if ("usesCleartextTraffic" !in mc) {
+                    mc = mc.replace("<application", "<application android:usesCleartextTraffic=\"true\"")
+                    modified = true
+                    fixes.add("Manifest: +usesCleartextTraffic")
+                }
+                if ("FOREGROUND_SERVICE" !in mc) {
+                    val permLine = "    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n"
+                    mc = mc.replace("<application", "$permLine    <application")
+                    modified = true
+                    fixes.add("Manifest: +FOREGROUND_SERVICE 权限")
+                }
+                if (modified) manifestFile.writeText(mc)
+            }
 
-            if ("usesCleartextTraffic" !in mc) {
-                mc = mc.replace("<application", "<application android:usesCleartextTraffic=\"true\"")
-                modified = true
-                fixes.add("Manifest: +usesCleartextTraffic")
+            val outDir = File("$target/output")
+            if (!outDir.exists()) {
+                outDir.mkdirs()
+                fixes.add("创建输出目录: output/")
             }
-            if ("FOREGROUND_SERVICE" !in mc) {
-                val permLine = "    <uses-permission android:name=\"android.permission.FOREGROUND_SERVICE\" />\n"
-                mc = mc.replace("<application", "$permLine    <application")
-                modified = true
-                fixes.add("Manifest: +FOREGROUND_SERVICE 权限")
+
+            val gradlew = File("$target/gradlew")
+            if (gradlew.exists() && !gradlew.canExecute()) {
+                gradlew.setExecutable(true)
+                fixes.add("gradlew → 已授权可执行")
             }
-            if (modified) manifestFile.writeText(mc)
         }
 
-        // 修复2: 确保输出目录存在
-        val outDir = File("$target/output")
-        if (!outDir.exists()) {
-            outDir.mkdirs()
-            fixes.add("创建输出目录: output/")
-        }
-
-        // 修复3: 确保 gradlew 可执行
-        val gradlew = File("$target/gradlew")
-        if (gradlew.exists() && !gradlew.canExecute()) {
-            gradlew.setExecutable(true)
-            fixes.add("gradlew → 已授权可执行")
+        // ── OPTIMIZE：注释/格式/import（不动逻辑） ──
+        if (doOptimize) {
+            val srcDir = File(workDir, "app/src/main/java")
+            if (srcDir.exists()) {
+                var totalCleaned = 0
+                srcDir.walkTopDown()
+                    .filter { it.isFile && it.extension == "kt" }
+                    .forEach { file ->
+                        val lines = file.readLines()
+                        val cleaned = mutableListOf<String>()
+                        var prevBlank = false
+                        for (line in lines) {
+                            val trimmed = line.trim()
+                            // 去连续空行
+                            if (trimmed.isEmpty()) {
+                                if (!prevBlank) cleaned.add("")
+                                prevBlank = true
+                            } else {
+                                prevBlank = false
+                                cleaned.add(line)  // 保留原始缩进
+                            }
+                        }
+                        // 去末尾空行
+                        while (cleaned.isNotEmpty() && cleaned.last().isBlank()) cleaned.removeAt(cleaned.lastIndex)
+                        if (cleaned.size != lines.size) {
+                            file.writeText(cleaned.joinToString("\n") + "\n")
+                            totalCleaned++
+                        }
+                    }
+                if (totalCleaned > 0) fixes.add("格式优化: $totalCleaned 个文件去连续空行")
+            }
         }
 
         return FixResult(mode, target, projectDir, fixes, errors)
