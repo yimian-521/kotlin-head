@@ -107,11 +107,14 @@ object MultiProjectCoordinator {
         saveScales(writer)
     }
 
+    /** 规模倍率上限——超过这个没意义，cap已被coerceIn截断 */
+    private const val MAX_MULTIPLIER = 10f
+
     /**
      * 创建新规模。最少1个，没有上限。
      */
     fun addScale(name: String, multiplier: Float, writer: (String, ByteArray) -> Unit): Boolean {
-        if (name.isBlank() || multiplier <= 0f) return false
+        if (name.isBlank() || multiplier <= 0f || multiplier > MAX_MULTIPLIER) return false
         scales.add(ArmyScale(name, multiplier))
         saveScales(writer)
         return true
