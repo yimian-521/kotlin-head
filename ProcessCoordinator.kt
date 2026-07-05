@@ -46,98 +46,81 @@ object ProcessCoordinator {
     var currentProfile: SceneProfile? = null
         private set
 
-    // ★ v0.11.3: 情景模板库——30+情景×6维交叉=极致匹配
-    private val sceneProfiles = listOf(
-        // ─── 綦桐神域（高分优先）───
-        SceneProfile("綦桐·语法狱", 0, Int.MAX_VALUE, true, HellType.SYNTAX, 0f, 1f, null, null, 8,
-            listOf(SubProcessOccupation.MICRO, SubProcessOccupation.ASSAULT), 0.5f, "綦桐语法地狱→显微+攻坚"),
-        SceneProfile("綦桐·类型狱", 0, Int.MAX_VALUE, true, HellType.TYPE, 0f, 1f, null, null, 8,
-            listOf(SubProcessOccupation.MICRO, SubProcessOccupation.DIGEST), 0.45f, "綦桐类型地狱→显微+摘要"),
-        SceneProfile("綦桐·链接狱", 0, Int.MAX_VALUE, true, HellType.LINK, 0f, 1f, null, null, 8,
-            listOf(SubProcessOccupation.BURST, SubProcessOccupation.SOLDIER), 0.6f, "綦桐链接地狱→爆裂填线速修"),
-        SceneProfile("綦桐·混合狱", 0, Int.MAX_VALUE, true, HellType.MIXED, 0f, 1f, null, null, 8,
-            listOf(SubProcessOccupation.ASSAULT, SubProcessOccupation.MICRO, SubProcessOccupation.BURST, SubProcessOccupation.DIGEST), 0.35f, "綦桐混合→全兵种"),
-        
-        // ─── 语法地狱（非綦桐）───
-        SceneProfile("语法·微地狱", 0, 3000, true, HellType.SYNTAX, 0f, 0.15f, null, null, 0,
-            listOf(SubProcessOccupation.MICRO), 0.5f, "语法微地狱·显微深挖"),
-        SceneProfile("语法·轻地狱", 3001, 8000, true, HellType.SYNTAX, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.ASSAULT, SubProcessOccupation.MICRO), 0.4f, "语法地狱·攻坚+显微"),
-        SceneProfile("语法·重地狱", 8001, Int.MAX_VALUE, true, HellType.SYNTAX, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.ASSAULT, SubProcessOccupation.MICRO, SubProcessOccupation.SOLDIER), 0.3f, "语法重地狱·全员语法"),
-        
-        // ─── 类型地狱 ───
-        SceneProfile("类型·微地狱", 0, 3000, true, HellType.TYPE, 0f, 0.15f, null, null, 0,
-            listOf(SubProcessOccupation.DIGEST), 0.5f, "类型微地狱·摘要推断"),
-        SceneProfile("类型·轻地狱", 3001, 10000, true, HellType.TYPE, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.DIGEST, SubProcessOccupation.MICRO), 0.4f, "类型地狱·摘要+显微"),
-        SceneProfile("类型·重地狱", 10001, Int.MAX_VALUE, true, HellType.TYPE, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.DIGEST, SubProcessOccupation.MICRO, SubProcessOccupation.ASSAULT), 0.3f, "类型重地狱·推理三级"),
-        
-        // ─── 链接地狱 ───
-        SceneProfile("链接·轻地狱", 0, 8000, true, HellType.LINK, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.SOLDIER), 0.5f, "链接地狱·列兵填线"),
-        SceneProfile("链接·重地狱", 8001, Int.MAX_VALUE, true, HellType.LINK, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.BURST, SubProcessOccupation.SOLDIER, SubProcessOccupation.GUARD), 0.35f, "链接重地狱·爆裂+哨卫"),
-        
-        // ─── 混合地狱 ───
-        SceneProfile("混合·中地狱", 0, 30000, true, HellType.MIXED, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.ASSAULT, SubProcessOccupation.MICRO, SubProcessOccupation.DIGEST), 0.35f, "混合地狱·三线"),
-        SceneProfile("混合·超大地狱", 30001, Int.MAX_VALUE, true, HellType.MIXED, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.ASSAULT, SubProcessOccupation.MICRO, SubProcessOccupation.SOLDIER, SubProcessOccupation.DIGEST, SubProcessOccupation.GUARD), 0.2f, "混合超大地狱·全员"),
-        
-        // ─── 高密bug（非地狱、bug率>30%）───
-        SceneProfile("密bug·增量微", 0, 5000, null, null, 0.3f, 1f, null, true, 0,
-            listOf(SubProcessOccupation.BURST), 0.7f, "增量密bug·爆裂速修"),
-        SceneProfile("密bug·增量化", 5001, 30000, null, null, 0.3f, 1f, null, true, 0,
-            listOf(SubProcessOccupation.BURST, SubProcessOccupation.DIGEST), 0.5f, "增量密bug·爆裂+摘要"),
-        SceneProfile("密bug·首次轻", 0, 5000, null, null, 0.3f, 1f, null, false, 0,
-            listOf(SubProcessOccupation.BURST, SubProcessOccupation.MICRO), 0.55f, "首次密bug·爆裂+显微"),
-        SceneProfile("密bug·首次重", 5001, Int.MAX_VALUE, null, null, 0.3f, 1f, null, false, 0,
-            listOf(SubProcessOccupation.BURST, SubProcessOccupation.ASSAULT, SubProcessOccupation.SOLDIER), 0.4f, "首次密bug·爆裂联军"),
-        
-        // ─── 干净系列（按规模+批量）───
-        SceneProfile("微干净·单", 0, 3000, false, null, 0f, 1f, false, null, 0,
-            listOf(SubProcessOccupation.GUARD), 1f, "微干净·哨卫单兵"),
-        SceneProfile("微干净·批", 0, 3000, false, null, 0f, 1f, true, null, 0,
-            listOf(SubProcessOccupation.SOLDIER), 0.5f, "微干净批·列兵"),
-        SceneProfile("轻干净·单", 3001, 15000, false, null, 0f, 1f, false, null, 0,
-            listOf(SubProcessOccupation.GUARD), 0.5f, "轻干净·哨卫"),
-        SceneProfile("轻干净·批", 3001, 15000, false, null, 0f, 1f, true, null, 0,
-            listOf(SubProcessOccupation.SOLDIER, SubProcessOccupation.GUARD), 0.4f, "轻干净批·列兵+哨卫"),
-        SceneProfile("中干净·单", 15001, 50000, false, null, 0f, 1f, false, null, 0,
-            listOf(SubProcessOccupation.SOLDIER), 0.35f, "中干净·列兵稳态"),
-        SceneProfile("中干净·批", 15001, 50000, false, null, 0f, 1f, true, null, 0,
-            listOf(SubProcessOccupation.SOLDIER, SubProcessOccupation.DIGEST), 0.3f, "中干净批·列兵+摘要"),
-        SceneProfile("重干净·单", 50001, 200000, false, null, 0f, 1f, false, null, 0,
-            listOf(SubProcessOccupation.SOLDIER, SubProcessOccupation.DIGEST), 0.25f, "重干净·列兵+摘要"),
-        SceneProfile("重干净·批", 50001, 200000, false, null, 0f, 1f, true, null, 0,
-            listOf(SubProcessOccupation.SOLDIER, SubProcessOccupation.DIGEST, SubProcessOccupation.GUARD), 0.2f, "重干净批·三层"),
-        SceneProfile("超大干净", 200001, Int.MAX_VALUE, false, null, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.SOLDIER, SubProcessOccupation.DIGEST, SubProcessOccupation.MICRO, SubProcessOccupation.GUARD), 0.18f, "超大干净·全员"),
-        
-        // ─── 增量编译专项 ───
-        SceneProfile("增量·微变动", 0, 5000, null, null, 0f, 0.1f, null, true, 0,
-            listOf(SubProcessOccupation.GUARD), 0.8f, "增量小变动·哨卫快扫"),
-        SceneProfile("增量·大变重编译", 5001, Int.MAX_VALUE, null, null, 0f, 1f, null, true, 0,
-            listOf(SubProcessOccupation.DIGEST, SubProcessOccupation.SOLDIER), 0.35f, "增量大变·摘要+列兵"),
-        
-        // ─── 默认兜底 ───
-        SceneProfile("默认·混编", 0, Int.MAX_VALUE, null, null, 0f, 1f, null, null, 0,
-            listOf(SubProcessOccupation.SOLDIER), 0.3f, "默认混编")
+    // ★ v0.11.3: 军队推导规则链——静态模板的正交替换
+// 每条规则独立，链式执行后合并，6条规则覆盖1000+情景
+interface SceneRule {
+    fun apply(occupations: MutableSet<SubProcessOccupation>, ratio: FloatArray, input: SceneInput)
+}
+
+data class SceneInput(
+    val fileSize: Int, val fileCount: Int, val isHostile: Boolean,
+    val hellType: HellType, val bugDensity: Float,
+    val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
+    val style: MainProcessStyle
+)
+
+object SceneEngine {
+    // 规则链——优先级从上到下
+    private val rules: List<SceneRule> = listOf(
+        // R1: 地狱类型→根职业
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            if (!i.isHostile) return
+            when (i.hellType) {
+                HellType.SYNTAX -> { oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.ASSAULT) }
+                HellType.TYPE -> { oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.MICRO) }
+                HellType.LINK -> { oc.add(SubProcessOccupation.BURST); oc.add(SubProcessOccupation.SOLDIER) }
+                HellType.MIXED -> { oc.add(SubProcessOccupation.ASSAULT); oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.DIGEST) }
+                HellType.NONE -> {}
+            }
+        }},
+        // R2: 綦桐高分→职业升级+容量加成
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            if (i.qitongScore >= 8 && i.isHostile) {
+                r[0] *= 1.3f
+                if (SubProcessOccupation.SOLDIER in oc) { oc.remove(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.BURST) }
+            }
+        }},
+        // R3: 规模→扩展职业+容量比
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            when {
+                i.fileSize < 3000 -> { r[0] *= 0.5f; if (oc.isEmpty()) oc.add(SubProcessOccupation.GUARD) }
+                i.fileSize < 15000 -> { r[0] = 0.4f; if (oc.isEmpty()) oc.add(SubProcessOccupation.SOLDIER) }
+                i.fileSize < 50000 -> { r[0] = 0.3f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST) }
+                i.fileSize < 200000 -> { r[0] = 0.25f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.GUARD) }
+                else -> { r[0] = 0.2f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.GUARD) }
+            }
+        }},
+        // R4: bug密度>30%→开关爆裂
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            if (i.bugDensity >= 0.3f) { oc.add(SubProcessOccupation.BURST); r[0] *= 1.2f }
+        }},
+        // R5: 批量→叠加摘要
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            if (i.isBatch && i.fileSize > 3000) oc.add(SubProcessOccupation.DIGEST)
+        }},
+        // R6: 增量→加速+去攻坚
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            if (i.incremental) { r[0] *= 1.5f; oc.remove(SubProcessOccupation.ASSAULT) }
+        }},
+        // R7: 父进程风格→最终覆盖
+        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
+            when (i.style) {
+                MainProcessStyle.EMERGENCY -> { oc.clear(); oc.add(SubProcessOccupation.BURST); r[0] = 0.6f }
+                MainProcessStyle.CONSERVATIVE -> { oc.clear(); oc.add(SubProcessOccupation.GUARD); r[0] *= 0.6f }
+                MainProcessStyle.CONTRACT -> { r[0] = (r[0] * 0.8f).coerceAtLeast(0.15f) }
+                else -> {}
+            }
+        }}
     )
 
-    private fun matchProfile(fileSize: Int, isHostile: Boolean, bugDensity: Float, isBatch: Boolean, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0): SceneProfile {
-        return sceneProfiles.firstOrNull { p ->
-            fileSize in p.minSize..p.maxSize &&
-            (p.isHostile == null || p.isHostile == isHostile) &&
-            (p.hellType == null || p.hellType == hellType) &&
-            bugDensity in p.minBugDensity..p.maxBugDensity &&
-            (p.batchMode == null || p.batchMode == isBatch) &&
-            (p.incremental == null || p.incremental == incremental) &&
-            qitongScore >= p.minQitongScore
-        } ?: sceneProfiles.last()
+    fun derive(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
+        val occs = mutableSetOf<SubProcessOccupation>()
+        val ratio = floatArrayOf(0.35f)  // 默认容量比
+        for (rule in rules) rule.apply(occs, ratio, input)
+        if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER)
+        return occs.toList() to ratio[0].coerceIn(0.1f, 1f)
     }
+}
 
     /** v0.11.3: 运行时切换治理风格 */
     fun setStyle(style: MainProcessStyle) {
@@ -147,28 +130,20 @@ object ProcessCoordinator {
     }
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0) {
         val strategy = activeStyle
         if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
         if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
         if (fileSize < 500 && fileCount <= 1 && !isHostile) return
         
-        // 匹配情景模板
-        val isBatch = fileCount > 1
-        val profile = matchProfile(fileSize, isHostile, bugDensity, isBatch)
-        currentProfile = profile
+        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
+        val (occs, ratio) = SceneEngine.derive(input)
         
         val estTasks = (fileSize / 500).coerceIn(1, 100)
-        // 紧急全爆裂、保守全哨卫，其他按模板
-        val occs = when (strategy) {
-            MainProcessStyle.EMERGENCY -> listOf(SubProcessOccupation.BURST)
-            MainProcessStyle.CONSERVATIVE -> listOf(SubProcessOccupation.GUARD)
-            else -> profile.occupations
-        }
-        val cap = ((estTasks * profile.capacityRatio).toInt()).coerceIn(1, 60)
+        val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 主动增派: $army (${profile.name}·${profile.description})")
+        broadcast("system", "⚔️ 主动增派: $army → ${occs.map { it.name }.joinToString("+")}")
     }
 
     /** v0.11.3: 被动增派——负载超容量时临时扩编 */
