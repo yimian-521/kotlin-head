@@ -135,6 +135,16 @@ object MultiProjectCoordinator {
         return true
     }
 
+    /**
+     * 恢复默认四档预设。
+     */
+    fun resetToDefaults(writer: (String, ByteArray) -> Unit) {
+        scales.clear()
+        scales.addAll(DEFAULT_SCALES)
+        activeScaleIndex = 1
+        saveScales(writer)
+    }
+
     // ═══════════════════════════════════════════
     // 多项目调度
     // ═══════════════════════════════════════════

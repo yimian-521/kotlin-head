@@ -997,8 +997,13 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         if (multiProjectEnabled) {
             hPrintln()
             hPrintln("  ── 军队规模 ──")
-            hPrintln("  当前: ${MultiProjectCoordinator.getActiveScale().name} (${MultiProjectCoordinator.currentMultiplier}x)")
-            hPrintln("  [3] 切换规模")
+            val scales = MultiProjectCoordinator.getScales()
+            val act = MultiProjectCoordinator.getActiveScaleIndex()
+            scales.forEachIndexed { i, s ->
+                hPrintln("  ${if (i == act) "●" else "○"} ${s.name} (${s.multiplier}x)")
+            }
+            hPrintln()
+            hPrintln("  [3] 切换规模  [4] 新建  [5] 删除  [6] 恢复默认")
         }
     }
 
@@ -1014,18 +1019,58 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                 if (!multiProjectEnabled) return
                 val scales = MultiProjectCoordinator.getScales()
                 hPrintln()
-                hPrintln("  ── 军队规模 ──")
+                hPrintln("  ── 切换规模 ──")
                 scales.forEachIndexed { i, s ->
-                    val cur = if (i == MultiProjectCoordinator.getActiveScaleIndex()) " ←当前" else ""
-                    hPrintln("  [${i + 1}] ${s.name} (${s.multiplier}x)$cur")
+                    hPrintln("  [${i + 1}] ${s.name} (${s.multiplier}x)${if (i == MultiProjectCoordinator.getActiveScaleIndex()) " ←当前" else ""}")
                 }
-                hPrintln("  输入数字切换：")
+                hPrintln("  输入数字：")
                 val inp = readLine() ?: return
                 val idx = inp.trim().toIntOrNull()?.minus(1) ?: return
                 if (idx >= 0 && idx < scales.size) {
                     MultiProjectCoordinator.setActiveScale(idx, dev::store)
                     hPrintln("  ✓ 已切换到: ${scales[idx].name}")
                 }
+            }
+            "4" -> {
+                if (!multiProjectEnabled) return
+                hPrintln()
+                hPrintln("  ── 新建规模 ──")
+                hPrintln("  倍率范围: 0.5~10")
+                hPrintln("  格式: 名称:倍率 (例: 自定义:3)")
+                val inp = readLine() ?: return
+                val parts = inp.trim().split(":")
+                if (parts.size < 2) { hPrintln("  ✖ 格式错误"); return }
+                val name = parts[0].trim()
+                val mult = parts[1].trim().toFloatOrNull()
+                if (mult == null) { hPrintln("  ✖ 倍率无效"); return }
+                if (MultiProjectCoordinator.addScale(name, mult, dev::store)) {
+                    hPrintln("  ✓ 已创建: $name (${mult}x)")
+                } else {
+                    hPrintln("  ✖ 创建失败: 倍率需在0.5~10，名称不能为空")
+                }
+            }
+            "5" -> {
+                if (!multiProjectEnabled) return
+                val scales = MultiProjectCoordinator.getScales()
+                if (scales.size <= 1) { hPrintln("  ✖ 至少保留一个规模"); return }
+                hPrintln()
+                hPrintln("  ── 删除规模 ──")
+                scales.forEachIndexed { i, s ->
+                    hPrintln("  [${i + 1}] ${s.name} (${s.multiplier}x)")
+                }
+                hPrintln("  输入数字删除：")
+                val inp = readLine() ?: return
+                val idx = inp.trim().toIntOrNull()?.minus(1) ?: return
+                if (MultiProjectCoordinator.removeScale(idx, dev::store)) {
+                    hPrintln("  ✓ 已删除")
+                } else {
+                    hPrintln("  ✖ 删除失败: 至少保留一个")
+                }
+            }
+            "6" -> {
+                if (!multiProjectEnabled) return
+                MultiProjectCoordinator.resetToDefaults(dev::store)
+                hPrintln("  ✓ 已恢复默认四档（低/中/高/极高）")
             }
             else -> page = "admin"
         }
