@@ -451,6 +451,35 @@ object ApkPackCoordinator {
         val errors: List<String> = emptyList()
     )
 
+    /**
+     * 修复预览——分两步：
+     * 第一步：概览（各变更前后预计改动什么，具体改几处）
+     * 第二步：详细（具体位置、内容、军师评价）
+     */
+    data class FixPreview(
+        val mode: FixMode,
+        val targetPath: String,
+        val originalPath: String,
+        /** 概览：每个改动项简述 */
+        val overview: List<PreviewItem> = emptyList(),
+        /** 详细：军师点评每处改动 */
+        val details: Map<String, List<DetailItem>> = emptyMap()
+    )
+
+    data class PreviewItem(
+        val category: String,      // 类别：Manifest/格式/目录/权限
+        val before: String,        // 改前
+        val after: String,         // 改后
+        val changeCount: Int       // 改动数量
+    )
+
+    data class DetailItem(
+        val file: String,          // 涉及文件
+        val line: Int,             // 大约行号（-1=新增）
+        val change: String,        // 具体改动内容
+        val comment: String        // 军师评价
+    )
+
     /** 生成修复后的项目路径 */
     fun fixTargetPath(projectDir: String, mode: FixMode): String = if (mode.needsCopy()) {
         val base = projectDir.trimEnd('/')
@@ -459,6 +488,150 @@ object ApkPackCoordinator {
         "$parent/${name}-fixed"
     } else {
         projectDir
+    }
+
+    /**
+     * 预览修复——不实际修改，只出报告。
+     * 第一步：概览（改什么、改几处）
+     * 第二步：详情（具体位置、军师评价）
+     */
+    fun previewFixes(projectDir: String, mode: FixMode): FixPreview {
+        if (mode == FixMode.CANCEL) {
+            return FixPreview(mode, projectDir, projectDir,
+                overview = listOf(PreviewItem("无", "-", "-", 0)),
+                details = mapOf("info" to listOf(DetailItem("N/A", 0, "用户拒绝，无改动", "军师：尊重选择")))
+            )
+        }
+
+        val target = fixTargetPath(projectDir, mode)
+        val overview = mutableListOf<PreviewItem>()
+        val details = mutableMapOf<String, MutableList<DetailItem>>()
+
+        fun addDetail(cat: String, file: String, line: Int, change: String, comment: String) {
+            details.getOrPut(cat) { mutableListOf() }
+                .add(DetailItem(file, line, change, comment))
+        }
+
+        val workDir = File(projectDir)  // 预览不复制，只看原项目
+
+        // ── UPGRADE 预览 ──
+        if (mode.doUpgrade()) {
+            val manifestFile = findFile(workDir, "AndroidManifest.xml")
+            val manifestName = manifestFile?.name ?: "AndroidManifest.xml"
+            var manifestChanges = 0
+
+            if (manifestFile != null) {
+                val mc = manifestFile.readText()
+
+                if ("usesCleartextTraffic" !in mc) {
+                    manifestChanges++
+                    val line = mc.lines().indexOfFirst { "<application" in it }.let { if (it >= 0) it + 1 else -1 }
+                    addDetail("Manifest", manifestName, line,
+                        "在 <application> 加 android:usesCleartextTraffic=\"true\"",
+                        "军师：网关需代理HTTP明文流量，建议加上")
+                }
+                if ("FOREGROUND_SERVICE" !in mc) {
+                    manifestChanges++
+                    addDetail("Manifest", manifestName, -1,
+                        "新增 <uses-permission android:name=\"FOREGROUND_SERVICE\"/>",
+                        "军师：有前台服务必须声明权限，否则崩溃")
+                }
+            }
+
+            if (manifestChanges > 0) {
+                overview.add(PreviewItem("Manifest", "无补充", "补全$manifestChanges处", manifestChanges))
+            }
+
+            val outDir = File("$projectDir/output")
+            if (!outDir.exists()) {
+                overview.add(PreviewItem("目录", "无output/", "创建 output/", 1))
+                addDetail("目录", "output/", -1, "mkdir output/", "军师：打包产物需要输出目录")
+            }
+
+            val gradlew = File("$projectDir/gradlew")
+            if (gradlew.exists() && !gradlew.canExecute()) {
+                overview.add(PreviewItem("权限", "gradlew不可执行", "chmod +x gradlew", 1))
+                addDetail("权限", "gradlew", -1, "chmod +x gradlew", "军师：确保Gradle Wrapper可运行")
+            }
+        }
+
+        // ── OPTIMIZE 预览 ──
+        if (mode.doOptimize()) {
+            val srcDir = File(workDir, "app/src/main/java")
+            var cleanedFiles = 0
+            if (srcDir.exists()) {
+                srcDir.walkTopDown()
+                    .filter { it.isFile && it.extension == "kt" }
+                    .forEach { file ->
+                        val lines = file.readLines()
+                        var consecutiveBlanks = 0
+                        var hasIssue = false
+                        for (l in lines) {
+                            if (l.isBlank()) { consecutiveBlanks++ } else { consecutiveBlanks = 0 }
+                            if (consecutiveBlanks > 1) { hasIssue = true; break }
+                        }
+                        if (hasIssue) cleanedFiles++
+                    }
+            }
+            if (cleanedFiles > 0) {
+                overview.add(PreviewItem("格式", "有连续空行", "去连续空行", cleanedFiles))
+                addDetail("格式", "$cleanedFiles个.kt文件", -1,
+                    "去除连续空行和末尾空行",
+                    "军师：提升可读性，不影响逻辑")
+            }
+        }
+
+        // 复制预览
+        if (mode.needsCopy()) {
+            overview.add(0, PreviewItem("复制", projectDir, target, 1))
+            addDetail("复制", projectDir, -1, "复制整个项目 → $target", "军师：原项目不动，安全")
+        }
+
+        return FixPreview(mode, target, projectDir, overview, details)
+    }
+
+    /** 格式化预览——第一步概览 */
+    fun formatPreviewOverview(preview: FixPreview): String {
+        val sb = StringBuilder()
+        sb.appendLine("════ 军师修复预览 ════")
+        sb.appendLine("模式: ${preview.mode.label}")
+        sb.appendLine("原路径: ${preview.originalPath}")
+        if (preview.originalPath != preview.targetPath) {
+            sb.appendLine("目标: ${preview.targetPath}")
+        }
+        sb.appendLine()
+        sb.appendLine("── 变更概览 ──")
+        if (preview.overview.isEmpty()) {
+            sb.appendLine("  ✓ 无需改动")
+        } else {
+            for ((i, item) in preview.overview.withIndex()) {
+                sb.appendLine("  ${i+1}. [${item.category}] ${item.before} → ${item.after} (${item.changeCount}处)")
+            }
+        }
+        sb.appendLine()
+        sb.appendLine("  [D] 查看详细  [Enter] 执行  [Q] 返回")
+        sb.append("══════════════════════")
+        return sb.toString()
+    }
+
+    /** 格式化预览——第二步详细 */
+    fun formatPreviewDetail(preview: FixPreview): String {
+        val sb = StringBuilder()
+        sb.appendLine("════ 军师详细点评 ════")
+        for ((cat, items) in preview.details) {
+            sb.appendLine()
+            sb.appendLine("── $cat ──")
+            for (item in items) {
+                sb.appendLine("  📄 ${item.file}")
+                if (item.line > 0) sb.append("  第${item.line}行: ")
+                sb.appendLine(item.change)
+                sb.appendLine("     💬 ${item.comment}")
+            }
+        }
+        sb.appendLine()
+        sb.appendLine("  [Enter] 执行  [Q] 返回")
+        sb.append("══════════════════════")
+        return sb.toString()
     }
 
     /** 一键修复——按模式铺不同深度的地基 */
