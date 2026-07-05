@@ -9,6 +9,7 @@ import com.qitong.head.checker.TypeChecker
 import com.qitong.head.diagnostic.Diagnostic
 import com.qitong.head.process.ProcessCoordinator
 import com.qitong.head.process.CommanderReport
+import com.qitong.head.process.MainProcessStyle
 import com.qitong.head.eventbus.*
 import com.qitong.head.eventbus.DependencyGraph
 import com.qitong.head.eventbus.LiveDeclarationGraph
@@ -74,6 +75,14 @@ object Main {
         
         // v0.11.1: 军师进程——编译前决策优先级策略
         strategistDecide(path)
+
+        // v0.11.3: 父进程治理风格——命令行或自动判断
+        val styleFlag = args.find { it.startsWith("--style=") }?.removePrefix("--style=")
+        if (styleFlag != null) {
+            ProcessCoordinator.setStyle(try {
+                MainProcessStyle.valueOf(styleFlag.uppercase())
+            } catch (_: Exception) { MainProcessStyle.FEDERAL })
+        }
 
         // v0.8.3: AsyncIO 归指挥官——主进程只下命令
         lastSrc = file.readText()

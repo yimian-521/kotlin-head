@@ -29,6 +29,17 @@ object ProcessCoordinator {
     // 全局广播日志（指挥官之间）
     private val broadcastLog = HMap<String, HList<String>>()
 
+    // ★ v0.11.3: 父进程治理风格——影响容错判断、检测进程数量
+    var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
+        private set
+
+    /** v0.11.3: 运行时切换治理风格 */
+    fun setStyle(style: MainProcessStyle) {
+        activeStyle = style
+        broadcastLog.getOrPut("system") { HList<String>() }
+            .add("治理风格切换: $style")
+    }
+
     // ─── 初始化：扫描并注册指挥官 ───
 
     fun initialize() {
@@ -214,13 +225,22 @@ object ProcessCoordinator {
 
     private fun assessFailureLevel(tasks: List<AnnotationTask>): FailureLevel {
         val unhealthyCount = tasks.count { !it.isHealthy }
-        if (unhealthyCount == 0) return FailureLevel.LOCAL  // 全健康=走正常路径
+        if (unhealthyCount == 0) return FailureLevel.LOCAL
         
         val ratio = unhealthyCount.toFloat() / tasks.size
+        // v0.11.3: 父进程风格影响容错阈值
+        val (archThreshold, partialThreshold) = when (activeStyle) {
+            MainProcessStyle.EMERGENCY -> 0.5f to 0.15f   // 紧急：更宽容，少停
+            MainProcessStyle.CONSERVATIVE -> 0.6f to 0.2f  // 保守：更早停
+            MainProcessStyle.CONTRACT -> 0.9f to 0.4f      // 契约：能修就修
+            MainProcessStyle.XIAOXIONG -> 0.7f to 0.25f    // 枭雄：中间偏激进
+            MainProcessStyle.RENYONG -> 0.6f to 0.2f       // 仁勇：同保守，保护小弟
+            else -> 0.8f to 0.3f                           // 联邦/独裁/正常：默认
+        }
         return when {
-            ratio >= 0.8f -> FailureLevel.ARCHITECTURAL  // 80%+ 坏 → 架构问题
-            ratio >= 0.3f -> FailureLevel.PARTIAL         // 30%+ 坏 → 成功一半
-            else -> FailureLevel.LOCAL                    // 少量坏 → 局部错误
+            ratio >= archThreshold -> FailureLevel.ARCHITECTURAL
+            ratio >= partialThreshold -> FailureLevel.PARTIAL
+            else -> FailureLevel.LOCAL
         }
     }
 
