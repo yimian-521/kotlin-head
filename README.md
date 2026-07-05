@@ -19,7 +19,7 @@
 ## 当前版本
 
 **v0.11.8** — 定量混合打包（2026-07-05 免免 &amp; 望安）
-ApkPackCoordinator军师扫diff→自动决定跑几步。java-head独立诊断器+通道/实现分离。军师三层诊断：报错→缺失→最佳改法。
+ApkPackCoordinator军师扫diff→自动决定跑几步。java-head独立诊断器+通道/实现分离。军师三层诊断：报错→缺失→最佳改法。修复七档+两步预览+打包容错模式。地狱测试100个文件全杀全报，与源码层诊断完全同构。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
