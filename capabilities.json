@@ -147,6 +147,29 @@
       "keywords": ["head_stdlib","HList","HMap","HString"],
       "desc": "自实现集合+IO替代。编译器内部状态全换头标库，零kotlin-stdlib集合引用"
     },
+    "v0.11.0": {
+      "done": "主动容错——不认识的不杀，跳过但标注原因。綦桐32/32全通过",
+      "desc": "parsePrimary else改throw为warnSkip+跳过；parseExpression加容错"
+    },
+    "v0.11.1": {
+      "done": "链式?.嵌套联动修复+ELVIS优先级实测重校准+军师进程接管优先级+HMap定量动态并发",
+      "keywords": ["safe_access","elvis","strategist","concurrency"],
+      "desc": "链式?.AST加safeAccess标记+Parser while联动。ELVIS 2→5基于地狱文件实测。军师编译前扫文件选优先级表。HConcurrencyProfile+进程自选并发模式"
+    },
+    "v0.11.2": {
+      "done": "进程帝国版：八种指挥官(元帅/尖刀/闪电/常规)+七种检测性格(专业/慵懒)+十一种子进程职业+ProcessTendency倾向系统",
+      "keywords": ["commander","marshal","elite","lightning","watch","process_tendency","burst"],
+      "desc": "指挥官从4种扩充至8种（元帅大兵团、尖刀精英、闪电速攻、常规默认）。检测性格5→7（+专业语法洁癖/+慵懒紧急秒醒）。子进程职业6→11（+显微/摘要/攻坚/哨卫/列兵/爆裂）。倾向系统正交于职业——闪电挂BURST速度+1会自爆"
+    },
+    "v0.11.3": {
+      "done": "父进程觉醒版：八种治理风格+SceneEngine动态规则链+态势简报+检测性格8种",
+      "keywords": ["main_process_style","scene_engine","situation_briefing","hypernetwork"],
+      "desc": "MainProcessStyle八种（联邦/独裁/紧急/保守/契约/枭雄/仁勇/正常）影响容错阈值。SceneEngine替换30条静态模板——7规则×6维交叉推导覆盖无限场景（HyperNetwork同构）。态势简报输出场景诊断。检测性格+标准基线"
+    },
+    "v0.11.4": {
+      "done": "动态缺分补齐：删SceneRule尸体+deployArmy接SceneEngine。主动被动增派统一走动态推导",
+      "desc": "删7个匿名object+接口。被动增派不再全配列兵，走SceneEngine.derive()出态势简报。零挂件"
+    },
   "v1.0.0": {
       "keywords": [],
       "desc": "32/32 綦桐文件全通过"
