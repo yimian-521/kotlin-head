@@ -48,44 +48,62 @@ object ProcessCoordinator {
     }
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false) {
         val strategy = activeStyle
+        // 保守/仁勇小文件且非地狱不扩
         when {
-            strategy == MainProcessStyle.RENYONG && fileSize < 5000 -> return  // 仁勇小文件不扩
-            fileSize < 1000 && fileCount <= 1 -> return  // 太小不用
+            strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile -> return
+            strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile -> return
+            fileSize < 500 && fileCount <= 1 && !isHostile -> return
         }
-        val cap = when (strategy) {
-            MainProcessStyle.EMERGENCY -> (fileCount * 5).coerceIn(5, 50)
-            MainProcessStyle.FEDERAL -> (fileCount * 3).coerceIn(3, 30)
-            MainProcessStyle.XIAOXIONG -> (fileCount * 4).coerceIn(4, 40)
-            MainProcessStyle.CONSERVATIVE -> (fileCount * 1).coerceIn(1, 5)  // 小心扩，慢但安全
-            MainProcessStyle.CONTRACT -> (fileCount * 2).coerceIn(2, 20)  // 精打细算
-            else -> (fileCount * 2).coerceIn(1, 20)
+        // 估算任务数：每500字节约1个注解任务（最小1，最大100）
+        val estTasks = (fileSize / 500).coerceIn(1, 100)
+        val baseCap = when (strategy) {
+            MainProcessStyle.EMERGENCY -> (estTasks / 2).coerceIn(5, 50)
+            MainProcessStyle.FEDERAL -> (estTasks / 3).coerceIn(3, 30)
+            MainProcessStyle.XIAOXIONG -> (estTasks / 2).coerceIn(4, 40)
+            MainProcessStyle.CONSERVATIVE -> (estTasks / 5).coerceIn(1, 8)
+            MainProcessStyle.CONTRACT -> (estTasks / 4).coerceIn(2, 25)
+            else -> (estTasks / 3).coerceIn(1, 20)
         }
+        // 地狱文件：兵力加倍，契约精算修正
+        val cap = if (isHostile) {
+            when (strategy) {
+                MainProcessStyle.CONTRACT -> (estTasks / 3).coerceIn(3, 30)  // 契约地狱精算
+                MainProcessStyle.EMERGENCY -> (estTasks / 2).coerceIn(3, 20)  // 紧急地狱反而收敛
+                else -> (baseCap * 2).coerceIn(baseCap, 60)
+            }
+        } else baseCap
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true)
         armyPool.add(army)
-        broadcast("system", "⚔️ 主动增派: $army (文件${fileSize}字节×${fileCount}个)")
+        val hostileTag = if (isHostile) " ⚠️地狱" else ""
+        broadcast("system", "⚔️ 主动增派: $army (${fileSize}字节→估${estTasks}任务$hostileTag)")
     }
 
     /** v0.11.3: 被动增派——负载超容量时临时扩编 */
     internal fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
             List<Pair<AnnotationTask, ProcessResult>>? {
-        if (tasks.size <= 3) return null  // 太少不值得扩
-        if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null  // 保守只在真的多时才扩
+        if (tasks.size <= 3) return null
+        if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null
+        
+        // 计算现有剩余容量
+        val remainingCap = armyPool.filter { it.isActive() }
+            .sumOf { it.capacity } - armyPool.filter { it.isActive() }.sumOf { it.currentLoad() }
+        if (tasks.size <= remainingCap.coerceAtLeast(1)) return null  // 还够
         
         // 先看常备军队有没有活的
         val perm = armyPool.filter { it.isActive() && it.isPermanent() }
         if (perm.isNotEmpty()) {
-            val army = perm.last()  // 用最新的常备军
+            val army = perm.last()
             return army.deploy(tasks, commander)
         }
-        // 没有常备就临时创
-        val cap = (tasks.size / 2).coerceIn(3, 20)
+        // 没有常备就临时创——补齐缺口
+        val cap = ((tasks.size - remainingCap) / 2).coerceIn(3, 20)
         val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false)
         armyPool.add(army)
-        broadcast("system", "⚔️ 被动增派: $army (${tasks.size}个任务)")
+        broadcast("system", "⚔️ 被动增派: $army (${tasks.size}任务,缺口${tasks.size-remainingCap})")
         val results = army.deploy(tasks, commander)
-        army.retire()  // 用完退役
+        army.retire()
         return results
     }
 

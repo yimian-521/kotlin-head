@@ -84,8 +84,9 @@ object Main {
             } catch (_: Exception) { MainProcessStyle.FEDERAL })
         }
 
-        // v0.11.3: 主动增派——根据源码规模预配军队
-        ProcessCoordinator.prepareArmy(file.length().toInt(), 1)
+        // v0.11.3: 主动增派——根据源码规模预配军队（地狱文件加倍）
+        val isHostileFile = path.contains("hell", ignoreCase = true) || path.contains("destroy", ignoreCase = true)
+        ProcessCoordinator.prepareArmy(file.length().toInt(), 1, isHostile = isHostileFile)
 
         // v0.8.3: AsyncIO 归指挥官——主进程只下命令
         lastSrc = file.readText()
