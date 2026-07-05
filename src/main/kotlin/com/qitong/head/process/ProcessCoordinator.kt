@@ -51,7 +51,6 @@ object ProcessCoordinator {
     fun prepareArmy(fileSize: Int, fileCount: Int) {
         val strategy = activeStyle
         when {
-            strategy == MainProcessStyle.CONSERVATIVE -> return  // 保守不扩编
             strategy == MainProcessStyle.RENYONG && fileSize < 5000 -> return  // 仁勇小文件不扩
             fileSize < 1000 && fileCount <= 1 -> return  // 太小不用
         }
@@ -59,6 +58,7 @@ object ProcessCoordinator {
             MainProcessStyle.EMERGENCY -> (fileCount * 5).coerceIn(5, 50)  // 全速铺
             MainProcessStyle.MARSHAL, MainProcessStyle.FEDERAL -> (fileCount * 3).coerceIn(3, 30)
             MainProcessStyle.XIAOXIONG -> (fileCount * 4).coerceIn(4, 40)
+            MainProcessStyle.CONSERVATIVE -> (fileCount * 1).coerceIn(1, 5)  // 小心扩，慢但安全
             MainProcessStyle.CONTRACT -> (fileCount * 2).coerceIn(2, 20)  // 精打细算
             else -> (fileCount * 2).coerceIn(1, 20)
         }
@@ -71,7 +71,7 @@ object ProcessCoordinator {
     private fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
             List<Pair<AnnotationTask, ProcessResult>>? {
         if (tasks.size <= 3) return null  // 太少不值得扩
-        if (activeStyle == MainProcessStyle.CONSERVATIVE) return null  // 保守不扩
+        if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null  // 保守只在真的多时才扩
         
         // 先看常备军队有没有活的
         val perm = armyPool.filter { it.isActive() && it.isPermanent() }
