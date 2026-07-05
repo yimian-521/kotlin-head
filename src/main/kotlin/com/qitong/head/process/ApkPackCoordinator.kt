@@ -223,17 +223,13 @@ object ApkPackCoordinator {
     // ── 打包执行 ──
 
     /**
-     * 按军师分析的步骤执行打包。
-     *
-     * @param projectDir 项目根目录
-     * @param outputPath APK 输出路径（可选，默认 projectDir/output/app.apk）
-     * @param keystore   签名 keystore 路径（可选）
-     */
     fun pack(
         projectDir: String,
         outputPath: String? = null,
         keystore: String? = null,
-        previousArtifacts: Boolean = false
+        previousArtifacts: Boolean = false,
+        /** v0.11.8: 容错模式——某步失败不中止，跳过标注继续 */
+        faultTolerant: Boolean = false
     ): PackReport {
         val tools = checkTools()
         if (!tools.allAvailable()) {
@@ -274,21 +270,26 @@ object ApkPackCoordinator {
                 PackStep.D8 -> runD8(outDir)
                 PackStep.ZIP_ALIGN -> runZipAlign(outDir, unsigned, aligned)
                 PackStep.APKSIGNER -> runApkSigner(aligned, apkPath, keystore)
-            }
+                }
             val elapsed = System.currentTimeMillis() - start
 
             val sr = StepResult(step, result.success, result.message, elapsed)
             results.add(sr)
 
-            if (!result.success && step != PackStep.APKSIGNER) {
-                // 非签名步骤失败→停止（签名失败也继续报告）
-                val done = results.joinToString("\n") { "  ${if (it.success) "✓" else "✗"} ${it.step.label}: ${it.message}" }
-                return PackReport(
-                    projectPath = projectDir,
-                    steps = results,
-                    summary = "✗ ${step.label} 失败——打包中止\n$done",
-                    passed = false
-                )
+            if (!result.success) {
+                if (faultTolerant) {
+                    // 容错模式：跳过但标注，继续下一步
+                    continue
+                } else if (step != PackStep.APKSIGNER) {
+                    // 标准模式：非签名失败→中止
+                    val done = results.joinToString("\n") { "  ${if (it.success) "✓" else "✗"} ${it.step.label}: ${it.message}" }
+                    return PackReport(
+                        projectPath = projectDir,
+                        steps = results,
+                        summary = "✗ ${step.label} 失败——打包中止\n$done",
+                        passed = false
+                    )
+                }
             }
         }
 
@@ -299,11 +300,14 @@ object ApkPackCoordinator {
         val done = results.joinToString("\n") { "  ${if (it.success) "✓" else "✗"} ${it.step.label}: ${it.message} (${it.durationMs}ms)" }
 
         val allPassed = results.all { it.success }
+        val failedCount = results.count { !it.success }
+        val faultTag = if (faultTolerant && failedCount > 0) " ⚡容错: ${failedCount}步失败但继续" else ""
+
         return PackReport(
             projectPath = projectDir,
             steps = results,
             apkPath = if (allPassed) apkPath else null,
-            summary = "${if (allPassed) "✓ 打包完成" else "✗ 打包失败"}$skippedInfo\n$done",
+            summary = "${if (allPassed) "✓ 打包完成" else "⚠ 部分完成（$failedCount步失败）"}$faultTag$skippedInfo\n$done",
             passed = allPassed
         )
     }
