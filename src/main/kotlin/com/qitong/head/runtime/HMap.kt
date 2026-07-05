@@ -215,7 +215,7 @@ class HMap<K, V>(
         while (i < a.length && i < b.length && a[i] == b[i]) { i++; score += 2 }
         var ai = a.length - 1; var bi = b.length - 1
         while (ai >= 0 && bi >= 0 && a[ai] == b[bi]) { ai--; bi--; score += 1 }
-        val aLower = a.lowercase(); val bLower = b.lowercase()
+        val aLower = a.toLowerCase(); val bLower = b.toLowerCase()
         if (bLower in aLower || aLower in bLower) score += 5
         return score
     }

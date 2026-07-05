@@ -700,13 +700,13 @@ RETURN -> {
     private fun error(msg: String): Nothing =
         throw ParseException("$msg at ${peek().pos}", peek().pos)
 
-    // 运算符优先级
+    // ★ v0.11.1: ELVIS 重新校准——基于地狱文件v4实测，非Kotlin教科书
     private fun curPrec(): Int? = when (peek().type) {
         OR -> 1
-        ELVIS -> 2
-        AND -> 3
-        EQEQ, BANGEQ -> 4
-        LT, GT, LTEQ, GTEQ -> 5
+        AND -> 2
+        EQEQ, BANGEQ -> 3
+        LT, GT, LTEQ, GTEQ -> 4
+        ELVIS -> 5
         AS -> 6
         PLUS, MINUS -> 7
         STAR, SLASH -> 8
