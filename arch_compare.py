@@ -121,3 +121,92 @@ print(f"{'扩展性':<20} {'改主进程':<25} {'挂新指挥官/检测，不碰
 print()
 print("裸父+子能跑。分工让你知道跑得怎么样。")
 print("不是多了一层——是多了一个「感知→决策→执行」的闭环。")
+
+# ========== v0.11.8 扩展：APK打包对比 ==========
+print()
+print()
+print("=" * 60)
+print("扩展：APK打包对比——传统全量 vs 定量混合")
+print("=" * 60)
+print("场景：Android项目改了1个图标，其余不变")
+
+# 路径A：传统全量打包
+print()
+print("── 路径A：传统全量打包（Gradle/命令行）──")
+steps_a = [
+    ("aapt2 compile", "3.2s", True),
+    ("aapt2 link", "1.8s", True),
+    ("kotlinc(全量)", "52.3s", True),
+    ("d8(全量)", "18.7s", True),
+    ("zipalign", "2.1s", True),
+    ("apksigner", "1.4s", True),
+]
+total_a = 0
+for step, dur, ok in steps_a:
+    icon = "✓" if ok else "✗"
+    print(f"  {icon} {step}: {dur}")
+    total_a += float(dur.replace("s",""))
+print(f"  总耗时: {total_a:.1f}s")
+print("  结果: 成功。但只改了个图标，跑了6步全管线。")
+
+# 路径B：军师定量混合打包
+print()
+print("── 路径B：军师定量混合打包（kotlin-head）──")
+print("[军师] 扫 diff...")
+diff_result = {
+    "资源变更": "res/drawable/icon.png (修改)",
+    "源码变更": "无",
+    "Manifest变更": "无",
+}
+for k, v in diff_result.items():
+    print(f"  · {k}: {v}")
+
+print("[军师] 决策: 只改资源 → 跑 aapt2(2步) + 签名(1步)，跳过 kotlinc/d8")
+
+steps_b = [
+    ("aapt2 compile", "3.2s", True, "需要（资源变了）"),
+    ("aapt2 link", "1.8s", True, "需要"),
+    ("kotlinc", "0s", True, "跳过——源码没变"),
+    ("d8", "0s", True, "跳过——复用上次 dex"),
+    ("zipalign", "2.1s", True, "需要"),
+    ("apksigner", "1.4s", True, "需要"),
+]
+total_b = 0
+for step, dur, ok, reason in steps_b:
+    icon = "✓" if ok else "✗"
+    d = float(dur.replace("s","")) if dur != "0s" else 0
+    total_b += d
+    print(f"  {icon} {step}: {dur} — {reason}")
+
+print(f"  总耗时: {total_b:.1f}s")
+print("  跳过步骤: kotlinc + d8（复用上次产物）")
+print(f"  节省: {total_a - total_b:.1f}s ({(total_a-total_b)/total_a*100:.0f}%)")
+
+# 军师总结
+print()
+print("[军师] 打包简报：")
+print("  ┌─────────────────────────────────┐")
+print("  │ 📋 APK打包简报                   │")
+print("  │ 项目: QiTong Gateway             │")
+print("  │ 改动: 1个图标                     │")
+print("  │ 需要: aapt2×2 + zip+签名=4步     │")
+print("  │ 跳过: kotlinc+d8=2步              │")
+print("  │ 原因: 源码未变更，复用上次dex     │")
+print(f"  │ 耗时: {total_b:.1f}s vs 全量{total_a:.1f}s (省{(total_a-total_b)/total_a*100:.0f}%) │")
+print("  │ 建议: 不需要全量打包              │")
+print("  └─────────────────────────────────┘")
+
+# 对比表
+print()
+print("=" * 60)
+print("APK打包对比总结")
+print("=" * 60)
+print(f"{'':<22} {'传统全量打包':<22} {'定量混合打包':<22}")
+print("-" * 66)
+print(f"{'步骤数':<22} {'6步（全跑）':<22} {'4步（跳2步）':<22}")
+print(f"{'耗时':<22} {f'{total_a:.1f}s':<22} {f'{total_b:.1f}s':<22}")
+print(f"{'感知层':<22} {'无——不知道改了什么':<22} {'军师扫diff→决定跑几步':<22}")
+print(f"{'复用':<22} {'无——每次都全量':<22} {'复用上次dex':<22}")
+print(f"{'崩了':<22} {'从头再来':<22} {'只重跑失败那一步':<22}")
+print()
+print("不是全量/增量二选一——是改了什么，决定跑几步。定量混合。")
