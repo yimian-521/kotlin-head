@@ -155,4 +155,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.5 ✅ | 培养系：pid灵魂+称号铭牌+经验缓存+三观+退役池+多套预设+增派保护老兵 |
 | v0.11.6 ✅ | 缓存可信度：三档(novice/skilled/expert)+模糊指纹+deriveCached+expert跳过derive |
 | v0.11.7 ✅ | 多项目并行调度：MultiProjectCoordinator+军队规模自定义(0.5~10x)+五道防线 |
+| v0.11.8 ✅ | 定量混合打包：ApkPackCoordinator+java-head+军师三层诊断+修复七档+两步预览 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
