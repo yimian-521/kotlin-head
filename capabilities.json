@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.11.0",
+  "version": "0.11.5",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -169,6 +169,11 @@
     "v0.11.4": {
       "done": "动态缺分补齐：删SceneRule尸体+deployArmy接SceneEngine。主动被动增派统一走动态推导",
       "desc": "删7个匿名object+接口。被动增派不再全配列兵，走SceneEngine.derive()出态势简报。零挂件"
+    },
+    "v0.11.5": {
+      "done": "培养系核心：ProcessIdentity+ExperienceCache+TitleSystem+RetirePool+ArmyPresetManager+ReinforcePolicy+三观",
+      "keywords": ["process_identity","experience_cache","title_system","retire_pool","army_preset","reinforce_policy","worldview"],
+      "desc": "老兵新兵同一把刀，老兵知道往哪砍。pid=灵魂不改，称号=铭牌只增不减，经验缓存64场景指纹职业倾向淘汰。退役非死亡回大厅。多套预设房间+大厅。PROTECTIVE保护老兵。三观自动生长"
     },
   "v1.0.0": {
       "keywords": [],

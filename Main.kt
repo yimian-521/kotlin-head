@@ -680,6 +680,7 @@ object Main {
         hPrintln("  v0.11.2 ✅ 八种指挥官(元帅/尖刀/闪电/常规+4) + 七种检测性格(专业/慵懒+5) + 十一种子进程职业 + ProcessTendency倾向系统")
         hPrintln("  v0.11.3 ✅ 父进程治理风格+SceneEngine动态军队推导+态势简报+检测性格8种")
 hPrintln("  v0.11.4 ✅ 增派统一走动态推导：主动被动齐备、态势简报全覆盖")
+        hPrintln("  v0.11.5 ✅ 培养系：pid灵魂+称号铭牌+经验缓存+三观+退役池+多套预设+增派保护老兵")
         hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
         hPrintln()
         hPrintln("  [1] 返回主页")
