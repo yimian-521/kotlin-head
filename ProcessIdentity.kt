@@ -63,12 +63,17 @@ class ExperienceCache(
 
     private val entries = mutableMapOf<String, Entry>()   // fingerprint → entry
 
-    /** 查询缓存 */
-    fun lookup(fingerprint: String): Entry? {
-        val entry = entries[fingerprint] ?: return null
+    /** 查询缓存。v0.11.6: 三档可信度——专家（≥20次+深度够）跳过校验 */
+    fun lookup(fingerprint: String): Triple<Entry?, Boolean, String> {
+        val entry = entries[fingerprint] ?: return Triple(null, false, "novice")
         entry.hitCount++
         entry.lastHit = System.currentTimeMillis()
-        return entry
+        val tier = when {
+            entry.hitCount >= 20 && entries.size >= 30 -> "expert"   // 深度+次数都够→可信
+            entry.hitCount >= 5 -> "skilled"
+            else -> "novice"
+        }
+        return Triple(entry, tier == "expert", tier)
     }
 
     /** 存入新指纹。满了就按职业倾向淘汰 */

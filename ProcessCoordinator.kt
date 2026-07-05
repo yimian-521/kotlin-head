@@ -143,7 +143,29 @@ object SceneEngine {
         return r.joinToString("·")
     }
 
-    /** v0.11.4: 从军队反推严重度 */
+    /** v0.11.6: 场景指纹——模糊化避免无限拆分 */
+    fun fingerprintOf(input: SceneInput): String {
+        val sizeBucket = when {
+            input.fileSize < 3000 -> "S"; input.fileSize < 15000 -> "M"
+            input.fileSize < 50000 -> "L"; else -> "XL"
+        }
+        val dense = if (input.bugDensity >= 0.3f) "D" else "d"
+        return "${input.hellType.name}_${sizeBucket}_${dense}_${if(input.incremental)"I" else "i"}_${input.style.name}"
+    }
+
+    /** v0.11.6: 缓存网关——老兵命中可信≥10→跳过derive */
+    fun deriveCached(input: SceneInput, identity: ProcessIdentity?): Pair<List<SubProcessOccupation>, Float> {
+        if (identity == null) return derive(input)
+        val cache = identity.career[identity.currentOccupation] ?: return derive(input)
+        val fp = fingerprintOf(input)
+        val (entry, trusted, _) = cache.lookup(fp)
+        if (entry != null && trusted) {
+            return Pair(entry.occs, entry.ratio)  // 专家跳过7条规则链
+        }
+        val result = derive(input)
+        cache.store(fp, result.first, result.second, "success")
+        return result
+    }
     fun severityScore(occs: List<SubProcessOccupation>, ratio: Float, isHostile: Boolean): Int {
         var score = (occs.size * 2.5f).toInt()
         if (isHostile) score += 2
