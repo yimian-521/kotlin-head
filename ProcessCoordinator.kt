@@ -98,6 +98,18 @@ object SceneEngine {
         val brief = reasons.joinToString("·")
         return Triple(occs.toList(), ratio[0].coerceIn(0.1f, 1f), brief)
     }
+
+    /** v0.11.4: 从军队反推严重度——军队越重，文件越危险 */
+    fun severityScore(occs: List<SubProcessOccupation>, ratio: Float, isHostile: Boolean): Int {
+        var score = (occs.size * 2.5f).toInt()
+        if (isHostile) score += 2
+        if (SubProcessOccupation.BURST in occs) score += 1
+        if (SubProcessOccupation.ASSAULT in occs) score += 1
+        if (SubProcessOccupation.MICRO in occs) score += 1
+        if (ratio < 0.2f) score -= 1
+        if (ratio > 0.5f) score += 1
+        return score.coerceIn(0, 10)
+    }
 }
 
     /** v0.11.3: 运行时切换治理风格 */
