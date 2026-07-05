@@ -991,9 +991,11 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         hPrintln("═══ 开发者功能 ═══")
         hPrintln()
         hPrintln("  多项目测试模式: ${if (multiProjectEnabled) "✓ 已开启" else "○ 关闭"}")
+        hPrintln("  Java 检测模块: ${if (ProcessCoordinator.javaDetectionEnabled) "✓ 已挂载" else "○ 关闭"}")
         hPrintln()
         hPrintln("  [1] 返回管理员")
         hPrintln("  [2] ${if (multiProjectEnabled) "关闭" else "开启"}多项目测试模式")
+        hPrintln("  [7] ${if (ProcessCoordinator.javaDetectionEnabled) "关闭" else "启用"} Java 检测")
         if (multiProjectEnabled) {
             hPrintln()
             hPrintln("  ── 军队规模 ──")
@@ -1071,6 +1073,19 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                 if (!multiProjectEnabled) return
                 MultiProjectCoordinator.resetToDefaults(dev::store)
                 hPrintln("  ✓ 已恢复默认四档（低/中/高/极高）")
+            }
+            "7" -> {
+                if (ProcessCoordinator.javaDetectionEnabled) {
+                    ProcessCoordinator.disableJavaDetection()
+                    hPrintln("  Java 检测: ○ 已关闭")
+                } else {
+                    val ok = ProcessCoordinator.enableJavaDetection()
+                    if (ok) {
+                        hPrintln("  Java 检测: ✓ 已挂载 java-head")
+                    } else {
+                        hPrintln("  ✖ 未找到 java-head.jar，请将 java-head.jar 放入 classpath")
+                    }
+                }
             }
             else -> page = "admin"
         }

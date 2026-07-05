@@ -199,6 +199,26 @@ object SceneEngine {
     // ★ v0.11.7: 多项目模式开关
     var multiProjectMode: Boolean = false
 
+    // ★ v0.11.8: Java 检测开关
+    var javaDetectionEnabled: Boolean = false
+        private set
+
+    /** 启用 Java 检测——尝试挂载 java-head */
+    fun enableJavaDetection(): Boolean {
+        val ok = JavaHeadAdapter.tryMount()
+        if (ok) javaDetectionEnabled = true
+        return ok
+    }
+
+    /** 关闭 Java 检测 */
+    fun disableJavaDetection() {
+        JavaHeadAdapter.unmount()
+        javaDetectionEnabled = false
+    }
+
+    /** 当前 Java 检测通道 */
+    val javaChannel: JavaDetectionChannel get() = JavaHeadAdapter.channel
+
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
     fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false) {
         val strategy = activeStyle
