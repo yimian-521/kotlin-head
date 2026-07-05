@@ -29,7 +29,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.11.3"
+    const val VERSION = "0.11.4"
 
     private val dev = DevMode.boot()
 
@@ -80,7 +80,7 @@ object Main {
         val styleFlag = args.find { it.startsWith("--style=") }?.removePrefix("--style=")
         if (styleFlag != null) {
             ProcessCoordinator.setStyle(try {
-                MainProcessStyle.valueOf(styleFlag.uppercase())
+                MainProcessStyle.valueOf(styleFlag.toUpperCase())
             } catch (_: Exception) { MainProcessStyle.FEDERAL })
         }
 
