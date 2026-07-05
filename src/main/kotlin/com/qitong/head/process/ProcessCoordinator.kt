@@ -76,7 +76,7 @@ object ProcessCoordinator {
         // 先看常备军队有没有活的
         val perm = armyPool.filter { it.isActive() && it.isPermanent() }
         if (perm.isNotEmpty()) {
-            val army = perm.first()
+            val army = perm.last()  // 用最新的常备军
             return army.deploy(tasks, commander)
         }
         // 没有常备就临时创
@@ -99,7 +99,8 @@ object ProcessCoordinator {
     fun initialize() {
         commanders.clear()
         broadcastLog.clear()
-        armyPool.clear()  // v0.11.3: 清理军队池
+        // v0.11.3: 退役所有军队
+        for (army in armyPool.toList()) army.retire()
 
         // v0.8.3: 指挥官订阅 "file" 频道，接管异步文件读取
         EventBus.subscribe("file", object : EventHandler {
