@@ -148,6 +148,8 @@ object ProcessCoordinator {
                 commander.attachWatch(WatchStyle.BRAVE, "commander")
                 commander.attachWatch(WatchStyle.SAMPLER, "commander")
                 commander.attachWatch(WatchStyle.TREND, "commander")
+                commander.attachWatch(WatchStyle.PEDANTIC, "commander")
+                commander.attachWatch(WatchStyle.LAZY, "commander")
             }
             val report = runWithFaultTolerance(commander, tasks)
             results[tag] = report
