@@ -87,8 +87,12 @@ object ProcessCoordinator {
         if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null
         
         // 计算现有剩余容量
-        val remainingCap = armyPool.filter { it.isActive() }
-            .sumOf { it.capacity } - armyPool.filter { it.isActive() }.sumOf { it.currentLoad() }
+        var totalCap = 0
+        var totalLoad = 0
+        for (army in armyPool.toList()) {
+            if (army.isActive()) { totalCap += army.capacity; totalLoad += army.currentLoad() }
+        }
+        val remainingCap = totalCap - totalLoad
         if (tasks.size <= remainingCap.coerceAtLeast(1)) return null  // 还够
         
         // 先看常备军队有没有活的
