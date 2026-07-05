@@ -117,6 +117,18 @@ enum class ProcessTendency {
     BURST   // 速攻倾向——速度+1，会自爆。由闪电指挥官挂载
 }
 
+// ★ v0.11.3: 父进程治理风格——最高指挥官没有职业，但有统治哲学
+enum class MainProcessStyle(val label: String, val description: String) {
+    FEDERAL("联邦", "管边界不管内政，指挥官各自为政——容错高。默认"),
+    DICTATOR("独裁", "所有决策回传确认，指挥官只是手脚——精确但慢"),
+    EMERGENCY("紧急", "战时状态——全员加速、容错阈值降低，牺牲精度换速度"),
+    CONSERVATIVE("保守", "安全第一——多挂检测进程、宁可慢不炸，地狱文件场景"),
+    CONTRACT("契约", "判断+尊重——修能修的、舍该舍的，每个小弟牺牲必须值得"),
+    XIAOXIONG("枭雄", "激进但有底限——不择手段但尊重兄弟，带你们杀出去"),
+    RENYONG("仁勇", "仁者之勇——以人为本，活着就是赢，不忍任何白白牺牲"),
+    NORMAL("正常", "无偏向——既不放权也不集权，中庸基线。有人喜欢不加修饰")
+}
+
 // ─── 第三层：子进程 ───
 interface SubProcess {
     val id: ProcessId

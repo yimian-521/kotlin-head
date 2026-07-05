@@ -19,7 +19,9 @@ enum class WatchStyle(val label: String, val description: String) {
     SENTINEL("哨兵型", "只在关键节点检查，深且重，平时休眠，只守大门"),
     // ★ v0.11.2: 两种新检测性格
     PEDANTIC("专业", "语法洁癖——对语法敏感至极，错一点就吼：为什么要这样！"),
-    LAZY("慵懒", "平常睡觉，紧急秒醒——过滤噪音，高优先级才动，速度极快")
+    LAZY("慵懒", "平常睡觉，紧急秒醒——过滤噪音，高优先级才动，速度极快"),
+    // ★ v0.11.3
+    STANDARD("标准", "中规中矩基线——每步都看，异常就报，不极端。默认性格")
 }
 
 // ─── 检测进程接口 ───
@@ -384,6 +386,49 @@ class LazyWatch(
     }
 }
 
+// ★ v0.11.3: 标准型检测进程——中规中矩基线
+class StandardWatch(
+    override val id: ProcessId,
+    override val targetSubProcessId: String
+) : WatchProcess {
+    override val style = WatchStyle.STANDARD
+    private val seen = HList<ProcessStep>()
+
+    override fun observe(step: ProcessStep): WatchReport {
+        seen.add(step)
+        if (step.abnormal) {
+            return WatchReport(
+                anomalies = listOf("[标准] ${step.action} 异常: body=${step.bodyId}"),
+                suspicionLevel = 0.5f,
+                recommendation = "发现异常，按流程处理"
+            )
+        }
+        if (step.durationNs > 2_000_000_000) { // >2秒才提醒
+            return WatchReport(
+                anomalies = listOf("[标准] ${step.action} 耗时偏长: ${step.durationNs / 1_000_000}ms"),
+                suspicionLevel = 0.2f,
+                recommendation = "注意性能趋势"
+            )
+        }
+        return WatchReport.CLEAN
+    }
+
+    override fun finalReport(): WatchReport {
+        val abnormalCount = seen.count { it.abnormal }
+        val total = seen.size
+        return WatchReport(
+            anomalies = seen.filter { it.abnormal }.map { "[标准] ${it.action}" }.toList(),
+            suspicionLevel = if (total > 0) (abnormalCount.toFloat() / total * 0.7f).coerceAtMost(1f) else 0f,
+            recommendation = when {
+                abnormalCount == 0 -> "流程正常"
+                abnormalCount < total * 0.3 -> "少量异常，正常流程可处理"
+                else -> "异常较多，建议排查"
+            },
+            details = mapOf("totalSteps" to total, "abnormalSteps" to abnormalCount)
+        )
+    }
+}
+
 // ─── 检测进程工厂 ───
 
 object WatchProcessFactory {
@@ -409,5 +454,6 @@ object WatchProcessFactory {
             id, targetSubProcessId,
             lazyThreshold = (config["lazyThreshold"] as? Long) ?: 3
         )
+        WatchStyle.STANDARD -> StandardWatch(id, targetSubProcessId)
     }
 }

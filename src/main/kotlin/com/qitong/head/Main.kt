@@ -28,7 +28,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.11.2"
+    const val VERSION = "0.11.3"
 
     private val dev = DevMode.boot()
 
@@ -663,6 +663,7 @@ object Main {
         hPrintln("  v0.9.1 ✅ 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)")
         hPrintln("  v0.11.1 ✅ 链式?.修复 + ELVIS优先级校准 + 军师接管 + HMap定量动态并发")
         hPrintln("  v0.11.2 ✅ 八种指挥官(元帅/尖刀/闪电/常规+4) + 七种检测性格(专业/慵懒+5) + 十一种子进程职业 + ProcessTendency倾向系统")
+        hPrintln("  v0.11.3 ✅ 父进程治理风格(联邦/独裁/紧急/保守/契约/枭雄/仁勇/正常) + 检测性格+标准基线")
         hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
         hPrintln()
         hPrintln("  [1] 返回主页")
@@ -687,7 +688,7 @@ object Main {
 
     // ─── v0.8.5 进程树页面（树状展示）───
     private fun renderProcess() {
-        hPrintln("═══ 进程树（v0.11.2 八种指挥官 · 七种检测性格 · 十一种子进程职业） ═══")
+        hPrintln("═══ 进程树（v0.11.3 八种父进程 · 八种指挥官 · 八种检测性格 · 十一种子进程职业） ═══")
         hPrintln()
         if (lastProcessReports.isEmpty()) {
             hPrintln("  当前源码未检测到注解，或编译未完成")
@@ -741,8 +742,8 @@ object Main {
                 hPrintln()
             }
             hPrintln("  ─── 架构特性 ───")
-            hPrintln("  四层: 主进程 → 指挥官(8种) → 子进程(11种职业) → 进程体")
-            hPrintln("  旁路: 检测进程(7种性格) · 观察不拦截 · 与数据通道隔离")
+            hPrintln("  五层: 父进程(8种治理风格) → 指挥官(8种) → 子进程(11种职业) → 进程体")
+            hPrintln("  旁路: 检测进程(8种性格) · 观察不拦截 · 与数据通道隔离")
             hPrintln("  倾向: ProcessTendency(速攻) · 闪电指挥官临时赋予 · 正交于职业")
             hPrintln("  联动: 依赖图 → \"dep_ready\" → 指挥官被动响应")
             hPrintln("  隔离: 领域间零耦合 · 反向排除近邻但标签不同者")
