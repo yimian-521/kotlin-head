@@ -91,5 +91,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.9.1 ✅ | 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条) + 进程树3领域×5测评 |
 | v0.10.0 ✅ | 头标库运行时
 | v0.11.0 ✅ | 主动容错——不认识的不杀，跳过但标注原因 |——HList/HMap/HString替代kotlin-stdlib |
-| v0.11.1 ✅ | 性能特调版：kotlin-int 10/10满分。126条诊断。花括号泛滥检测+哨兵AST+Sentinel恢复+军队动态化 |
+| v0.11.1 ✅ | 性能特调版：kotlin-int 10/10满分。链式?.+HMap定量动态 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
