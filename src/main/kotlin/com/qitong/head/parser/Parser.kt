@@ -576,13 +576,12 @@ RETURN -> {
                 // 函数调用
                 if (checkType(LPAREN)) expr = parseCall(expr)
                 if (checkType(LBRACK)) { advance(); var bd=1; while(bd>0&&!isEof()){when(peek().type){LBRACK->{advance();bd++} RBRACK->{advance();bd--} else->advance()}} }
-                // ★ v0.11.0: 安全调用 ?.——? 被 Lexer 拆成 IDENT(?)，吞掉让 DOT 循环正常进入
-                if (checkType(IDENT) && peek().text == "?" && peekNext()?.type == DOT) {
-                    advance() // ?
-                }
-                // ★ v0.7.0: 链式 .member — 递归嵌套，结构就是记忆
-                while (checkType(DOT)) {
-                    advance() // DOT
+                // ★ v0.11.0: 安全调用 ?.——? 被 Lexer 拆成 IDENT(?)，while 条件内统一处理
+                // ★ v0.11.1: DOT + ?. 平等对待——while 条件同时检查两种接入方式
+                while (checkType(DOT) || (checkType(IDENT) && peek().text == "?" && peekNext()?.type == DOT)) {
+                    val isSafe = checkType(IDENT) && peek().text == "?"
+                    if (isSafe) advance() // 吞 ?
+                    advance() // 吞 DOT
                     if (checkType(IDENT)) {
                         val member = advance().text
                         var right: KtExpr = KtRef(member, null, Span(start, lastPos()))
@@ -591,7 +590,7 @@ RETURN -> {
                             right = (right as KtRef).copy(typeArgs = ta)
                         }
                         if (checkType(LPAREN)) right = parseCall(right)
-                        expr = KtMemberAccess(expr, member, Span(expr.span.start, right.span.end))
+                        expr = KtMemberAccess(expr, member, Span(expr.span.start, right.span.end), safeAccess = isSafe)
                     } else break
                 }
                 expr

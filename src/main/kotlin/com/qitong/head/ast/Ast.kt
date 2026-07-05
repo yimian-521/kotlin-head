@@ -78,10 +78,12 @@ data class KtCall(
 ) : KtExpr(callSpan)
 
 // ★ v0.7.0: 链式成员访问 a.b().c — 递归嵌套，结构就是记忆
+// ★ v0.11.1: safeAccess 标记 ?. 安全调用——TypeChecker 据此推断可空链
 data class KtMemberAccess(
     val target: KtExpr,       // 左边的表达式
     val member: String,       // 右边的成员名
-    val accessSpan: Span
+    val accessSpan: Span,
+    val safeAccess: Boolean = false  // true 表示 ?. 而非 .
 ) : KtExpr(accessSpan)
 
 data class KtIf(
