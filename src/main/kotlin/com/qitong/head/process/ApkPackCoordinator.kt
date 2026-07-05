@@ -425,12 +425,12 @@ object ApkPackCoordinator {
 
     /** 军师修复选项——七档渐变，改什么×改哪里 */
     enum class FixMode(val label: String) {
-        OVERWRITE("覆盖——原地全面修复"),
-        COPY("复制后全面修复——原项目不动"),
-        OPTIMIZE("表面优化——原地，注释/格式/import，不动逻辑"),
-        OPTIMIZE_COPY("表面优化——复制后改，原项目不动"),
-        UPGRADE("标准升级——原地，权限/配置/结构对齐标准"),
-        UPGRADE_COPY("标准升级——复制后改，原项目不动"),
+        OVERWRITE("全面升级（覆盖）"),
+        COPY("全面升级（复制）"),
+        OPTIMIZE("表面优化（覆盖）"),
+        OPTIMIZE_COPY("表面优化（复制）"),
+        UPGRADE("核心升级（覆盖）"),
+        UPGRADE_COPY("核心升级（复制）"),
         CANCEL("拒绝——什么也不做")
     }
 
