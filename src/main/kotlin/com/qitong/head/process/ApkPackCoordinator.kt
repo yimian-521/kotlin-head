@@ -423,17 +423,25 @@ object ApkPackCoordinator {
 
     // ── v0.11.8: 军师修复模式 ──
 
-    /** 军师修复选项——五档渐变，从全改到不改 */
+    /** 军师修复选项——七档渐变，改什么×改哪里 */
     enum class FixMode(val label: String) {
-        OVERWRITE("覆盖原项目——全面修复（优化+升级）"),
-        COPY("复制到新目录再改——原项目不动"),
-        OPTIMIZE("表面优化——注释/格式/import，不动逻辑"),
-        UPGRADE("标准升级——权限/配置/结构对齐kotlin-head标准"),
+        OVERWRITE("覆盖——原地全面修复"),
+        COPY("复制后全面修复——原项目不动"),
+        OPTIMIZE("表面优化——原地，注释/格式/import，不动逻辑"),
+        OPTIMIZE_COPY("表面优化——复制后改，原项目不动"),
+        UPGRADE("标准升级——原地，权限/配置/结构对齐标准"),
+        UPGRADE_COPY("标准升级——复制后改，原项目不动"),
         CANCEL("拒绝——什么也不做")
     }
 
-    /** 判断是否为原地修改（不复制） */
-    fun FixMode.isInPlace(): Boolean = this == FixMode.OVERWRITE || this == FixMode.OPTIMIZE || this == FixMode.UPGRADE
+    /** 判断是否需要复制（COPY / OPTIMIZE_COPY / UPGRADE_COPY） */
+    fun FixMode.needsCopy(): Boolean = this == FixMode.COPY || this == FixMode.OPTIMIZE_COPY || this == FixMode.UPGRADE_COPY
+
+    /** 判断是否做优化（含全改和优化类） */
+    fun FixMode.doOptimize(): Boolean = this == FixMode.OPTIMIZE || this == FixMode.OPTIMIZE_COPY || this == FixMode.OVERWRITE || this == FixMode.COPY
+
+    /** 判断是否做升级（含全改和升级类） */
+    fun FixMode.doUpgrade(): Boolean = this == FixMode.UPGRADE || this == FixMode.UPGRADE_COPY || this == FixMode.OVERWRITE || this == FixMode.COPY
 
     data class FixResult(
         val mode: FixMode,
@@ -444,15 +452,13 @@ object ApkPackCoordinator {
     )
 
     /** 生成修复后的项目路径 */
-    fun fixTargetPath(projectDir: String, mode: FixMode): String = when (mode) {
-        FixMode.OVERWRITE, FixMode.OPTIMIZE, FixMode.UPGRADE -> projectDir
-        FixMode.COPY -> {
-            val base = projectDir.trimEnd('/')
-            val parent = base.substringBeforeLast("/")
-            val name = base.substringAfterLast("/")
-            "$parent/${name}-fixed"
-        }
-        FixMode.CANCEL -> projectDir
+    fun fixTargetPath(projectDir: String, mode: FixMode): String = if (mode.needsCopy()) {
+        val base = projectDir.trimEnd('/')
+        val parent = base.substringBeforeLast("/")
+        val name = base.substringAfterLast("/")
+        "$parent/${name}-fixed"
+    } else {
+        projectDir
     }
 
     /** 一键修复——按模式铺不同深度的地基 */
@@ -461,15 +467,12 @@ object ApkPackCoordinator {
             return FixResult(mode, projectDir, projectDir, emptyList(), listOf("用户拒绝修复"))
         }
 
-        val doOptimize = mode == FixMode.OPTIMIZE || mode == FixMode.OVERWRITE || mode == FixMode.COPY
-        val doUpgrade  = mode == FixMode.UPGRADE  || mode == FixMode.OVERWRITE || mode == FixMode.COPY
-
         val target = fixTargetPath(projectDir, mode)
         val fixes = mutableListOf<String>()
         val errors = mutableListOf<String>()
 
-        // COPY 模式：复制整个项目
-        if (mode == FixMode.COPY) {
+        // 需要复制的模式
+        if (mode.needsCopy()) {
             try {
                 File(projectDir).copyRecursively(File(target), overwrite = true)
                 fixes.add("已复制: $projectDir → $target")
@@ -482,7 +485,7 @@ object ApkPackCoordinator {
         val workDir = File(target)
 
         // ── UPGRADE：权限/配置/结构 ──
-        if (doUpgrade) {
+        if (mode.doUpgrade()) {
             val manifestFile = findFile(workDir, "AndroidManifest.xml")
             if (manifestFile != null) {
                 var mc = manifestFile.readText()
@@ -515,7 +518,7 @@ object ApkPackCoordinator {
         }
 
         // ── OPTIMIZE：注释/格式/import（不动逻辑） ──
-        if (doOptimize) {
+        if (mode.doOptimize()) {
             val srcDir = File(workDir, "app/src/main/java")
             if (srcDir.exists()) {
                 var totalCleaned = 0
