@@ -10,6 +10,7 @@ import com.qitong.head.diagnostic.Diagnostic
 import com.qitong.head.process.ProcessCoordinator
 import com.qitong.head.process.CommanderReport
 import com.qitong.head.process.MainProcessStyle
+import com.qitong.head.process.MultiProjectCoordinator
 import com.qitong.head.eventbus.*
 import com.qitong.head.eventbus.DependencyGraph
 import com.qitong.head.eventbus.LiveDeclarationGraph
@@ -519,6 +520,10 @@ object Main {
         }
     }
 
+    // v0.11.7: 多项目模式开关
+    private var multiProjectEnabled = false
+    private var lastMultiReports: List<MultiProjectCoordinator.ProjectReport> = emptyList()
+
     // ─── 按钮渲染 ───
     private fun renderPage() {
         when (page) {
@@ -532,6 +537,8 @@ object Main {
             "decomp" -> renderDecomp()
             "process" -> renderProcess()
             "eventbus" -> renderEventBus()
+            "dev" -> renderDev()
+            "multiproj" -> renderMultiProject()
             else -> { page = "main"; renderMain() }
         }
     }
@@ -602,6 +609,7 @@ object Main {
         hPrintln("  [8] 反编译管线")
         hPrintln("  [9] 进程树 (${lastProcessReports.size}个领域)")
         hPrintln("  [0] EventBus 状态")
+        if (multiProjectEnabled) hPrintln("  [10] 多项目测试")
         hPrintln("  [q] 退出")
     }
 
@@ -630,6 +638,7 @@ object Main {
         hPrintln()
         hPrintln("  [1] 返回主页")
         hPrintln("  [2] 清除所有缓存")
+        hPrintln("  [3] 开发者功能")
     }
 
     // ─── 新页面 v0.6.1 ───
@@ -835,6 +844,8 @@ object Main {
             "diag" -> handleDiag(byLabel)
             "sim" -> handleSim(byLabel)
             "admin" -> handleAdmin(byLabel)
+            "dev" -> handleDev(byLabel)
+            "multiproj" -> handleMultiProject(byLabel)
             "bugs" -> if (byLabel == "1") page = "main"
             "roadmap" -> if (byLabel == "1") page = "main"
             "decomp" -> if (byLabel == "1") page = "main"
@@ -861,6 +872,7 @@ object Main {
             "8" -> page = "decomp"
             "9" -> page = "process"
             "0" -> page = "eventbus"
+            "10" -> if (multiProjectEnabled) page = "multiproj"
             else -> hPrintln("  ? 未知按钮: $key")
         }
     }
@@ -881,6 +893,7 @@ object Main {
                 cacheDir.listFiles()?.forEach { it.delete() }
                 hPrintln("  缓存已清除 ✓")
             }
+            "3" -> page = "dev"
             else -> hPrintln("  ? 未知按钮: $key")
         }
     }
@@ -972,4 +985,89 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         }
         return sb.toString()
     }
+
+    // ─── v0.11.7 开发者功能 ───
+    private fun renderDev() {
+        hPrintln("═══ 开发者功能 ═══")
+        hPrintln()
+        hPrintln("  多项目测试模式: ${if (multiProjectEnabled) "✓ 已开启" else "○ 关闭"}")
+        hPrintln()
+        hPrintln("  [1] 返回管理员")
+        hPrintln("  [2] ${if (multiProjectEnabled) "关闭" else "开启"}多项目测试模式")
+        if (multiProjectEnabled) {
+            hPrintln()
+            hPrintln("  ── 军队规模 ──")
+            hPrintln("  当前: ${MultiProjectCoordinator.getActiveScale().name} (${MultiProjectCoordinator.currentMultiplier}x)")
+            hPrintln("  [3] 切换规模")
+        }
+    }
+
+    private fun handleDev(key: String) {
+        when (key) {
+            "1" -> page = "admin"
+            "2" -> {
+                multiProjectEnabled = !multiProjectEnabled
+                ProcessCoordinator.multiProjectMode = multiProjectEnabled
+                hPrintln("  多项目测试模式: ${if (multiProjectEnabled) "✓ 已开启" else "○ 关闭"}")
+            }
+            "3" -> {
+                if (!multiProjectEnabled) return
+                val scales = MultiProjectCoordinator.getScales()
+                hPrintln()
+                hPrintln("  ── 军队规模 ──")
+                scales.forEachIndexed { i, s ->
+                    val cur = if (i == MultiProjectCoordinator.getActiveScaleIndex()) " ←当前" else ""
+                    hPrintln("  [${i + 1}] ${s.name} (${s.multiplier}x)$cur")
+                }
+                hPrintln("  输入数字切换：")
+                val inp = readLine() ?: return
+                val idx = inp.trim().toIntOrNull()?.minus(1) ?: return
+                if (idx >= 0 && idx < scales.size) {
+                    MultiProjectCoordinator.setActiveScale(idx, dev::store)
+                    hPrintln("  ✓ 已切换到: ${scales[idx].name}")
+                }
+            }
+            else -> page = "admin"
+        }
+    }
+
+    private fun renderMultiProject() {
+        hPrintln("═══ 多项目测试 ═══")
+        hPrintln("  规模: ${MultiProjectCoordinator.getActiveScale().name} (${MultiProjectCoordinator.currentMultiplier}x)")
+        hPrintln()
+        if (lastMultiReports.isNotEmpty()) {
+            hPrint(MultiProjectCoordinator.formatSummary(lastMultiReports))
+        } else {
+            hPrintln("  输入项目路径（用逗号分隔多个）：")
+            hPrintln("  例: /path/a.kt,/path/b.kt")
+        }
+        hPrintln()
+        hPrintln("  [1] 返回主页")
+        hPrintln("  [2] 输入路径并运行")
+    }
+
+    private fun handleMultiProject(key: String) {
+        when (key) {
+            "1" -> page = "main"
+            "2" -> {
+                hPrintln()
+                hPrintln("  输入项目路径（逗号分隔）：")
+                val inp = readLine() ?: return
+                val paths = inp.split(",").map { it.trim() }.filter { it.isNotEmpty() }
+                if (paths.isEmpty()) { hPrintln("  ✖ 未输入路径"); return }
+                val projects = paths.mapIndexed { i, p ->
+                    val f = File(p)
+                    val name = f.name.ifEmpty { "项目${i + 1}" }
+                    val size = if (f.exists()) { val len = f.length(); if (len > Int.MAX_VALUE) Int.MAX_VALUE else len.toInt() } else 0
+                    MultiProjectCoordinator.ProjectTask(name, p, size)
+                }
+                hPrintln("  跑 ${projects.size} 个项目...")
+                lastMultiReports = MultiProjectCoordinator.runBatch(projects)
+                hPrintln()
+                hPrint(MultiProjectCoordinator.formatSummary(lastMultiReports))
+            }
+            else -> page = "main"
+        }
+    }
+
 }

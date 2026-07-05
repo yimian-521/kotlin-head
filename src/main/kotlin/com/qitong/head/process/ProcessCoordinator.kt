@@ -196,8 +196,11 @@ object SceneEngine {
             .add("治理风格切换: $style")
     }
 
+    // ★ v0.11.7: 多项目模式开关
+    var multiProjectMode: Boolean = false
+
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false) {
         val strategy = activeStyle
         if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
         if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
