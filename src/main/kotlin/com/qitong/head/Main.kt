@@ -1078,7 +1078,8 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
 
     private fun renderMultiProject() {
         hPrintln("═══ 多项目测试 ═══")
-        hPrintln("  规模: ${MultiProjectCoordinator.getActiveScale().name} (${MultiProjectCoordinator.currentMultiplier}x)")
+        hPrintln("  军队: ●${MultiProjectCoordinator.getActiveScale().name} (${MultiProjectCoordinator.currentMultiplier}x)  — 在开发者功能切换")
+        hPrintln("  绑定规则: 添加时自动绑定当前军队，切军队后新添的跟新军队")
         hPrintln()
         if (lastMultiReports.isNotEmpty()) {
             hPrint(MultiProjectCoordinator.formatSummary(lastMultiReports))
