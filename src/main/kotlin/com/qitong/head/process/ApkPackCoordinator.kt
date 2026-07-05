@@ -609,7 +609,7 @@ object ApkPackCoordinator {
             }
         }
         sb.appendLine()
-        sb.appendLine("  [D] 查看详细  [Enter] 执行  [Q] 返回")
+        sb.appendLine("  [D] 查看详细  [Q] 返回")
         sb.append("══════════════════════")
         return sb.toString()
     }
@@ -629,7 +629,7 @@ object ApkPackCoordinator {
             }
         }
         sb.appendLine()
-        sb.appendLine("  [Enter] 执行  [Q] 返回")
+        sb.appendLine("  [Q] 返回概览")
         sb.append("══════════════════════")
         return sb.toString()
     }
