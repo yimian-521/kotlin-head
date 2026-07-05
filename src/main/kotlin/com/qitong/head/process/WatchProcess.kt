@@ -245,6 +245,17 @@ class SentinelWatch(
     override val style = WatchStyle.SENTINEL
     private val gateActions = setOf("compile_start", "compile_done", "dispatch_done", "ir_lower", "link")
     private val gateReports = HList<WatchReport>()
+    private var recoverAttempts = 0
+    private var recoverSuccesses = 0
+    private var recoverBudget = 500
+
+    fun tryRecover(label: String, fn: () -> Any?): Any? {
+        if (recoverBudget <= 0) return null
+        recoverBudget--
+        recoverAttempts++
+        return try { val r = fn(); if (r != null) recoverSuccesses++; r } catch (_: Exception) { null }
+    }
+    fun recoverStats() = Triple(recoverAttempts, recoverSuccesses, recoverBudget)
 
     override fun observe(step: ProcessStep): WatchReport? {
         // 只在守门节点醒来

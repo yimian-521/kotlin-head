@@ -24,7 +24,8 @@ sealed class KtDecl(span: Span) : KtNode(span)
 
 data class KtClass(
     val name: String,
-    val modifiers: List<String>,  // public / data / sealed ...
+    val modifiers: List<String>,
+    val annotations: List<KtAnnotation>,  // v0.8.0
     val members: List<KtDecl>,
     val classSpan: Span
 ) : KtDecl(classSpan)
@@ -32,9 +33,10 @@ data class KtClass(
 data class KtFun(
     val name: String,
     val params: List<KtParam>,
-    val returnType: String?,     // null = 未声明（推断）
+    val returnType: String?,
     val body: KtExpr?,
-    val modifiers: List<String>, // ★ v0.7.0: 不吞修饰符
+    val modifiers: List<String>,
+    val annotations: List<KtAnnotation>,  // v0.8.0
     val funSpan: Span
 ) : KtDecl(funSpan)
 
@@ -42,7 +44,8 @@ data class KtVal(
     val name: String,
     val type: String?,
     val value: KtExpr?,
-    val modifiers: List<String>, // ★ v0.7.0: 不吞修饰符
+    val modifiers: List<String>,
+    val annotations: List<KtAnnotation>,  // v0.8.0
     val valSpan: Span
 ) : KtDecl(valSpan)
 
@@ -156,3 +159,10 @@ data class KtPrefixExpr(
     val operand: KtExpr,
     val prefixSpan: Span
 ) : KtExpr(prefixSpan)
+
+// ─── v0.8.0 注解 ───
+data class KtAnnotation(
+    val name: String,
+    val args: List<String>,   // 注解参数（简化：字符串列表）
+    val annSpan: Span
+) : KtNode(annSpan)

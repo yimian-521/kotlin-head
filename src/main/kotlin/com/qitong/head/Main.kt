@@ -140,7 +140,7 @@ object Main {
         val tokens = Lexer(src).tokenize()
         EventBus.emitTo("lex", "lex_complete", mapOf("tokens" to tokens.size))
         
-        val parser = Parser(tokens)
+        val parser = Parser(tokens, ProcessCoordinator.getParserRecoveryFn())
         lastParser = parser
         lastFile = try {
             parser.parseFile()
@@ -519,11 +519,11 @@ object Main {
             val arr = json["profiles"] as? List<*> ?: return@lazy emptyList<SimProfile>()
             arr.mapNotNull {
                 val m = it as? Map<*, *> ?: return@mapNotNull null
-                SimProfile(m["name"] as? String ?: "?", m["file"] as? String ?: "")
+                SimProfile(m["name"] as? String ?: "?", m["file"] as? String ?: "", (m["expectedMinDiags"] as? Int) ?: 0)
             }
         } catch (_: Exception) { emptyList<SimProfile>() }
     }
-    data class SimProfile(val name: String, val file: String)
+    data class SimProfile(val name: String, val file: String, val expectedMinDiags: Int = 0)
 
     private fun renderSim() {
         hPrintln("═══ 模拟运行 ═══")
@@ -549,7 +549,12 @@ object Main {
             lastSrc = f.readText()
             compile(lastSrc)
         }
-        hPrintln("  完成 ✓")
+        val totalDiags = lastDiags.size + lastFindings.size
+        hPrintln("  完成 ✓  诊断: $totalDiags 条 (Parser+TypeChecker: ${lastDiags.size}, BugScanner: ${lastFindings.size})")
+        if (profile.expectedMinDiags > 0) {
+            if (totalDiags >= profile.expectedMinDiags) hPrintln("  ✅ 诊断数达标 (≥${profile.expectedMinDiags})")
+            else hPrintln("  ⚠️ 诊断数未达标 (${totalDiags}/${profile.expectedMinDiags})")
+        }
         hPrintln("  [1] 查看AST  [2] 查看诊断  [0] 返回")
         val input = readLine() ?: ""
         when (input.trim()) {
@@ -558,7 +563,6 @@ object Main {
             else -> page = "main"
         }
     }
-
     private fun renderMain() {
         hPrintln("═══ 主页 ═══  ${lastSrcPath.takeLast(30)}")
         hPrintln()

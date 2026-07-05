@@ -42,6 +42,7 @@ class BugScanner {
                 checkBug9_platformTypeBang(node)
                 checkBug10_delegateTrap(node)
                 node.value?.let { scanExpr(it) }
+                if (node.name.contains("69")) System.err.println("[BS] saw hell_69: value=${node.value?.javaClass?.simpleName}")
             }
             is KtBlock -> node.statements.forEach { scanNode(it) }
             is KtIf -> { scanExpr(node.cond); scanExpr(node.thenBranch); node.elseBranch?.let { scanExpr(it) } }

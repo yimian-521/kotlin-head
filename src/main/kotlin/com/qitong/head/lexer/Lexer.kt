@@ -98,13 +98,14 @@ class Lexer(private val src: String) {
     private fun tok(type: TokType, text: String, pos: Pos) = Token(type, text, pos)
 
     private fun skipLineComment() { while (i < src.length && src[i] != '\n') i++ }
-    private fun skipBlockComment() {
+    private fun skipBlockComment(): Boolean {
         advance()
         while (i < src.length) {
-            if (src[i] == '*' && src.getOrNull(i + 1) == '/') { i += 2; col += 2; return }
+            if (src[i] == '*' && src.getOrNull(i + 1) == '/') { i += 2; col += 2; return true }
             if (src[i] == '\n') { line++; col = 1 } else col++
             i++
         }
+        return false  // ★ 未闭合——不吞到末尾，标记失败
     }
 
     private fun readString(start: Pos): Token {

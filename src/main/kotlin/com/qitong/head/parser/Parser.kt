@@ -8,7 +8,10 @@ import com.qitong.head.lexer.Token
 import com.qitong.head.lexer.TokType
 import com.qitong.head.lexer.TokType.*
 
-class Parser(private val tokens: List<Token>) {
+class Parser(
+    private val tokens: List<Token>,
+    private val onRecover: ((String, () -> Any?) -> Any?)? = null
+) {
     private var pos = 0
 
     // ─── 顶层 ───
@@ -21,7 +24,15 @@ class Parser(private val tokens: List<Token>) {
             val anns = try { parseAnnotations() } catch (_: Exception) { emptyList<KtAnnotation>() }
             if (isEof()) break
             try { parseDeclaration(anns)?.let { decls += it } }
-            catch (_: Exception) { warnSkip("decl", "skip", autoFix = true); skipToNextDecl() }
+            catch (_: Exception) {
+                val savedPos = pos
+                val recovered = onRecover?.invoke("decl") {
+                    pos = savedPos
+                    try { parseDeclaration(anns) } catch (_: Exception) { null }
+                }
+                if (recovered != null) { decls += (recovered as? KtDecl) ?: continue }
+                else { warnSkip("decl", "skip", autoFix = true); skipToNextDecl() }
+            }
         }
         return KtFile(null, decls)
     }
@@ -132,26 +143,32 @@ class Parser(private val tokens: List<Token>) {
                 val end = lastPos()
                 KtClass(name, listOf("data", "public"), anns, members, Span(start, end))
             } catch (_: Exception) {
-                warnSkip("data class", "解析异常", autoFix = true)
+                warnSkip("data class声明不完整", "解析异常", autoFix = true)
                 skipToNextDecl()
                 KtClass("?data", emptyList(), emptyList(), emptyList(), Span(lastPos(), lastPos()))
             }
         }
         // fun ...（含 suspend 等前缀修饰符）
         if (matchType(FUN) || match("suspend")) return try { parseFun(anns) } catch (_: Exception) {
-            warnSkip("fun", "解析异常", autoFix = true)
+            val savedPos = pos
+            val recovered = onRecover?.invoke("fun") { pos = savedPos; try { parseFun(anns) } catch (_: Exception) { null } }
+            if (recovered != null) return recovered as KtDecl
+            warnSkip("函数声明不完整(缺函数名/参数/返回值)", "解析异常", autoFix = true)
             skipToNextDecl()
             KtFun("?fun", emptyList(), null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
         // val / var ...
         if (matchType(VAL) || matchType(VAR)) return try { parseVal(anns) } catch (_: Exception) {
-            warnSkip("val/var", "解析异常", autoFix = true)
+            val savedPos = pos
+            val recovered = onRecover?.invoke("val") { pos = savedPos; try { parseVal(anns) } catch (_: Exception) { null } }
+            if (recovered != null) return recovered as KtDecl
+            warnSkip("属性声明不完整(缺变量名/类型/值)", "解析异常", autoFix = true)
             skipToNextDecl()
             KtVal("?val", null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
         // class (non-data) ...
         if (matchType(CLASS)) {
-            warnSkip("class ${peekNext()?.text ?: "?"}", "v0.2.0")
+            warnSkip("class声明暂不支持(仅data class)", "v0.2.0将支持")
             skipToNextDecl()
             return KtClass("?class", emptyList(), emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
@@ -173,11 +190,11 @@ class Parser(private val tokens: List<Token>) {
             skipToNextDecl()
             KtEnum("?enum", emptyList(), emptyList(), Span(lastPos(), lastPos()))
         }
-        // 不认识的关键字 → 跳过整段
+        // 不认识的关键字 → 只跳当前 token，不连累后续
         val t = peek()
-        warnSkip("${t.type} ${t.text}", Capabilities.expectedFor(t.text))
-        skipToNextDecl()
-        return KtVal("?unk", null, null, emptyList(), emptyList(), Span(lastPos(), lastPos()))
+        warnSkip("不支持的语法: ${t.text}关键字", Capabilities.expectedFor(t.text))
+        advance() // ★ 只跳一步——不调用 skipToNextDecl
+        return KtVal("?unk", null, null, emptyList(), emptyList(), Span(t.pos, lastPos()))
     }
 
     private fun peekNext(): Token? = tokens.getOrNull(pos + 1)

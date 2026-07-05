@@ -224,6 +224,12 @@ object ProcessCoordinator {
     enum class FailureLevel { LOCAL, PARTIAL, ARCHITECTURAL }
 
     // ─── 广播系统 ───
+
+    private var parserSentinel: SentinelWatch? = null
+    fun getParserRecoveryFn(): ((String, () -> Any?) -> Any?)? {
+        if (parserSentinel == null) parserSentinel = SentinelWatch(ProcessId("p","s",""), "parser")
+        val s = parserSentinel!!; return { l, f -> s.tryRecover(l, f) }
+    }
     
     fun broadcast(commanderId: String, message: String) {
         commanders.values().forEach { cmd ->
