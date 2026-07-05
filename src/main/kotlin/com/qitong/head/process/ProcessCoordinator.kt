@@ -33,12 +33,161 @@ object ProcessCoordinator {
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 
+    // ★ v0.11.5: 增派策略——保护老兵还是不管经验
+    var reinforcePolicy: ReinforcePolicy = ReinforcePolicy.PROTECTIVE
+
+    // ★ v0.11.5: 进程身份注册表
+    private val identityRegistry = mutableMapOf<String, ProcessIdentity>()
+    private val pidCounter = AtomicInteger(0)
+
     // ★ v0.11.3: 军队池——主动常备+被动应急
     private val armyPool = HList<ArmyProcess>()
     private val armyCounter = AtomicInteger(0)
 
+    fun registerIdentity(occupation: SubProcessOccupation): ProcessIdentity {
+        val pid = "proc-${pidCounter.incrementAndGet()}"
+        val identity = ProcessIdentity(pid = pid, currentOccupation = occupation)
+        identity.career[occupation] = ExperienceCache(occupation)
+        identityRegistry[pid] = identity
+        return identity
+    }
+
+    fun getIdentity(pid: String): ProcessIdentity? = identityRegistry[pid]
+    fun allIdentities(): List<ProcessIdentity> = identityRegistry.values.toList()
+
     fun getArmies(): List<ArmyProcess> = armyPool.toList()
     fun getArmyCount(): Int = armyPool.size
+
+    // ★ v0.11.3: 编译情景检测
+    var currentScene: SceneType = SceneType.DEFAULT
+        private set
+    var currentProfile: SceneProfile? = null
+        private set
+
+    // ★ v0.11.3: 编译情景动态推导引擎
+    data class SceneInput(
+    val fileSize: Int, val fileCount: Int, val isHostile: Boolean,
+    val hellType: HellType, val bugDensity: Float,
+    val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
+    val style: MainProcessStyle
+)
+
+object SceneEngine {
+    /** v0.11.5: derive只出结构——不拼字符串，保持纳秒级 */
+    fun derive(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
+        val occs = mutableSetOf<SubProcessOccupation>()
+        val ratio = floatArrayOf(0.35f)
+        
+        // R1: 地狱类型
+        if (input.isHostile) {
+            when (input.hellType) {
+                HellType.SYNTAX -> { occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.ASSAULT) }
+                HellType.TYPE -> { occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.MICRO) }
+                HellType.LINK -> { occs.add(SubProcessOccupation.BURST); occs.add(SubProcessOccupation.SOLDIER) }
+                HellType.MIXED -> { occs.add(SubProcessOccupation.ASSAULT); occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.DIGEST) }
+                HellType.NONE -> {}
+            }
+        }
+        // R2: 綦桐分
+        if (input.qitongScore >= 8 && input.isHostile) { ratio[0] *= 1.3f }
+        // R3: 规模
+        when {
+            input.fileSize < 3000 -> { ratio[0] *= 0.5f; if (occs.isEmpty() && !input.isHostile) occs.add(SubProcessOccupation.GUARD) }
+            input.fileSize < 15000 -> { ratio[0] = 0.4f; if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER) }
+            input.fileSize < 50000 -> { ratio[0] = 0.3f; occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST) }
+            input.fileSize < 200000 -> { ratio[0] = 0.25f; occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.GUARD) }
+            else -> { ratio[0] = 0.2f; occs.add(SubProcessOccupation.SOLDIER); occs.add(SubProcessOccupation.DIGEST); occs.add(SubProcessOccupation.MICRO); occs.add(SubProcessOccupation.GUARD) }
+        }
+        // R4: bug密度
+        if (input.bugDensity >= 0.3f) { occs.add(SubProcessOccupation.BURST) }
+        // R5: 批量
+        if (input.isBatch && input.fileSize > 3000) { occs.add(SubProcessOccupation.DIGEST) }
+        // R6: 增量
+        if (input.incremental) { ratio[0] *= 1.5f; occs.remove(SubProcessOccupation.ASSAULT) }
+        // R7: 风格
+        when (input.style) {
+            MainProcessStyle.EMERGENCY -> { occs.clear(); occs.add(SubProcessOccupation.BURST); ratio[0] = 0.6f }
+            MainProcessStyle.CONSERVATIVE -> { occs.clear(); occs.add(SubProcessOccupation.GUARD); ratio[0] *= 0.6f }
+            MainProcessStyle.CONTRACT -> { ratio[0] = (ratio[0] * 0.8f).coerceAtLeast(0.15f) }
+            else -> {}
+        }
+        
+        if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER)
+        return Pair(occs.toList(), ratio[0].coerceIn(0.1f, 1f))
+    }
+
+    /** v0.11.5: 态势简报——只在需要广播时调用，不参与热路径 */
+    fun briefOf(input: SceneInput, occs: List<SubProcessOccupation>, ratio: Float): String {
+        val r = mutableListOf<String>()
+        if (input.isHostile) {
+            when (input.hellType) {
+                HellType.SYNTAX -> r.add("语法地狱"); HellType.TYPE -> r.add("类型地狱")
+                HellType.LINK -> r.add("链接地狱"); HellType.MIXED -> r.add("混合地狱"); else -> {}
+            }
+        }
+        if (input.qitongScore >= 8 && input.isHostile) r.add("綦桐")
+        when {
+            input.fileSize < 3000 -> r.add("微型")
+            input.fileSize < 15000 -> r.add("轻型")
+            input.fileSize < 50000 -> r.add("中型")
+            input.fileSize < 200000 -> r.add("重型")
+            else -> r.add("超大型")
+        }
+        if (input.bugDensity >= 0.3f) r.add("高密bug")
+        if (input.isBatch && input.fileSize > 3000) r.add("批量")
+        if (input.incremental) r.add("增量")
+        when (input.style) {
+            MainProcessStyle.EMERGENCY -> r.add("紧急"); MainProcessStyle.CONSERVATIVE -> r.add("保守")
+            MainProcessStyle.CONTRACT -> r.add("契约"); else -> r.add("联邦")
+        }
+        return r.joinToString("·")
+    }
+
+    /** v0.11.6: 场景指纹——模糊化避免无限拆分 */
+    fun fingerprintOf(input: SceneInput): String {
+        val sizeBucket = when {
+            input.fileSize < 3000 -> "S"; input.fileSize < 15000 -> "M"
+            input.fileSize < 50000 -> "L"; else -> "XL"
+        }
+        val dense = if (input.bugDensity >= 0.3f) "D" else "d"
+        return "${input.hellType.name}_${sizeBucket}_${dense}_${if(input.incremental)"I" else "i"}_${input.style.name}"
+    }
+
+    /** v0.11.6: 缓存网关——老兵命中可信≥10→跳过derive */
+    fun deriveCached(input: SceneInput, identity: ProcessIdentity?): Pair<List<SubProcessOccupation>, Float> {
+        if (identity == null) return derive(input)
+        val cache = identity.career[identity.currentOccupation] ?: return derive(input)
+        val fp = fingerprintOf(input)
+        val (entry, trusted, _) = cache.lookup(fp)
+        if (entry != null && trusted) {
+            return Pair(entry.occs, entry.ratio)  // 专家跳过7条规则链
+        }
+        val result = derive(input)
+        cache.store(fp, result.first, result.second, "success")
+        return result
+    }
+    fun severityScore(occs: List<SubProcessOccupation>, ratio: Float, isHostile: Boolean): Int {
+        var score = (occs.size * 2.5f).toInt()
+        if (isHostile) score += 2
+        if (SubProcessOccupation.BURST in occs) score += 1
+        if (SubProcessOccupation.ASSAULT in occs) score += 1
+        if (SubProcessOccupation.MICRO in occs) score += 1
+        if (ratio < 0.2f) score -= 1
+        if (ratio > 0.5f) score += 1
+        return score.coerceIn(0, 10)
+    }
+
+    /** v0.11.4: 根据文件特征自动选最合适的父进程风格 */
+    fun autoStyle(isHostile: Boolean, bugDensity: Float, fileSize: Int, incremental: Boolean): MainProcessStyle {
+        return when {
+            isHostile -> MainProcessStyle.CONTRACT        // 地狱→契约
+            bugDensity > 0.3f -> MainProcessStyle.XIAOXIONG // 高密bug→枭雄
+            fileSize > 200000 -> MainProcessStyle.FEDERAL   // 超大→元帅
+            incremental -> MainProcessStyle.EMERGENCY       // 增量→紧急
+            else -> MainProcessStyle.FEDERAL               // 默认联邦
+        }
+    }
+}
 
     /** v0.11.3: 运行时切换治理风格 */
     fun setStyle(style: MainProcessStyle) {
@@ -48,64 +197,47 @@ object ProcessCoordinator {
     }
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0) {
         val strategy = activeStyle
-        // 保守/仁勇小文件且非地狱不扩
-        when {
-            strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile -> return
-            strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile -> return
-            fileSize < 500 && fileCount <= 1 && !isHostile -> return
-        }
-        // 估算任务数：每500字节约1个注解任务（最小1，最大100）
+        if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
+        if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
+        if (fileSize < 500 && fileCount <= 1 && !isHostile) return
+        
+        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
+        val (occs, ratio) = SceneEngine.derive(input)
         val estTasks = (fileSize / 500).coerceIn(1, 100)
-        val baseCap = when (strategy) {
-            MainProcessStyle.EMERGENCY -> (estTasks / 2).coerceIn(5, 50)
-            MainProcessStyle.FEDERAL -> (estTasks / 3).coerceIn(3, 30)
-            MainProcessStyle.XIAOXIONG -> (estTasks / 2).coerceIn(4, 40)
-            MainProcessStyle.CONSERVATIVE -> (estTasks / 5).coerceIn(1, 8)
-            MainProcessStyle.CONTRACT -> (estTasks / 4).coerceIn(2, 25)
-            else -> (estTasks / 3).coerceIn(1, 20)
-        }
-        // 地狱文件：兵力加倍，契约精算修正
-        val cap = if (isHostile) {
-            when (strategy) {
-                MainProcessStyle.CONTRACT -> (estTasks / 3).coerceIn(3, 30)  // 契约地狱精算
-                MainProcessStyle.EMERGENCY -> (estTasks / 2).coerceIn(3, 20)  // 紧急地狱反而收敛
-                else -> (baseCap * 2).coerceIn(baseCap, 60)
-            }
-        } else baseCap
-        val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true)
+        val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
+        val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
-        val hostileTag = if (isHostile) " ⚠️地狱" else ""
-        broadcast("system", "⚔️ 主动增派: $army (${fileSize}字节→估${estTasks}任务$hostileTag)")
+        broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
     }
 
-    /** v0.11.3: 被动增派——负载超容量时临时扩编 */
+    /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
     internal fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
             List<Pair<AnnotationTask, ProcessResult>>? {
         if (tasks.size <= 3) return null
         if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null
         
-        // 计算现有剩余容量
-        var totalCap = 0
-        var totalLoad = 0
+        var totalCap = 0; var totalLoad = 0
         for (army in armyPool.toList()) {
             if (army.isActive()) { totalCap += army.capacity; totalLoad += army.currentLoad() }
         }
         val remainingCap = totalCap - totalLoad
-        if (tasks.size <= remainingCap.coerceAtLeast(1)) return null  // 还够
+        if (tasks.size <= remainingCap.coerceAtLeast(1)) return null
         
-        // 先看常备军队有没有活的
         val perm = armyPool.filter { it.isActive() && it.isPermanent() }
         if (perm.isNotEmpty()) {
             val army = perm.last()
             return army.deploy(tasks, commander)
         }
-        // 没有常备就临时创——补齐缺口
-        val cap = ((tasks.size - remainingCap) / 2).coerceIn(3, 20)
-        val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false)
+        
+        // v0.11.4: 被动增派走SceneEngine推导
+        val input = SceneInput(tasks.size * 500, 1, false, HellType.NONE, 0f, false, false, 0, activeStyle)
+        val (occs, ratio) = SceneEngine.derive(input)
+        val cap = ((tasks.size * ratio).toInt()).coerceIn(3, 30)
+        val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 被动增派: $army (${tasks.size}任务,缺口${tasks.size-remainingCap})")
+        broadcast("system", "⚔️ 被动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap=$cap")
         val results = army.deploy(tasks, commander)
         army.retire()
         return results

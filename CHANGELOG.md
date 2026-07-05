@@ -1,4 +1,10 @@
 # CHANGELOG — kotlin-head 有头编译器
+## v0.11.6 (2026-07-05) — 缓存可信度 🧠⚡
+- **三档可信度**：novice(<5次)/skilled(≥5次)/expert(≥20次+深度≥30)。expert跳过derive
+- **模糊指纹**：规模三档(L/M/S)+密度两档(高/低)+风格→同档位共享缓存，不再每个文件单独存
+- **deriveCached网关**：缓存命中→跳过7条规则链→路径=HashMap.get
+- **briefOf延迟**：derive只出Pair不拼String，brief延迟到广播时才生成
+
 ## v0.11.5 (2026-07-05) — 培养系 🧠🎖️
 - **ProcessIdentity**：pid=灵魂不改，称号=铭牌只增不减，career=每个岗位独立记忆
 - **ExperienceCache**：场景指纹→决策缓存，64条上限，职业倾向淘汰（满了先忘非本行）

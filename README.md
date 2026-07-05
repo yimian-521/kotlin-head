@@ -18,9 +18,9 @@
 
 ## 当前版本
 
-**v0.11.5** — 培养系（2026-07-05 免免 &amp; 望安）
+**v0.11.6** — 缓存可信度（2026-07-05 免免 &amp; 望安）
 
-pid=灵魂不改，称号=铭牌只增不减，经验缓存64场景指纹职业倾向淘汰。退役非死亡回大厅。多套预设房间+大厅。PROTECTIVE保护老兵。三观自动生长。SceneEngine规则链+态势简报+severityScore+autoStyle。八种治理风格、八种指挥官、八种检测性格、十一种子进程职业、ProcessTendency倾向系统。
+三档可信度(novice/skilled/expert)+模糊指纹(规模三档×密度两档共享缓存)+deriveCached网关(expert跳过7条规则链)+briefOf延迟。培养系(ProcessIdentity+ExperienceCache+TitleSystem+RetirePool+ArmyPresetManager+ReinforcePolicy+三观)。SceneEngine规则链+态势简报+severityScore+autoStyle。八种治理风格、八种指挥官、八种检测性格、十一种子进程职业、ProcessTendency倾向系统。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -154,4 +154,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.3 ✅ | 父进程觉醒版：八种治理风格(联邦/独裁/紧急/保守/契约/枭雄/仁勇/正常) + 检测性格+标准基线 |
 | v0.11.4 ✅ | 动态缺分补齐：SceneEngine规则链替静态模板+态势简报+增派统一走动态推导 |
 | v0.11.5 ✅ | 培养系：pid灵魂+称号铭牌+经验缓存+三观+退役池+多套预设+增派保护老兵 |
+| v0.11.6 ✅ | 缓存可信度：三档(novice/skilled/expert)+模糊指纹+deriveCached+expert跳过derive |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
