@@ -18,9 +18,8 @@
 
 ## 当前版本
 
-**v0.11.7** — 多项目并行调度（2026-07-05 免免 &amp; 望安）
-
-MultiProjectCoordinator多项目并行+军队规模自定义(0.5~10x)+五道防线。三档可信度+模糊指纹+deriveCached+培养系+态势简报+severityScore+autoStyle。八种治理风格、八种指挥官、八种检测性格、十一种子进程职业。
+**v0.11.8** — 定量混合打包（2026-07-05 免免 &amp; 望安）
+ApkPackCoordinator军师扫diff→自动决定跑几步。java-head独立诊断器+通道/实现分离。军师三层诊断：报错→缺失→最佳改法。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
