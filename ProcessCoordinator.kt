@@ -46,13 +46,8 @@ object ProcessCoordinator {
     var currentProfile: SceneProfile? = null
         private set
 
-    // ★ v0.11.3: 军队推导规则链——静态模板的正交替换
-// 每条规则独立，链式执行后合并，6条规则覆盖1000+情景
-interface SceneRule {
-    fun apply(occupations: MutableSet<SubProcessOccupation>, ratio: FloatArray, input: SceneInput)
-}
-
-data class SceneInput(
+    // ★ v0.11.3: 编译情景动态推导引擎
+    data class SceneInput(
     val fileSize: Int, val fileCount: Int, val isHostile: Boolean,
     val hellType: HellType, val bugDensity: Float,
     val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
@@ -60,59 +55,6 @@ data class SceneInput(
 )
 
 object SceneEngine {
-    // 规则链——优先级从上到下
-    private val rules: List<SceneRule> = listOf(
-        // R1: 地狱类型→根职业
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            if (!i.isHostile) return
-            when (i.hellType) {
-                HellType.SYNTAX -> { oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.ASSAULT) }
-                HellType.TYPE -> { oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.MICRO) }
-                HellType.LINK -> { oc.add(SubProcessOccupation.BURST); oc.add(SubProcessOccupation.SOLDIER) }
-                HellType.MIXED -> { oc.add(SubProcessOccupation.ASSAULT); oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.DIGEST) }
-                HellType.NONE -> {}
-            }
-        }},
-        // R2: 綦桐高分→职业升级+容量加成
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            if (i.qitongScore >= 8 && i.isHostile) {
-                r[0] *= 1.3f
-                if (SubProcessOccupation.SOLDIER in oc) { oc.remove(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.BURST) }
-            }
-        }},
-        // R3: 规模→扩展职业+容量比
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            when {
-                i.fileSize < 3000 -> { r[0] *= 0.5f; if (oc.isEmpty()) oc.add(SubProcessOccupation.GUARD) }
-                i.fileSize < 15000 -> { r[0] = 0.4f; if (oc.isEmpty()) oc.add(SubProcessOccupation.SOLDIER) }
-                i.fileSize < 50000 -> { r[0] = 0.3f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST) }
-                i.fileSize < 200000 -> { r[0] = 0.25f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.GUARD) }
-                else -> { r[0] = 0.2f; oc.add(SubProcessOccupation.SOLDIER); oc.add(SubProcessOccupation.DIGEST); oc.add(SubProcessOccupation.MICRO); oc.add(SubProcessOccupation.GUARD) }
-            }
-        }},
-        // R4: bug密度>30%→开关爆裂
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            if (i.bugDensity >= 0.3f) { oc.add(SubProcessOccupation.BURST); r[0] *= 1.2f }
-        }},
-        // R5: 批量→叠加摘要
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            if (i.isBatch && i.fileSize > 3000) oc.add(SubProcessOccupation.DIGEST)
-        }},
-        // R6: 增量→加速+去攻坚
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            if (i.incremental) { r[0] *= 1.5f; oc.remove(SubProcessOccupation.ASSAULT) }
-        }},
-        // R7: 父进程风格→最终覆盖
-        object : SceneRule { override fun apply(oc: MutableSet<SubProcessOccupation>, r: FloatArray, i: SceneInput) {
-            when (i.style) {
-                MainProcessStyle.EMERGENCY -> { oc.clear(); oc.add(SubProcessOccupation.BURST); r[0] = 0.6f }
-                MainProcessStyle.CONSERVATIVE -> { oc.clear(); oc.add(SubProcessOccupation.GUARD); r[0] *= 0.6f }
-                MainProcessStyle.CONTRACT -> { r[0] = (r[0] * 0.8f).coerceAtLeast(0.15f) }
-                else -> {}
-            }
-        }}
-    )
-
     fun derive(input: SceneInput): Triple<List<SubProcessOccupation>, Float, String> {
         val occs = mutableSetOf<SubProcessOccupation>()
         val ratio = floatArrayOf(0.35f)
@@ -182,32 +124,32 @@ object SceneEngine {
         broadcast("system", "⚔️ 主动增派 [$brief] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
     }
 
-    /** v0.11.3: 被动增派——负载超容量时临时扩编 */
+    /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
     internal fun deployArmy(commander: CommanderImpl, tasks: List<AnnotationTask>):
             List<Pair<AnnotationTask, ProcessResult>>? {
         if (tasks.size <= 3) return null
         if (activeStyle == MainProcessStyle.CONSERVATIVE && tasks.size <= 10) return null
         
-        // 计算现有剩余容量
-        var totalCap = 0
-        var totalLoad = 0
+        var totalCap = 0; var totalLoad = 0
         for (army in armyPool.toList()) {
             if (army.isActive()) { totalCap += army.capacity; totalLoad += army.currentLoad() }
         }
         val remainingCap = totalCap - totalLoad
-        if (tasks.size <= remainingCap.coerceAtLeast(1)) return null  // 还够
+        if (tasks.size <= remainingCap.coerceAtLeast(1)) return null
         
-        // 先看常备军队有没有活的
         val perm = armyPool.filter { it.isActive() && it.isPermanent() }
         if (perm.isNotEmpty()) {
             val army = perm.last()
             return army.deploy(tasks, commander)
         }
-        // 没有常备就临时创——补齐缺口
-        val cap = ((tasks.size - remainingCap) / 2).coerceIn(3, 20)
-        val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false)
+        
+        // v0.11.4: 被动增派走SceneEngine推导
+        val input = SceneInput(tasks.size * 500, 1, false, HellType.NONE, 0f, false, false, 0, activeStyle)
+        val (occs, ratio, brief) = SceneEngine.derive(input)
+        val cap = ((tasks.size * ratio).toInt()).coerceIn(3, 30)
+        val army = ArmyProcess("tmp-army-${armyCounter.incrementAndGet()}", cap, permanent = false, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 被动增派: $army (${tasks.size}任务,缺口${tasks.size-remainingCap})")
+        broadcast("system", "⚔️ 被动增派 [$brief] → ${occs.map { it.name }.joinToString("+")} cap=$cap")
         val results = army.deploy(tasks, commander)
         army.retire()
         return results
