@@ -52,11 +52,12 @@ class ExperienceCache(
     val capacity: Int = 64                               // 最多记住64个场景指纹
 ) {
     data class Entry(
-        val fingerprint: String,                         // 场景hash
+        val fingerprint: String,
+        val occupation: SubProcessOccupation,              // v0.11.5-fix: 存职业，供淘汰过滤
         val occs: List<SubProcessOccupation>,
         val ratio: Float,
-        val result: String,                              // "success" / "partial" / "failure"
-        var hitCount: Int = 0,                           // 命中次数
+        val result: String,
+        var hitCount: Int = 0,
         var lastHit: Long = System.currentTimeMillis()
     )
 
@@ -73,12 +74,18 @@ class ExperienceCache(
     /** 存入新指纹。满了就按职业倾向淘汰 */
     fun store(fingerprint: String, occs: List<SubProcessOccupation>, ratio: Float, result: String) {
         if (entries.size >= capacity) evict()
-        entries[fingerprint] = Entry(fingerprint, occs, ratio, result)
+        entries[fingerprint] = Entry(fingerprint, occupation, occs, ratio, result)
     }
 
-    /** 职业倾向淘汰：优先忘掉非本职业的记忆 */
+    /** 职业倾向淘汰：优先忘掉非本职业的记忆，其次忘最久没用的 */
     private fun evict() {
-        // 1. 找非当前职业的条目
+        // 1. 找非当前职业的条目，踢最久没用的
+        val foreign = entries.values.filter { it.occupation != occupation }.sortedBy { it.lastHit }
+        if (foreign.isNotEmpty()) {
+            entries.remove(foreign.first().fingerprint)
+            return
+        }
+        // 2. 全是本职业 → 踢最久没用的
         val sorted = entries.values.toList().sortedBy { it.lastHit }
         if (sorted.isNotEmpty()) {
             entries.remove(sorted.first().fingerprint)
@@ -291,6 +298,7 @@ object ArmyPresetManager {
         val hallRecruits = RetirePool.all()
             .filter { it.currentOccupation == occupation || policy == ReinforcePolicy.AGGRESSIVE }
             .take(needed)
+            .toList()  // v0.11.5-fix: 立即物化，避免懒读取
 
         for (r in hallRecruits) {
             RetirePool.recall(r.pid)
@@ -300,27 +308,30 @@ object ArmyPresetManager {
         val remaining = needed - recruited.size
         if (remaining <= 0) return recruited
 
-        // 2. 大厅空了 → 策略判断
-        when (policy) {
+        // 2. 大厅空了 → 策略判断：从active预设踢人，踢完招回recruited
+        val preset = activePreset?.let { presets[it] } ?: return recruited
+        val kicked = when (policy) {
             ReinforcePolicy.AGGRESSIVE -> {
-                // 从active预设踢任意人
-                activePreset?.let { name ->
-                    presets[name]?.identities?.take(remaining)?.forEach {
-                        RetirePool.store(it)
-                    }
+                preset.identities.take(remaining).toList().also {
+                    preset.identities.removeAll(it)       // 从预设移除
+                    it.forEach { i -> RetirePool.store(i) } // 进退役池
                 }
             }
             ReinforcePolicy.PROTECTIVE -> {
-                // 从active预设踢经验最少的
-                activePreset?.let { name ->
-                    presets[name]?.identities
-                        ?.sortedBy { it.career[it.currentOccupation]?.size() ?: 0 }
-                        ?.take(remaining)
-                        ?.forEach { RetirePool.store(it) }
-                }
+                preset.identities
+                    .sortedBy { it.career[it.currentOccupation]?.size() ?: 0 }
+                    .take(remaining)
+                    .toList()
+                    .also {
+                        preset.identities.removeAll(it)
+                        it.forEach { i -> RetirePool.store(i) }
+                    }
             }
         }
-
+        // 立刻从退役池召回加入招募列表
+        for (k in kicked) {
+            RetirePool.recall(k.pid)?.let { recruited.add(it) }
+        }
         return recruited
     }
 }
