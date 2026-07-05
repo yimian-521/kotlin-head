@@ -662,7 +662,7 @@ object Main {
         hPrintln("  v0.9.0 ✅ LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播）")
         hPrintln("  v0.9.1 ✅ 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)")
         hPrintln("  v0.11.1 ✅ 链式?.修复 + ELVIS优先级校准 + 军师接管 + HMap定量动态并发")
-        hPrintln("  v0.11.2 ✅ 八种指挥官(元帅/尖刀/闪电/常规+4) + 七种检测性格(专业型/慵懒+5) + 十一种子进程职业 + ProcessTendency倾向系统")
+        hPrintln("  v0.11.2 ✅ 八种指挥官(元帅/尖刀/闪电/常规+4) + 七种检测性格(专业/慵懒+5) + 十一种子进程职业 + ProcessTendency倾向系统")
         hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
         hPrintln()
         hPrintln("  [1] 返回主页")
