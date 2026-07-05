@@ -4,6 +4,7 @@ import com.qitong.head.ast.*
 import com.qitong.head.bugscan.BugScanner
 import com.qitong.head.lexer.Lexer
 import com.qitong.head.parser.Parser
+import com.qitong.head.parser.PrecProfile
 import com.qitong.head.checker.TypeChecker
 import com.qitong.head.diagnostic.Diagnostic
 import com.qitong.head.process.ProcessCoordinator
@@ -71,6 +72,9 @@ object Main {
         // v0.8.3: ProcessCoordinator 接管文件读取（角色不塌缩）
         ProcessCoordinator.initialize()
         
+        // v0.11.1: 军师进程——编译前决策优先级策略
+        strategistDecide(path)
+
         // v0.8.3: AsyncIO 归指挥官——主进程只下命令
         lastSrc = file.readText()
         compile(lastSrc)
@@ -89,6 +93,15 @@ object Main {
 
         // 主循环
         loop()
+    }
+
+    // v0.11.1: 军师进程——编译前分析文件特征，决策优先级策略
+    private fun strategistDecide(srcPath: String) {
+        Parser.activePrecTable = when {
+            srcPath.contains("hell", ignoreCase = true) -> PrecProfile.DEFENSIVE
+            srcPath.contains("destroy", ignoreCase = true) -> PrecProfile.DEFENSIVE
+            else -> PrecProfile.STANDARD
+        }
     }
 
     // ─── 编译流水线 ───

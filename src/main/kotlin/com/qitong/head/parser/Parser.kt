@@ -8,11 +8,24 @@ import com.qitong.head.lexer.Token
 import com.qitong.head.lexer.TokType
 import com.qitong.head.lexer.TokType.*
 
+// ★ v0.11.1: 军师进程动态优先级策略——不绑死一张表
+enum class PrecProfile {
+    /** 标准Kotlin语义——ELVIS=5，a ?: b == c → (a ?: b) == c */
+    STANDARD,
+    /** 地狱文件防御——ELVIS=2 松绑，窄输入防深层崩溃 */
+    DEFENSIVE
+}
+
 class Parser(
     private val tokens: List<Token>,
     private val onRecover: ((String, () -> Any?) -> Any?)? = null
 ) {
     private var pos = 0
+
+    companion object {
+        /** 军师进程决策——编译前切换。默认 STANDARD。和 HConcurrencyProfile 同构 */
+        var activePrecTable: PrecProfile = PrecProfile.STANDARD
+    }
 
     // ─── 顶层 ───
     fun parseFile(): KtFile {
@@ -700,17 +713,20 @@ RETURN -> {
     private fun error(msg: String): Nothing =
         throw ParseException("$msg at ${peek().pos}", peek().pos)
 
-    // ★ v0.11.1: ELVIS 重新校准——基于地狱文件v4实测，非Kotlin教科书
-    private fun curPrec(): Int? = when (peek().type) {
-        OR -> 1
-        AND -> 2
-        EQEQ, BANGEQ -> 3
-        LT, GT, LTEQ, GTEQ -> 4
-        ELVIS -> 5
-        AS -> 6
-        PLUS, MINUS -> 7
-        STAR, SLASH -> 8
-        else -> null
+    // ★ v0.11.1: 军师进程动态优先级——编译前切换 activePrecTable
+    private fun curPrec(): Int? = when (activePrecTable) {
+        PrecProfile.DEFENSIVE -> when (peek().type) {
+            OR -> 1; ELVIS -> 2; AND -> 3
+            EQEQ, BANGEQ -> 4; LT, GT, LTEQ, GTEQ -> 5
+            AS -> 6; PLUS, MINUS -> 7; STAR, SLASH -> 8
+            else -> null
+        }
+        else -> when (peek().type) {
+            OR -> 1; AND -> 2
+            EQEQ, BANGEQ -> 3; LT, GT, LTEQ, GTEQ -> 4
+            ELVIS -> 5; AS -> 6; PLUS, MINUS -> 7; STAR, SLASH -> 8
+            else -> null
+        }
     }
 }
 
