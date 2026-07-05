@@ -254,7 +254,7 @@ class CommanderImpl(
     override val id: String,
     override val tag: String,
     val pkg: String = "",
-    val commanderType: CommanderType = CommanderType.EXECUTOR  // v0.8.5: 指挥官类型
+    val commanderType: CommanderType = CommanderType.STANDARD  // v0.11.2: 默认常规
 ) : Commander {
 
     private val processors = HList<Class<*>>()
@@ -324,21 +324,49 @@ class CommanderImpl(
     override fun dispatch(order: String, payload: Map<String, Any>): List<SubProcess> {
         // 每个子任务创建一个子进程
         val taskCount = (payload["taskCount"] as? Int) ?: 1
+        val mode = selectMode(payload)
+        // v0.11.2: 根据指挥官类型选职业+倾向
+        val occupation = selectOccupation()
+        val tendency = selectTendency()
         return (0 until taskCount).map { _ ->
-            val mode = selectMode(payload)
             val sp = SubProcessImpl(
                 id = ProcessId(
                     commanderId = id,
                     subProcessId = "sub-${subCounter.incrementAndGet()}",
-                    bodyId = ""  // 子进程不填bodyId
+                    bodyId = ""
                 ),
                 tag = tag,
                 mode = mode,
-                parentCommander = this
+                parentCommander = this,
+                occupation = occupation,
+                tendency = tendency
             )
             subProcesses.add(sp)
             sp
         }
+    }
+
+    /** v0.11.2: 根据指挥官类型选子进程职业 */
+    private fun selectOccupation(): SubProcessOccupation = when (commanderType) {
+        CommanderType.MARSHAL -> {
+            // 元帅混编：显微+摘要+列兵轮流
+            val idx = subCounter.get() % 3
+            when (idx) { 0 -> SubProcessOccupation.MICRO; 1 -> SubProcessOccupation.DIGEST; else -> SubProcessOccupation.SOLDIER }
+        }
+        CommanderType.ELITE -> {
+            // 尖刀：攻坚+哨卫，精英配对
+            if (subCounter.get() % 2 == 0) SubProcessOccupation.ASSAULT else SubProcessOccupation.GUARD
+        }
+        CommanderType.LIGHTNING -> SubProcessOccupation.BURST   // 闪电→爆裂
+        CommanderType.BUG -> SubProcessOccupation.MICRO         // Bug类→显微
+        CommanderType.STRATEGIST -> SubProcessOccupation.DIGEST // 军师→摘要
+        else -> SubProcessOccupation.SOLDIER                    // 其他→列兵
+    }
+
+    /** v0.11.2: 闪电指挥官给手下挂速攻倾向 */
+    private fun selectTendency(): ProcessTendency = when (commanderType) {
+        CommanderType.LIGHTNING -> ProcessTendency.BURST
+        else -> ProcessTendency.NONE
     }
 
     /** 根据任务特征自动选协同模式 */
@@ -354,6 +382,9 @@ class CommanderImpl(
 
     override fun collectAndReport(results: List<ProcessResult>): CommanderReport {
         val successCount = results.count { it is ProcessResult.Success || it is ProcessResult.PartialSuccess }
+        // v0.11.2: 收集所有子进程的职业标签
+        val occLabels = subProcesses.map { it.occupation.label }.toList().distinct()
+        val tendLabel = if (commanderType == CommanderType.LIGHTNING) "速攻" else ""
         return CommanderReport(
             commanderId = id,
             tag = tag,
@@ -365,7 +396,10 @@ class CommanderImpl(
             commanderTypeLabel = commanderType.label,
             modeLabel = commanderType.defaultCollaborationMode().name.toLowerCase(),
             watchReports = collectWatchReports(),
-            subProcessCount = subProcesses.size
+            subProcessCount = subProcesses.size,
+            // v0.11.2
+            occupationLabels = occLabels,
+            tendencyLabel = tendLabel
         )
     }
 
@@ -547,7 +581,10 @@ class SubProcessImpl(
     override val id: ProcessId,
     override val tag: String,
     override val mode: CollaborationMode,
-    private val parentCommander: CommanderImpl
+    private val parentCommander: CommanderImpl,
+    // v0.11.2: 子进程职业+倾向
+    override val occupation: SubProcessOccupation = SubProcessOccupation.SOLDIER,
+    override val tendency: ProcessTendency = ProcessTendency.NONE
 ) : SubProcess {
 
     private val bodies = HList<ProcessBodyImpl>()

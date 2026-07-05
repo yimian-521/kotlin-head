@@ -18,16 +18,25 @@ enum class CommanderType(val label: String, val description: String) {
     BUG("Bug类", "诊断维度——查bug，回报最精准的bug内容，发现根因而非表象"),
     SCOUT("侦查类", "探路维度——先派侦察兵探路，能行就上，不行就换方案"),
     STRATEGIST("军师类", "拆解维度——负责如何管后续行动，拆路、定序、分层"),
-    EXECUTOR("执行类", "执行维度——完成一切要做的事情，拿到就干");
+    EXECUTOR("执行类", "执行维度——完成一切要做的事情，拿到就干"),
+    // ★ v0.11.2: 四种新指挥官类型
+    MARSHAL("元帅", "大兵团调度——广度碾压，混编精英+常规，靠量取胜"),
+    ELITE("尖刀", "精英渗透——深度碾压，只留精英，死不起但三五个顶三五十"),
+    LIGHTNING("闪电", "速攻——给手下挂自爆倾向，一切加速，以命换命"),
+    STANDARD("常规", "通用——无天赋，多派人自抢，默认指挥官，无调度开销");
 
     /**
      * 该类型指挥官偏好的默认协同模式
      */
     fun defaultCollaborationMode(): CollaborationMode = when (this) {
-        BUG -> CollaborationMode.COLLECT      // Bug 从各处收集信息再汇总
-        SCOUT -> CollaborationMode.SCOUT       // 先探路再决定
-        STRATEGIST -> CollaborationMode.PIPELINE  // 分层拆解、阶段接力
-        EXECUTOR -> CollaborationMode.SHARD    // 均切平推
+        BUG -> CollaborationMode.COLLECT
+        SCOUT -> CollaborationMode.SCOUT
+        STRATEGIST -> CollaborationMode.PIPELINE
+        EXECUTOR -> CollaborationMode.SHARD
+        MARSHAL -> CollaborationMode.SHARD      // 大兵团均切推进
+        ELITE -> CollaborationMode.COMPETE      // 精英双跑仲裁
+        LIGHTNING -> CollaborationMode.SHARD     // 闪电不调策略，全速冲
+        STANDARD -> CollaborationMode.SHARD      // 常规就多派人
     }
 
     companion object {

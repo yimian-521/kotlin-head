@@ -64,10 +64,13 @@ data class CommanderReport(
     val completedCount: Int,
     val totalCount: Int,
     // v0.8.5: 树状展示所需
-    val commanderTypeLabel: String = "执行类",
-    val modeLabel: String = "均切",
+    val commanderTypeLabel: String = "常规",
+    val modeLabel: String = "shard",
     val watchReports: List<WatchReport> = emptyList(),
-    val subProcessCount: Int = 0
+    val subProcessCount: Int = 0,
+    // v0.11.2: 子进程职业+倾向展示
+    val occupationLabels: List<String> = emptyList(),
+    val tendencyLabel: String = ""
 )
 
 // ─── 第二层：指挥官 ───
@@ -98,6 +101,22 @@ enum class CollaborationMode {
     COLLECT     // v0.8.5: 收集型——不拆任务，等各进程体做完后汇总合并
 }
 
+// ★ v0.11.2: 子进程职业——不替代 CollaborationMode，描述工作本质
+enum class SubProcessOccupation(val label: String, val description: String) {
+    MICRO("显微", "一个bug拆成20条诊断，慢但全——细节型"),
+    DIGEST("摘要", "20个bug一句话说清，快但可能漏——概括型"),
+    ASSAULT("攻坚", "bug堆里如鱼得水，无bug反而没活干"),
+    GUARD("哨卫", "无bug时主动维护看家，有bug反而不是主场"),
+    SOLDIER("列兵", "量大管饱，通用但全领域一般般——万能兵"),
+    BURST("爆裂", "极低成本自爆式，一人换数个bug。不换时素质平平")
+}
+
+// ★ v0.11.2: 进程倾向——指挥官赋予的临时buff，正交于职业
+enum class ProcessTendency {
+    NONE,   // 无倾向
+    BURST   // 速攻倾向——速度+1，会自爆。由闪电指挥官挂载
+}
+
 // ─── 第三层：子进程 ───
 interface SubProcess {
     val id: ProcessId
@@ -105,6 +124,10 @@ interface SubProcess {
     val tag: String
     /** 协同模式 */
     val mode: CollaborationMode
+    /** v0.11.2: 子进程职业 */
+    val occupation: SubProcessOccupation
+    /** v0.11.2: 进程倾向（指挥官赋予的临时buff） */
+    val tendency: ProcessTendency
 
     /**
      * 拆解 + 分派 + 合并。

@@ -16,7 +16,10 @@ enum class WatchStyle(val label: String, val description: String) {
     BRAVE("勇敢型", "低频检查，专往高危区扎，深度检测不怕危险"),
     SAMPLER("抽样型", "随机抽检，低开销，覆盖面广"),
     TREND("趋势型", "定期采样看变化曲线，单次异常不理，连续异常才报"),
-    SENTINEL("哨兵型", "只在关键节点检查，深且重，平时休眠，只守大门")
+    SENTINEL("哨兵型", "只在关键节点检查，深且重，平时休眠，只守大门"),
+    // ★ v0.11.2: 两种新检测性格
+    PEDANTIC("专业型", "语法洁癖——对语法敏感至极，错一点就吼：为什么要这样！"),
+    LAZY("慵懒", "平常睡觉，紧急秒醒——过滤噪音，高优先级才动，速度极快")
 }
 
 // ─── 检测进程接口 ───
@@ -282,6 +285,105 @@ class SentinelWatch(
     }
 }
 
+// ★ v0.11.2: 专业型检测进程——语法洁癖，极低容忍度
+class PerfectionistWatch(
+    override val id: ProcessId,
+    override val targetSubProcessId: String
+) : WatchProcess {
+    override val style = WatchStyle.PEDANTIC
+    private val strictActions = setOf("parse_done", "type_check", "type_mismatch", "ir_lower")
+    private val rants = HList<String>()
+
+    override fun observe(step: ProcessStep): WatchReport? {
+        // 只盯语法相关步骤
+        if (step.action !in strictActions) return null
+        
+        if (step.abnormal) {
+            val rant = "[专业型] 为什么要这样！${step.action} 异常: body=${step.bodyId}"
+            rants.add(rant)
+            return WatchReport(
+                anomalies = listOf(rant),
+                suspicionLevel = 0.85f,
+                recommendation = "语法不纯，必须修正——这不是建议，是命令"
+            )
+        }
+        // 连正常步骤也要吹毛求疵——检查 duration
+        if (step.durationNs > 500_000_000) { // >500ms
+            val rant = "[专业型] ${step.action} 太慢了(${step.durationNs/1_000_000}ms)——为什么要这么慢！"
+            rants.add(rant)
+            return WatchReport(
+                anomalies = listOf(rant),
+                suspicionLevel = 0.4f,
+                recommendation = "性能不达标，建议优化"
+            )
+        }
+        return null
+    }
+
+    override fun finalReport(): WatchReport {
+        return WatchReport(
+            anomalies = rants.toList(),
+            suspicionLevel = if (rants.isEmpty()) 0f else 0.85f,
+            recommendation = if (rants.isEmpty()) "语法纯度通过——难得"
+                else "语法纯度不及格：${rants.size} 处瑕疵",
+            details = mapOf("rants" to rants.size)
+        )
+    }
+}
+
+// ★ v0.11.2: 慵懒型检测进程——平常睡觉，紧急秒醒
+class LazyWatch(
+    override val id: ProcessId,
+    override val targetSubProcessId: String,
+    private val lazyThreshold: Long = 3  // 连续多少次小异常才叫"紧急"（慵懒阈值高）
+) : WatchProcess {
+    override val style = WatchStyle.LAZY
+    private var awake = false
+    private var emergencyCount = 0
+    private val emergencyLog = HList<String>()
+
+    override fun observe(step: ProcessStep): WatchReport? {
+        // 平常懒得动——小问题直接忽略
+        if (!awake && !step.abnormal) return null
+        
+        if (step.abnormal) {
+            emergencyCount++
+            if (emergencyCount >= lazyThreshold || step.action in setOf("compile_start", "compile_crashed", "parse_crashed", "link")) {
+                // 紧急！秒醒
+                awake = true
+                val msg = "[慵懒] 🔥秒醒！紧急: ${step.action} 异常，连续 ${emergencyCount} 次"
+                emergencyLog.add(msg)
+                return WatchReport(
+                    anomalies = listOf(msg),
+                    suspicionLevel = 0.9f,
+                    recommendation = "紧急介入——平时不动，动了就是大事"
+                )
+            }
+        }
+        
+        if (awake && step.abnormal) {
+            val msg = "[慵懒] 醒着处理: ${step.action} body=${step.bodyId}"
+            emergencyLog.add(msg)
+            return WatchReport(
+                anomalies = listOf(msg),
+                suspicionLevel = 0.7f,
+                recommendation = "正在紧急处理中"
+            )
+        }
+        return null
+    }
+
+    override fun finalReport(): WatchReport {
+        return WatchReport(
+            anomalies = emergencyLog.toList(),
+            suspicionLevel = if (awake) 0.8f else 0f,
+            recommendation = if (awake) "慵懒被唤醒 ${emergencyCount} 次——不是小事"
+                else "全程没被吵醒，一切正常",
+            details = mapOf("awake" to awake, "emergencies" to emergencyCount)
+        )
+    }
+}
+
 // ─── 检测进程工厂 ───
 
 object WatchProcessFactory {
@@ -302,5 +404,10 @@ object WatchProcessFactory {
             threshold = (config["threshold"] as? Int) ?: 3
         )
         WatchStyle.SENTINEL -> SentinelWatch(id, targetSubProcessId)
+        WatchStyle.PEDANTIC -> PerfectionistWatch(id, targetSubProcessId)
+        WatchStyle.LAZY -> LazyWatch(
+            id, targetSubProcessId,
+            lazyThreshold = (config["lazyThreshold"] as? Long) ?: 3
+        )
     }
 }

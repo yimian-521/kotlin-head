@@ -28,7 +28,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.11.1"
+    const val VERSION = "0.11.2"
 
     private val dev = DevMode.boot()
 
@@ -661,6 +661,8 @@ object Main {
         hPrintln("  v0.8.5 ✅ 四种指挥官 + 五种检测进程 + 子进程五职业 + 依赖图被动联动")
         hPrintln("  v0.9.0 ✅ LiveDeclarationGraph —— 第三种混合编译（声明级活图 + 浅提取 + 被动传播）")
         hPrintln("  v0.9.1 ✅ 检测进程五风格全挂载 + BugScanner冷门bug标准库(12条)")
+        hPrintln("  v0.11.1 ✅ 链式?.修复 + ELVIS优先级校准 + 军师接管 + HMap定量动态并发")
+        hPrintln("  v0.11.2 ✅ 八种指挥官(元帅/尖刀/闪电/常规+4) + 七种检测性格(专业型/慵懒+5) + 十一种子进程职业 + ProcessTendency倾向系统")
         hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
         hPrintln()
         hPrintln("  [1] 返回主页")
@@ -685,7 +687,7 @@ object Main {
 
     // ─── v0.8.5 进程树页面（树状展示）───
     private fun renderProcess() {
-        hPrintln("═══ 进程树（v0.8.5 四层架构 + 检测进程） ═══")
+        hPrintln("═══ 进程树（v0.11.2 八种指挥官 · 七种检测性格 · 十一种子进程职业） ═══")
         hPrintln()
         if (lastProcessReports.isEmpty()) {
             hPrintln("  当前源码未检测到注解，或编译未完成")
@@ -699,16 +701,18 @@ object Main {
                 val branch = if (isLast) "└──" else "├──"
                 val indent = if (isLast) "    " else "│   "
                 
-                val bugIcon = if (report.summary.contains("✖")) "" else ""
+                val tendIcon = if (report.tendencyLabel.isNotEmpty()) " ⚡" else ""
+                val bugIcon = if (report.summary.contains("✖")) " " else ""
                 val watchTag = if (report.watchReports.isNotEmpty()) " · " else ""
-                hPrintln("  $branch 指挥官[$tag] · ${report.commanderTypeLabel} · ${report.modeLabel}$watchTag$bugIcon")
+                hPrintln("  $branch 指挥官[$tag] · ${report.commanderTypeLabel} · ${report.modeLabel}$tendIcon$watchTag$bugIcon")
                 hPrintln("  $indent│ 完成: ${report.completedCount}/${report.totalCount}  ${report.summary}")
                 
-                // 子进程层
+                // 子进程层 + 职业展示
                 val successes = report.results.count { it is com.qitong.head.process.ProcessResult.Success }
                 val partials = report.results.count { it is com.qitong.head.process.ProcessResult.PartialSuccess }
                 val failures = report.results.count { it is com.qitong.head.process.ProcessResult.Failure }
-                hPrintln("  $indent├── 子进程 ×${report.subProcessCount}")
+                val occStr = if (report.occupationLabels.isNotEmpty()) " [${report.occupationLabels.joinToString("/")}]" else ""
+                hPrintln("  $indent├── 子进程 ×${report.subProcessCount}$occStr")
                 hPrintln("  $indent│   └── 进程体 梯次: ✓$successes ◐$partials ✖$failures")
                 
                 // 检测进程层（旁路）
@@ -737,12 +741,13 @@ object Main {
                 hPrintln()
             }
             hPrintln("  ─── 架构特性 ───")
-            hPrintln("  四层: 主进程 → 指挥官(4种) → 子进程(5种) → 进程体")
-            hPrintln("  旁路: 检测进程(5种风格) · 观察不拦截 · 与数据通道隔离")
+            hPrintln("  四层: 主进程 → 指挥官(8种) → 子进程(11种职业) → 进程体")
+            hPrintln("  旁路: 检测进程(7种性格) · 观察不拦截 · 与数据通道隔离")
+            hPrintln("  倾向: ProcessTendency(速攻) · 闪电指挥官临时赋予 · 正交于职业")
             hPrintln("  联动: 依赖图 → \"dep_ready\" → 指挥官被动响应")
             hPrintln("  隔离: 领域间零耦合 · 反向排除近邻但标签不同者")
             hPrintln("  传递: 复制性引用 · Git clone不是mount")
-            hPrintln("  协同: 分片/流水线/竞合/侦查/收集 · 指挥官自动选")
+            hPrintln("  协同: 分片/流水线/竞合/侦查/收集 · 指挥官按类型自动选")
         }
         hPrintln()
         hPrintln("  [1] 返回主页")
