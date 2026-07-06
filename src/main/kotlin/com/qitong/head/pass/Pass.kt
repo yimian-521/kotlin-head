@@ -1,5 +1,6 @@
 package com.qitong.head.pass
 
+import com.qitong.head.runtime.HList
 import com.qitong.head.eventbus.StreamTransform
 import com.qitong.head.ir.*
 
@@ -20,11 +21,11 @@ abstract class Pass(val name: String) : StreamTransform<IRModule, IRModule> {
 
     companion object {
         /** 标准三件套 */
-        fun standardChain(): List<Pass> = listOf(
+        fun standardChain(): HList<Pass> = HList.from(listOf(
             DeadCodeElimination(),
             ConstantFolding(),
             InlineExpansion()
-        )
+        ))
     }
 }
 

@@ -12,7 +12,7 @@ data class Dependency(
 data class DependencyConflict(
     val dep: String,
     val versions: Set<String>,
-    val files: List<String>
+    val files: HList<String>
 )
 
 object DependencyGraph {
@@ -23,15 +23,15 @@ object DependencyGraph {
     private val stageBuffer = HMap<String, HList<Dependency>>()
 
     class StagingData(
-        val deps: Map<String, List<Dependency>>,
-        val fileDeps: Map<String, List<Dependency>>
+        val deps: HMap<String, HList<Dependency>>,
+        val fileDeps: HMap<String, HList<Dependency>>
     )
 
     fun snapshot(): StagingData {
-        val depsCopy = mutableMapOf<String, List<Dependency>>()
-        deps.forEach { k, v -> depsCopy[k] = v.toList() }
-        val fileCopy = mutableMapOf<String, List<Dependency>>()
-        fileDeps.forEach { k, v -> fileCopy[k] = v.toList() }
+        val depsCopy = HMap<String, HList<Dependency>>()
+        deps.forEach { k, v -> depsCopy.put(k, v) }
+        val fileCopy = HMap<String, HList<Dependency>>()
+        fileDeps.forEach { k, v -> fileCopy.put(k, v) }
         currentSnapshot = StagingData(depsCopy, fileCopy)
         stageBuffer.clear()
         return currentSnapshot!!
@@ -61,22 +61,18 @@ object DependencyGraph {
         }
     }
 
-    fun getDepsForFile(file: String): List<Dependency> =
-        (currentSnapshot?.fileDeps?.get(file) ?: fileDeps.get(file)?.toList()) ?: emptyList()
+    fun getDepsForFile(file: String): HList<Dependency> =
+        (currentSnapshot?.fileDeps?.get(file) ?: fileDeps.get(file)) ?: HList()
 
-    fun detectConflicts(): List<DependencyConflict> {
-        val conflicts = mutableListOf<DependencyConflict>()
+    fun detectConflicts(): HList<DependencyConflict> {
+        val conflicts = HList<DependencyConflict>()
         deps.forEach { importPath, depList ->
             val versions = mutableSetOf<String>()
             depList.forEach { it.version?.let { v -> versions.add(v) } }
             if (versions.size > 1) {
-                val files = mutableListOf<String>()
+                val files = HList<String>()
                 depList.forEach { files.add(it.importedBy) }
-                val c = DependencyConflict(
-                    dep = importPath,
-                    versions = versions,
-                    files = files
-                )
+                val c = DependencyConflict(dep = importPath, versions = versions, files = files)
                 conflicts.add(c)
                 EventBus.emitTo("dep", "conflict_detected", c)
             }
@@ -84,10 +80,10 @@ object DependencyGraph {
         return conflicts
     }
 
-    fun resolveConflicts(): Map<String, String> {
-        val resolutions = mutableMapOf<String, String>()
+    fun resolveConflicts(): HMap<String, String> {
+        val resolutions = HMap<String, String>()
         val conflicts = detectConflicts()
-        for (c in conflicts) {
+        for (c in conflicts.toList()) {
             var best = ""
             var bestScore = -1
             for (v in c.versions) {
@@ -95,13 +91,12 @@ object DependencyGraph {
                 if (score > bestScore) { bestScore = score; best = v }
             }
             if (best.isEmpty()) continue
-            resolutions[c.dep] = best
+            resolutions.put(c.dep, best)
             EventBus.emitTo("dep", "conflict_resolved", mapOf(
-                "dep" to c.dep,
-                "chosen" to best,
+                "dep" to c.dep, "chosen" to best,
                 "alternatives" to (c.versions - best),
-                "isolated_files" to c.files.filter { f ->
-                    fileDeps.get(f)?.any { it.name == c.dep && it.version != best } ?: false
+                "isolated_files" to c.files.toList().filter { f ->
+                    fileDeps.get(f)?.any { dep -> dep.name == c.dep && dep.version != best } ?: false
                 }
             ))
         }

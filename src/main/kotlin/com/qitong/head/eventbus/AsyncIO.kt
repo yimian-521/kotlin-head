@@ -1,5 +1,6 @@
 package com.qitong.head.eventbus
 
+import com.qitong.head.runtime.HMap
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -10,18 +11,11 @@ object AsyncIO {
         ioPool.submit {
             try {
                 val content = File(path).readText()
-                EventBus.emitTo("file", "file_ready", mapOf(
-                    "path" to path,
-                    "fileId" to (fileId ?: path),
-                    "content" to content,
-                    "size" to content.length
-                ))
+                val m = HMap<String, Any>(); m.put("path", path); m.put("fileId", fileId ?: path); m.put("content", content); m.put("size", content.length)
+                EventBus.emitTo("file", "file_ready", m)
             } catch (e: Exception) {
-                EventBus.emitTo("error", "file_read_error", mapOf(
-                    "path" to path,
-                    "fileId" to (fileId ?: path),
-                    "error" to e.message
-                ))
+                val m = HMap<String, Any>(); m.put("path", path); m.put("fileId", fileId ?: path); m.put("error", e.message ?: "unknown")
+                EventBus.emitTo("error", "file_read_error", m)
             }
         }
     }

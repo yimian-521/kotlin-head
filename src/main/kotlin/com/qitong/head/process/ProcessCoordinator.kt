@@ -415,17 +415,14 @@ object SceneEngine {
 
             when (failureLevel) {
                 FailureLevel.LOCAL -> {
-                    // 局部错误：继续走，标记+广播
                     val result = commander.dispatchTasks(tasks)
-                    commander.collectAndReport(result.map { it.second })
+                    commander.collectAndReport(HList.from(result.toList().map { it.second }))
                 }
                 FailureLevel.PARTIAL -> {
-                    // 成功一半：成功半继续、失败半标靶
                     val (good, bad) = tasks.partition { it.isHealthy }
                     val goodResults = commander.dispatchTasks(good)
                     val badReport = bad.map { "✖ ${it.annotationName} @ ${it.location}" }
-                    
-                    val report = commander.collectAndReport(goodResults.map { it.second })
+                    val report = commander.collectAndReport(HList.from(goodResults.toList().map { it.second }))
                     report.copy(
                         summary = "${report.summary} | 失败标靶: ${badReport.joinToString("; ")}"
                     )
@@ -436,9 +433,9 @@ object SceneEngine {
                         commanderId = commander.id,
                         tag = commander.tag,
                         summary = "⛔ 架构错误，停止处理",
-                        results = tasks.map {
+                        results = HList.from(tasks.map {
                             ProcessResult.Failure("架构级: ${it.annotationName}", recoverable = false)
-                        },
+                        }),
                         completedCount = 0,
                         totalCount = tasks.size
                     )
@@ -449,7 +446,7 @@ object SceneEngine {
                 commanderId = commander.id,
                 tag = commander.tag,
                 summary = "⛔ 指挥官异常: ${e.message}",
-                results = emptyList(),
+                results = HList(),
                 completedCount = 0,
                 totalCount = tasks.size
             )
@@ -573,33 +570,21 @@ class CommanderImpl(
     }
 
     // v0.8.5: 收集所有检测进程的最终报告
-    fun collectWatchReports(): List<WatchReport> {
-        return watchProcesses.map { it.finalReport() }.toList()
+    fun collectWatchReports(): HList<WatchReport> {
+        return HList.from(watchProcesses.toList().map { it.finalReport() })
     }
 
-    override fun dispatch(order: String, payload: Map<String, Any>): List<SubProcess> {
-        // 每个子任务创建一个子进程
-        val taskCount = (payload["taskCount"] as? Int) ?: 1
+    override fun dispatch(order: String, payload: HMap<String, Any>): HList<SubProcess> {
+        val taskCount = (payload.get("taskCount") as? Int) ?: 1
         val mode = selectMode(payload)
-        // v0.11.2: 根据指挥官类型选职业+倾向
         val occupation = selectOccupation()
         val tendency = selectTendency()
-        return (0 until taskCount).map { _ ->
-            val sp = SubProcessImpl(
-                id = ProcessId(
-                    commanderId = id,
-                    subProcessId = "sub-${subCounter.incrementAndGet()}",
-                    bodyId = ""
-                ),
-                tag = tag,
-                mode = mode,
-                parentCommander = this,
-                occupation = occupation,
-                tendency = tendency
-            )
-            subProcesses.add(sp)
-            sp
-        }
+        val result = HList<SubProcess>()
+        for (i in 0 until taskCount) { result.add(SubProcessImpl(
+            id = ProcessId(commanderId = id, subProcessId = "sub-${subCounter.incrementAndGet()}", bodyId = ""),
+            tag = tag, mode = mode, parentCommander = this, occupation = occupation, tendency = tendency
+        ).also { subProcesses.add(it) }) }
+        return result
     }
 
     /** v0.11.2: 根据指挥官类型选子进程职业 */
@@ -626,9 +611,9 @@ class CommanderImpl(
     }
 
     /** 根据任务特征自动选协同模式 */
-    private fun selectMode(payload: Map<String, Any>): CollaborationMode {
-        val stages = payload["stages"] as? Int ?: 1
-        val critical = payload["critical"] as? Boolean ?: false
+    private fun selectMode(payload: HMap<String, Any>): CollaborationMode {
+        val stages = (payload.get("stages") as? Int) ?: 1
+        val critical = (payload.get("critical") as? Boolean) ?: false
         return when {
             critical -> CollaborationMode.COMPETE
             stages > 1 -> CollaborationMode.PIPELINE
@@ -636,34 +621,31 @@ class CommanderImpl(
         }
     }
 
-    override fun collectAndReport(results: List<ProcessResult>): CommanderReport {
-        val successCount = results.count { it is ProcessResult.Success || it is ProcessResult.PartialSuccess }
-        // v0.11.2: 收集所有子进程的职业标签
-        val occLabels = subProcesses.map { it.occupation.label }.toList().distinct()
-        val tendLabel = if (commanderType == CommanderType.LIGHTNING) "速攻" else ""
+    override fun collectAndReport(results: HList<ProcessResult>): CommanderReport {
+        val list = results.toList()
+        val successCount = list.count { it is ProcessResult.Success || it is ProcessResult.PartialSuccess }
+        val occLabels = mutableListOf<String>()
+        for (sp in subProcesses.toList()) { val l = sp.occupation.label; if (l !in occLabels) occLabels.add(l) }
         return CommanderReport(
-            commanderId = id,
-            tag = tag,
+            commanderId = id, tag = tag,
             summary = buildSummary(results),
             results = results,
-            completedCount = successCount,
-            totalCount = results.size,
-            // v0.8.5: 树状展示
+            completedCount = successCount, totalCount = results.size,
             commanderTypeLabel = commanderType.label,
             modeLabel = commanderType.defaultCollaborationMode().name.toLowerCase(),
             watchReports = collectWatchReports(),
             subProcessCount = subProcesses.size,
-            // v0.11.2
-            occupationLabels = occLabels,
-            tendencyLabel = tendLabel
+            occupationLabels = HList.from(occLabels),
+            tendencyLabel = if (commanderType == CommanderType.LIGHTNING) "速攻" else ""
         )
     }
 
-    private fun buildSummary(results: List<ProcessResult>): String {
-        val success = results.count { it is ProcessResult.Success }
-        val partial = results.count { it is ProcessResult.PartialSuccess }
-        val fail = results.count { it is ProcessResult.Failure && it.recoverable }
-        val arch = results.count { it is ProcessResult.Failure && !it.recoverable }
+    private fun buildSummary(results: HList<ProcessResult>): String {
+        val list = results.toList()
+        val success = list.count { it is ProcessResult.Success }
+        val partial = list.count { it is ProcessResult.PartialSuccess }
+        val fail = list.count { it is ProcessResult.Failure && it.recoverable }
+        val arch = list.count { it is ProcessResult.Failure && !it.recoverable }
         
         return buildString {
             if (success > 0) append("✓$success ")
@@ -697,10 +679,10 @@ class CommanderImpl(
         // v0.9.1: 通知检测进程开始
         notifyWatches(ProcessStep(bodyId = "commander", action = "dispatch_start", durationNs = 0))
 
-        val mode = selectMode(mapOf(
-            "taskCount" to tasks.size,
-            "stages" to (if (tasks.any { it.stages > 1 }) 2 else 1)
-        ))
+        val modePayload = HMap<String, Any>()
+        modePayload.put("taskCount", tasks.size)
+        modePayload.put("stages", if (tasks.any { it.stages > 1 }) 2 else 1)
+        val mode = selectMode(modePayload)
 
         val results = when (mode) {
             CollaborationMode.SHARD -> dispatchShard(tasks)
@@ -851,14 +833,14 @@ class SubProcessImpl(
 
     private val bodies = HList<ProcessBodyImpl>()
 
-    override fun delegate(tasks: List<Any>): List<ProcessResult> {
-        // 子进程不写代码——只拆解+分派+合并
+    override fun delegate(tasks: HList<Any>): HList<ProcessResult> {
+        val list = tasks.toList()
         val results = mutableListOf<ProcessResult>()
-        for (task in tasks) {
+        for (task in list) {
             val body = spawnBody("body-${bodies.size}")
             results.add(body.execute(task))
         }
-        return merge(results)
+        return merge(HList.from(results))
     }
 
     override fun spawnBody(bodyId: String): ProcessBody {
@@ -870,15 +852,15 @@ class SubProcessImpl(
         return body
     }
 
-    override fun merge(results: List<ProcessResult>): List<ProcessResult> {
-        // 合并结果：保持成功在前、部分成功在中、失败在后
-        return results.sortedBy {
+    override fun merge(results: HList<ProcessResult>): HList<ProcessResult> {
+        val sorted = results.toList().sortedBy {
             when (it) {
                 is ProcessResult.Success -> 0
                 is ProcessResult.PartialSuccess -> 1
                 is ProcessResult.Failure -> if (it.recoverable) 2 else 3
             }
         }
+        return HList.from(sorted)
     }
 
     fun onBroadcast(message: String) {
@@ -902,9 +884,10 @@ class ProcessBodyImpl(
             // 实际执行：调用对应注解处理器
             // TODO: 通过反射调用 @ProcessorTag 标注的类的处理方法
             val content = "processed: $task by body:${id.bodyId} (cmd:${id.commanderId})"
+            val m = HMap<String, Any>(); m.put("elapsed_ms", 0); m.put("tag", tag)
             ProcessResult.Success(
                 data = ProcessData(content = content, sourceBodyId = id.bodyId),
-                metrics = mapOf("elapsed_ms" to 0, "tag" to tag)
+                metrics = m
             )
         } catch (e: Exception) {
             ProcessResult.Failure(

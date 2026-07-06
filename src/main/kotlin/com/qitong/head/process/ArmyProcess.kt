@@ -15,14 +15,16 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class ArmyProcess(
     val id: String,
-    val capacity: Int,  // 最大并行任务数
-    val permanent: Boolean = false  // v0.11.3: 常备（主动）还是临时（被动）
+    val capacity: Int,
+    val permanent: Boolean = false,
+    val occupations: List<SubProcessOccupation> = listOf(SubProcessOccupation.SOLDIER)
 ) {
     private val squad = HList<SubProcessImpl>()
     private var active = true
     private val subCounter = AtomicInteger(0)
+    private var occIdx = 0  // 轮流取职业
 
-    /** 向军队分派任务——创建子进程并行执行 */
+    /** 向军队分派任务——创建子进程并行执行，用军队的职业组合 */
     fun deploy(
         tasks: List<AnnotationTask>,
         commander: CommanderImpl
@@ -30,22 +32,27 @@ class ArmyProcess(
         if (tasks.isEmpty()) return emptyList()
         if (!active) return tasks.map { it to ProcessResult.Failure("army退役", true) }
         
-        // 按容量拆分，每 chunk 一个子进程
         val chunkSize = (tasks.size / capacity.coerceAtMost(tasks.size)).coerceAtLeast(1)
         val chunks = tasks.chunked(chunkSize)
         
-        return chunks.flatMapIndexed { idx, chunk ->
+        val results = mutableListOf<Pair<AnnotationTask, ProcessResult>>()
+        for ((idx, chunk) in chunks.withIndex()) {
+            val occ = occupations[occIdx % occupations.size]
+            occIdx++
             val sp = SubProcessImpl(
                 id = ProcessId(commander.id, "army-$id-sub-${subCounter.incrementAndGet()}", ""),
                 tag = commander.tag,
                 mode = CollaborationMode.SHARD,
                 parentCommander = commander,
-                occupation = SubProcessOccupation.SOLDIER,
+                occupation = occ,
                 tendency = ProcessTendency.NONE
             )
             squad.add(sp)
-            chunk.map { task -> task to sp.delegate(listOf(task.payload)).first() }
+            for (task in chunk) {
+                results.add(task to sp.delegate(HList.from(listOf(task.payload))).toList().first())
+            }
         }
+        return results
     }
 
     fun currentLoad(): Int = squad.size
@@ -57,5 +64,5 @@ class ArmyProcess(
     
     fun isPermanent(): Boolean = permanent
 
-    override fun toString(): String = "⚔️ ArmyProcess($id, cap=$capacity, squad=${squad.size}, ${if (permanent) "常备" else "临时"})"
+    override fun toString(): String = "⚔️ ArmyProcess($id, cap=$capacity, [${occupations.joinToString("/") { it.label }}], squad=${squad.size}, ${if (permanent) "常备" else "临时"})"
 }

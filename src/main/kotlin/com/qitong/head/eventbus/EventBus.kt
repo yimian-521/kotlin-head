@@ -1,6 +1,7 @@
 package com.qitong.head.eventbus
 
 import java.util.concurrent.ConcurrentHashMap
+import com.qitong.head.runtime.HMap
 import java.util.concurrent.Executors
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -90,7 +91,8 @@ class WorkerChannel<R>(val name: String, workers: Int = 4) {
                 pair.second(result)
             } catch (e: Exception) {
                 // 工作异常广播到 error 频道供接替
-                EventBus.emitTo("error", "worker_crashed", mapOf("channel" to name, "error" to e.message))
+                val m = HMap<String, Any>(); m.put("channel", name); m.put("error", e.message ?: "unknown")
+                EventBus.emitTo("error", "worker_crashed", m)
             }
         }
     }
