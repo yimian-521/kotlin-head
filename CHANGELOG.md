@@ -1,5 +1,50 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.12.0+生态重构 (2026-07-06) — v0.8~v0.12 全区间 HList/HMap 替换 + ProHList 进化 🧬
+
+> 不是打补丁。是从进程树出生的那一刻起，全部重构成原生生态。
+
+### ProHList — 进化版头标库
+
+| 操作 | HList | ProHList |
+|------|-------|----------|
+| add | 直接追加 | 直接追加（E后门，零开销） |
+| remove | 不支持 | O(1)标记脏位 |
+| apply | — | 脏了才filter重建（B路径） |
+| 纯add场景 | 正常 | apply()零开销（+62-90%） |
+
+**混合Pro（免免设计）**：add直通+remove标记+apply惰性清理。与CPU大小核调度完全同构。
+
+### 全区间替换清单（11文件 +518/-256行）
+
+| 模块 | 替换内容 |
+|------|----------|
+| `runtime/ProHList.kt` | 新建252行，进化版有序列表 |
+| `headstd/HeadStd.kt` | 新建73行，诊断存储（DiagStore） |
+| `process/ProcessTree.kt` | 全部接口契约 List→HList, Map→HMap |
+| `process/ProcessCoordinator.kt` | CommanderImpl+SubProcessImpl签名桥接 |
+| `process/JavaChannel.kt` | 诊断通道全换HList |
+| `process/JavaHeadAdapter.kt` | 适配器全换HList |
+| `process/ArmyProcess.kt` | delegate调用桥接 |
+| `eventbus/DependencyGraph.kt` | StagingData+deps全换HList/HMap |
+| `eventbus/EventBus.kt` | 消息体→HMap |
+| `eventbus/AsyncIO.kt` | 消息体→HMap |
+| `pass/Pass.kt` | DCE换remove+apply, CFold加HMap新量折叠缓存, Inline换直接赋值 |
+| `ir/IR.kt` | instructions/function→ProHList, metadata→HMap, args→HList |
+
+### 设计原则
+
+> 「去冗杂，留原生。不是兼容，是降维。」
+> 「老模块不动（Lexer/Parser/AST），v0.8以后的每个版本都走原生HList/HMap。」
+> 「EventBus消息走HMap、IR指令走ProHList、进程树全HList/HMap——同一套底层，全管线打通。」
+
+### Python原型验证
+
+- 常量折叠新量缓存：省56-58%，命中率96-100%
+- ProHList add-only：省62-90%
+- 超预索引V5：中/重任务延迟省96-97%，热槽命中加速75.6%
+- 9份验证脚本：`/sdcard/Download/Operit/`
+
 ## v0.12.0 (2026-07-06) — 内存树 + HED按钮V5超预索引 🌲⚡
 
 > 进程树有了眼睛，按钮有了翅膀。
