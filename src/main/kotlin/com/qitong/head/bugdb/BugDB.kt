@@ -53,6 +53,10 @@ enum class BugSeverity(val label: String, val weight: Int) {
 object BugDB {
     private val rules = mutableListOf<BugRule>()
     private var triggerIndex: MutableMap<String, MutableList<BugRule>>? = null
+    /** 超预索引缓存：代码指纹 → 命中规则ID列表。不算第二遍。 */
+    private val scanCache = object : LinkedHashMap<String, List<BugRule>>(64, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, List<BugRule>>?): Boolean = size > 64
+    }
     val all: List<BugRule> get() = rules
 
     fun load(r: BugRule) {
@@ -101,6 +105,8 @@ object BugDB {
      * 5000条规则去重后仅几十个关键词，与100条延迟同量级。
      */
     fun scan(code: String): List<BugRule> {
+        val fp = code.hashCode().toString()
+        scanCache[fp]?.let { return it }
         val idx = ensureIndex()
         val seen = mutableSetOf<String>()
         val hits = mutableListOf<BugRule>()
@@ -119,6 +125,6 @@ object BugDB {
                 }
             }
         }
-        return hits
+        return hits.apply { scanCache[fp] = this }
     }
 }
