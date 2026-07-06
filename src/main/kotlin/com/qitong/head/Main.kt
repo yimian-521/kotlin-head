@@ -2,6 +2,9 @@ package com.qitong.head
 
 import com.qitong.head.ast.*
 import com.qitong.head.bugscan.BugScanner
+import com.qitong.head.bugdb.BugDB
+import com.qitong.head.bugdb.BugRules
+import com.qitong.head.bugdb.BugSeverity
 import com.qitong.head.lexer.Lexer
 import com.qitong.head.parser.Parser
 import com.qitong.head.parser.PrecProfile
@@ -73,6 +76,9 @@ object Main {
         // v0.8.2: EventBus 初始化 + 注册编译管线 + Pass 链
         initEventBus()
         
+        // v0.12.1: BugDB 5000条规则库注册
+        BugRules.register()
+        
         // v0.8.3: ProcessCoordinator 接管文件读取（角色不塌缩）
         ProcessCoordinator.initialize()
         
@@ -123,6 +129,10 @@ object Main {
     // ─── 编译流水线 ───
     private var lastParser: Parser? = null
     private var lastFindings: List<BugScanner.Finding> = emptyList()
+    private var lastBugdbHits = 0
+    private var lastBugdbMild = 0
+    private var lastBugdbModerate = 0
+    private var lastBugdbSevere = 0
 
     /** v0.9.0: 检测变更声明——对比新 AST 和活图中的声明 */
     private fun detectChangedDecls(file: KtFile): Set<String> {
@@ -232,6 +242,18 @@ object Main {
         lastFindings = if (lastFile != null) {
             BugScanner.from(lastFile!!)
         } else emptyList()
+        
+        // BugDB 5000条规则扫描
+        lastBugdbHits = 0; lastBugdbMild = 0; lastBugdbModerate = 0; lastBugdbSevere = 0
+        val hits = BugDB.scan(lastSrc)
+        lastBugdbHits = hits.size
+        for (r in hits) {
+            when (r.severity) {
+                BugSeverity.MILD -> lastBugdbMild++
+                BugSeverity.MODERATE -> lastBugdbModerate++
+                BugSeverity.SEVERE -> lastBugdbSevere++
+            }
+        }
         
         // v0.8.2: IR 生成 + Pass 优化管线
         lastIR = if (lastFile != null) {
@@ -587,7 +609,7 @@ object Main {
             compile(lastSrc)
         }
         val totalDiags = lastDiags.size + lastFindings.size
-        hPrintln("  完成 ✓  诊断: $totalDiags 条 (Parser+TypeChecker: ${lastDiags.size}, BugScanner: ${lastFindings.size})")
+        hPrintln("  完成 ✓  诊断: $totalDiags 条 (Parser+TypeChecker: ${lastDiags.size}, BugScanner: ${lastFindings.size}, BugDB: $lastBugdbHits)")
         if (profile.expectedMinDiags > 0) {
             if (totalDiags >= profile.expectedMinDiags) hPrintln("  ✅ 诊断数达标 (≥${profile.expectedMinDiags})")
             else hPrintln("  ⚠️ 诊断数未达标 (${totalDiags}/${profile.expectedMinDiags})")
@@ -608,7 +630,7 @@ object Main {
         hPrintln("  [3] 重新编译")
         hPrintln("  [4] 模拟运行")
         hPrintln("  [5] 管理员")
-        hPrintln("  [6] Bug 扫描 (${lastFindings.size})")
+        hPrintln("  [6] Bug 扫描 (BugDB:$lastBugdbHits, Scanner:${lastFindings.size})")
         hPrintln("  [7] 能力路线图")
         hPrintln("  [8] 反编译管线")
         hPrintln("  [9] 进程树 (${lastProcessReports.size}个领域)")
@@ -650,16 +672,23 @@ object Main {
     private fun renderBugs() {
         hPrintln("═══ Bug 扫描 ═══")
         hPrintln()
-        if (lastFindings.isEmpty()) {
+        hPrintln("  ── BugDB 5000条规则库 ──")
+        hPrintln("  命中: $lastBugdbHits 条 (🔴严重:$lastBugdbSevere 🟡中度:$lastBugdbModerate ⚪轻度:$lastBugdbMild)")
+        hPrintln()
+        if (lastFindings.isEmpty() && lastBugdbHits == 0) {
             hPrintln("  ✓ 未发现已知 Bug 模式")
         } else {
-            for (f in lastFindings) {
-                val icon = when (f.severity) {
-                    BugScanner.Severity.HIGH -> "🔴"
-                    BugScanner.Severity.MEDIUM -> "🟡"
-                    BugScanner.Severity.LOW -> "⚪"
+            if (lastFindings.isNotEmpty()) {
+                hPrintln("  ── BugScanner AST分析 ──")
+                for (f in lastFindings.take(5)) {
+                    val icon = when (f.severity) {
+                        BugScanner.Severity.HIGH -> "🔴"
+                        BugScanner.Severity.MEDIUM -> "🟡"
+                        BugScanner.Severity.LOW -> "⚪"
+                    }
+                    hPrintln("  $icon ${f.message} | ${f.span}")
                 }
-                hPrintln("  $icon ${f.message} | ${f.span}")
+                if (lastFindings.size > 5) hPrintln("  ... 还有 ${lastFindings.size - 5} 条")
             }
         }
         hPrintln()
