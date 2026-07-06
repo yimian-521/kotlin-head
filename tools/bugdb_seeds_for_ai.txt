@@ -1,0 +1,48 @@
+=== BugDB 种子规则清单 — 请为每条生成对应的 Kotlin 验证代码片段 ===
+
+规则格式: ID | 分类 | 严重度 | 标题 | 触发条件 | 检测方法 | 修复建议
+
+请为下面每条规则生成一段可运行的 Kotlin 代码，要求：
+1. 代码能触发该规则（包含trigger中的模式）
+2. 是一个独立的函数或代码块
+3. 代码后面标注：// 命中规则: [标题] → [修复建议]
+4. 输出格式: 每条规则一段代码，用 --- 分隔
+
+=== 种子规则列表 ===
+
+KT-0001 | NULL_SAFETY | SEVERE | 平台类型!!导致NPE | val x:String!=java();x!!.length | !!无保护 | 用?.let
+KT-0002 | NULL_SAFETY | MODERATE | ?.链混用!! | a?.b?.c!!.d | 混合?.和!! | 统一用?.
+KT-0003 | GENERICS | SEVERE | 泛型异常捕获 | catch(e:T){} | JVM擦除不可捕获 | 捕获具体类型
+KT-0004 | GENERICS | MODERATE | 星投影误用 | val x:List<*>;x.add(1) | 只读 | 声明类型
+KT-0005 | COROUTINES | SEVERE | GlobalScope泄漏 | GlobalScope.launch{} | 不受控 | lifecycleScope
+KT-0006 | COROUTINES | MODERATE | launch异常不传播 | launch{riskyOp()} | 吞异常 | async+await
+KT-0007 | COLLECTIONS | SEVERE | 遍历修改集合 | for(x in l){l.remove(x)} | ConcurrentMod | 收集后删
+KT-0008 | COLLECTIONS | MODERATE | 可变集合暴露 | fun get()=internalList | 外部可改 | 返回不可变
+KT-0009 | SMART_CAST | MODERATE | var智能转换失效 | var x:Any;if(x is S){x.len} | var可被改 | val y=x
+KT-0010 | SMART_CAST | SEVERE | when穷举缺失 | when(s){is A->..} | 加子类不报错 | 加else
+KT-0011 | JAVA_INTEROP | SEVERE | Java null未标注 | val s=javaObj.name | T!可null | ?.
+KT-0012 | JAVA_INTEROP | MODERATE | @JvmStatic缺失 | object U{fun f(){}} | 需INSTANCE | 加注解
+KT-0013 | DSL_LAMBDA | SEVERE | 非局部return | fun f(){l.forEach{if(it)return}} | 非局部 | return@forEach
+KT-0014 | DSL_LAMBDA | MODERATE | 隐式this歧义 | apply{name=name} | 内外混淆 | this@outer
+KT-0015 | DATA_SERIAL | SEVERE | 循环引用序列化 | A(val b:B);B(val a:A) | 栈溢出 | @Transient
+KT-0016 | DATA_SERIAL | MODERATE | copy浅复制 | data U(val l:MutableList) | 共享集合 | 深复制
+KT-0017 | INLINE_TAILREC | SEVERE | tailrec非尾递归 | tailrec f(n)=n*f(n-1) | 最后非自身 | 改写
+KT-0018 | INLINE_TAILREC | MODERATE | inline过大 | inline big(){..200行} | 膨胀 | 去inline
+KT-0019 | CONCURRENCY | SEVERE | 共享可变无同步 | var c=0;threads{c++} | 竞态 | AtomicInt
+KT-0020 | CONCURRENCY | MODERATE | 死锁风险 | a(){l1;l2} b(){l2;l1} | 反向 | 统一顺序
+KT-0021 | PERFORMANCE | MILD | +拼接字符串 | for(i in 1..100){s+="$i"} | 反复分配 | buildString
+KT-0022 | PERFORMANCE | MODERATE | 不必要装箱 | val x:Int?=42 | Int?装箱 | 避免可空
+KT-0023 | COMPILER_TRAP | SEVERE | 类型推断选错重载 | f(Int);f(Any);f(42) | 选Int | 显式标注
+KT-0024 | COMPILER_TRAP | MODERATE | 重载解析歧义 | f(Int);f(Long);f(1) | 1可双匹配 | 1L
+KT-0025 | SECURITY | SEVERE | 硬编码密钥 | val key="sk-xxx" | 源码明文 | 环境变量
+KT-0026 | SECURITY | MODERATE | 日志泄露 | Log.d("tok",tok) | 敏感入日志 | 脱敏
+KT-0027 | COMPOSE | SEVERE | 主线程IO | Text(readFile()) | 卡UI | LaunchedEffect+IO
+KT-0028 | COMPOSE | MODERATE | 重组副作用 | LaunchedEffect(Unit){load()} | key=Unit一次 | 正确key
+KT-0029 | SEALED_ENUM | SEVERE | values()性能 | enum.values().find{} | 每次新建 | enumEntries
+KT-0030 | SEALED_ENUM | MODERATE | sealed跨文件 | sealed A File1,B File2 | 需同文件 | 移到同文件
+KT-0031 | VALUE_CLASS | MODERATE | @JvmInline缺失 | inline class N(val s) | 需注解 | 加注解
+KT-0032 | DELEGATE | MODERATE | by lazy线程安全 | val x by lazy{init()} | 默认SYNC | 指定模式
+KT-0033 | KMP | SEVERE | expect/actual不匹配 | expect f():S;actual f():I | 返回类型不同 | 对齐
+KT-0034 | KMP | MODERATE | 平台API未抽象 | fun a(){System.load()} | 仅JVM | expect/actual
+KT-0035 | REFLECTION | SEVERE | 反射访问私有成员 | cls.getDeclaredField("secret"); f.isAccessible=true | 破坏封装 | 提供公开接口
+KT-0036 | MULTIPLATFORM | MODERATE | 平台特定导入 | import java.io.File | 不可移植 | expect/actual封装
