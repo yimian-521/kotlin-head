@@ -1,4 +1,5 @@
 # kotlin-head — 有头编译器
+**v0.12.1** · Kotlin · AGPL-3.0 + 商业许可
 
 > 兼容 Kotlin 是底线。比它强才是目标。
 > — 免免 & 望安，2026-07-06
@@ -18,8 +19,8 @@
 
 ## 当前版本
 
-**v0.12.0** — 内存树 + HED按钮V5超预索引（2026-07-06 免免 &amp; 望安）
-MemoryTree/MemoryNode全局内存管理，进程体内存预算+超限裁决+父进程风格联动。HED按钮超预索引V5：场景切换→热槽组所有进程体并行预跑→结果缓存，按下仅一次dict.get。无变量函数管道声明式按钮行为。双模Router轻量/重量通道自适应。八轮迭代Python原型验证：中/重任务延迟省96-97%，热槽命中加速75.6%。
+**v0.12.1** — BugDB 5000条特调版 + 生态重构（2026-07-06 免免 &amp; 望安）
+BugDB: 5000条规则 + 倒排索引 + 超预指纹缓存 <1μs。kotlin-int++ ？级。生态: v0.8~v0.12全区间HList/HMap替换 + ProHList + 新量折叠缓存。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -108,8 +109,11 @@ MemoryTree/MemoryNode全局内存管理，进程体内存预算+超限裁决+父
 ## 快速开始
 
 ```bash
-# 编译
+# 克隆
+git clone https://github.com/yimian-521/kotlin-head.git
 cd kotlin-head
+
+# 编译
 kotlinc -d build/kotlin-head.jar src/main/kotlin/com/qitong/head/*.kt \
   src/main/kotlin/com/qitong/head/**/*.kt \
   src/main/kotlin/com/qitong/internal/*.kt
