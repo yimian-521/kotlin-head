@@ -82,8 +82,8 @@ object Main {
         // v0.8.3: ProcessCoordinator 接管文件读取（角色不塌缩）
         ProcessCoordinator.initialize()
         
-        // v0.11.1: 军师进程——编译前决策优先级策略
-        strategistDecide(path)
+        // v0.11.1: 军师进程——编译前决策优先级策略（默认关，开发者菜单开启）
+        if (strategistEnabled) strategistDecide(path)
 
         // v0.11.3: 父进程治理风格——命令行或自动判断
         val styleFlag = args.find { it.startsWith("--style=") }?.removePrefix("--style=")
@@ -548,6 +548,10 @@ object Main {
     private var multiProjectEnabled = false
     private var lastMultiReports: List<MultiProjectCoordinator.ProjectReport> = emptyList()
     private var lastPackReport: ApkPackCoordinator.PackReport? = null
+
+    // v0.12.1: 军师建议 + APK只编译（编译是底线，操作是可选层）
+    private var strategistEnabled = false
+    private var packCompileOnly = false
 
     // ─── 按钮渲染 ───
     private fun renderPage() {
@@ -1032,6 +1036,8 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         hPrintln("  [1] 返回管理员")
         hPrintln("  [2] ${if (multiProjectEnabled) "关闭" else "开启"}多项目测试模式")
         hPrintln("  [7] ${if (ProcessCoordinator.javaDetectionEnabled) "关闭" else "启用"} Java 检测")
+        hPrintln("  [8] 军师建议：${if (strategistEnabled) "✓ 开启" else "○ 关闭"}")
+        hPrintln("  [9] APK只编译：${if (packCompileOnly) "✓ 只编译不打包" else "○ 正常打包"}")
         if (multiProjectEnabled) {
             hPrintln()
             hPrintln("  ── 军队规模 ──")
@@ -1123,6 +1129,14 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                     }
                 }
             }
+            "8" -> {
+                strategistEnabled = !strategistEnabled
+                hPrintln("  军师建议：${if (strategistEnabled) "✓ 已开启（编译时输出分析面板）" else "○ 已关闭"}")
+            }
+            "9" -> {
+                packCompileOnly = !packCompileOnly
+                hPrintln("  APK模式：${if (packCompileOnly) "✓ 只编译不打包" else "○ 正常编译+打包"}")
+            }
             else -> page = "admin"
         }
     }
@@ -1187,6 +1201,7 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         hPrintln("  [2] 输入项目路径并打包")
         hPrintln("  [3] 检查工具链")
         hPrintln("  [4] 仅分析（不打）")
+        if (packCompileOnly) hPrintln("  ⚡ APK只编译模式：打包步骤已跳过")
     }
 
     private fun handlePack(key: String) {
@@ -1207,11 +1222,19 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                     return
                 }
                 hPrintln("  打包中...")
-                val previous = lastPackReport?.passed ?: false
-                val report = ApkPackCoordinator.pack(dir, previousArtifacts = previous)
-                lastPackReport = report
-                hPrintln()
-                hPrint(ApkPackCoordinator.formatReport(report))
+                if (packCompileOnly) {
+                    // 只编译不打包：compile() 走完整流水线，跳过 ApkPackCoordinator
+                    hPrintln("  ⚡ 只编译模式——编译中...")
+                    compile(lastSrc)
+                    hPrintln("  ✓ 编译完成（打包已跳过）")
+                    hPrintln("  BugDB命中: $lastBugdbHits 条  诊断: ${lastDiags.size} 条")
+                } else {
+                    val previous = lastPackReport?.passed ?: false
+                    val report = ApkPackCoordinator.pack(dir, previousArtifacts = previous)
+                    lastPackReport = report
+                    hPrintln()
+                    hPrint(ApkPackCoordinator.formatReport(report))
+                }
             }
             "3" -> {
                 val tools = ApkPackCoordinator.checkTools()
