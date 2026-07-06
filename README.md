@@ -28,7 +28,7 @@
 ## 当前版本
 
 **v0.12.3** — 八军生态+专武绑定+军师闪电双体系 + 生态重构（2026-07-06 免免 &amp; 望安）
-BugDB: 5000条规则 + 倒排索引 + 超预指纹缓存 <1μs。kotlin-int++ ？级。生态: v0.8~v0.12全区间HList/HMap替换 + ProHList + 新量折叠缓存。
+八军生态：💥爆裂(BURST) 🛡哨卫(GUARD) 🔍侦察(SCOUT) 📦收集(COLLECT) ⚔攻坚(ASSAULT) 👑精英(ELITE) 🧠军师(STRATEGY) ⚡闪电(LIGHTNING)。指挥官专武独占绑定。headstd统一标准库(HList+HMap+SceneTypes+HeadStd)。
 
 ## ✨ 核心功能
 
