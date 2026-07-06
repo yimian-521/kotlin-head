@@ -4,11 +4,11 @@ BugDB 规则生成器 — 导入模板
 ================================
 别人复刻只需改下面三个参数：
 
-  LEVEL = "int"   → 地狱级  (~1000条，中度+严重为主)
-  LEVEL = "int+"  → 不可能级 (5000条+，严重占60%+)
-  LEVEL = "int++" → ？级    (待扩展：全维度联动)
+  LEVEL = "int"   → 地狱级  (100条，严重40%)
+  LEVEL = "int+"  → 不可能级 (1000条，严重60%)
+  LEVEL = "int++" → ？级    (5000条，全维度)
 
-  COUNT     = 规则总数
+  COUNT     = 根据LEVEL自动选（100/1000/5000）
   SEVS      = 严重度分布（改权重数字即可）
   CATS      = 分类（增删改都在这里）
   TYPES     = 类型变体池
@@ -22,7 +22,10 @@ random.seed(42)
 
 # ============ 配置区 ============
 LEVEL = "int+"
-COUNT = 5000
+# COUNT 自动根据 LEVEL 选择：int→100, int+→1000, int++→5000
+if LEVEL == "int":     COUNT = 100
+elif LEVEL == "int+":   COUNT = 1000
+else:                   COUNT = 5000
 
 if LEVEL == "int":
     SEVS = ["SEVERE","SEVERE","SEVERE","SEVERE","MODERATE","MODERATE","MODERATE","MODERATE","MILD","MILD"]
