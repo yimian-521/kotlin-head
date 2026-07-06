@@ -68,6 +68,9 @@ open class LinkedDiagStore(
 }
 
 object HeadStd {
+    /** 新量折叠缓存——独立频道，下版接内存树联动 */
+    val foldCache = HMap<String, String>()
+
     fun diagStore(): DiagStore = DiagStore()
     fun linkedStore(
         onChanged: (String) -> Unit,

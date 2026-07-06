@@ -3,6 +3,7 @@ package com.qitong.head.pass
 import com.qitong.head.runtime.HList
 import com.qitong.head.runtime.HMap
 import com.qitong.head.runtime.ProHList
+import com.qitong.head.headstd.HeadStd
 import com.qitong.head.eventbus.StreamTransform
 import com.qitong.head.ir.*
 
@@ -73,7 +74,7 @@ class DeadCodeElimination : Pass("dead-code-elim") {
 
 // ─── 常量折叠：HMap新量折叠缓存 ───
 class ConstantFolding : Pass("const-fold") {
-    private val foldCache = HMap<String, String>()  // 新量折叠缓存
+    // foldCache 已迁移到 HeadStd.foldCache——独立频道，下版接内存树
     private fun isIntLit(s: String) = s.toIntOrNull()
     private fun isStrLit(s: String) = s.startsWith("\"") && s.endsWith("\"")
 
@@ -90,7 +91,7 @@ class ConstantFolding : Pass("const-fold") {
                 if (inst is IRBinary) {
                     val exprKey = "${inst.left}${inst.op}${inst.right}"
                     // 新量折叠：先查缓存
-                    val cached = foldCache.get(exprKey)
+                    val cached = HeadStd.foldCache.get(exprKey)
                     if (cached != null) {
                         newInsts.add(IRLit(inst.dest, cached, "Int"))
                         newInsts.add(IRComment("cache-hit: $exprKey = $cached"))
@@ -116,7 +117,7 @@ class ConstantFolding : Pass("const-fold") {
                                 newInsts.add(IRLit(inst.dest, s, "Int"))
                                 newInsts.add(IRComment("folded: $exprKey = $s"))
                                 litValues.put(inst.dest, s)
-                                foldCache.put(exprKey, s)  // 存缓存
+                                HeadStd.foldCache.put(exprKey, s)  // 存缓存
                                 folded++
                                 handled = true
                             }
@@ -125,7 +126,7 @@ class ConstantFolding : Pass("const-fold") {
                             val result = "\"${l.trim('"')}${r.trim('"')}\""
                             newInsts.add(IRLit(inst.dest, result, "String"))
                             litValues.put(inst.dest, result)
-                            foldCache.put(exprKey, result)
+                            HeadStd.foldCache.put(exprKey, result)
                             folded++
                             handled = true
                         }
