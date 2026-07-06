@@ -1,6 +1,6 @@
 package com.qitong.head.process
 
-import com.qitong.head.runtime.HList
+import com.qitong.head.headstd.HList
 
 /**
  * v0.12.0 — java-head 适配器（底层换 HList）

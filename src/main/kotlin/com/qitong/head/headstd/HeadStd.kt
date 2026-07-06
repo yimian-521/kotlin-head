@@ -3,8 +3,8 @@
 // java-head 适配器一行 import 接入
 package com.qitong.head.headstd
 
-import com.qitong.head.runtime.HList
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HList
+import com.qitong.head.headstd.HMap
 
 data class Diag(
     val group: String,

@@ -1,7 +1,7 @@
 package com.qitong.head.process
 
-import com.qitong.head.runtime.HList
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HList
+import com.qitong.head.headstd.HMap
 
 /**
  * 进程树四层类型契约 —— v0.12.0（底层换 HList/HMap）

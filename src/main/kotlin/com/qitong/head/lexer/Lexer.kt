@@ -1,8 +1,8 @@
 package com.qitong.head.lexer
 
 import com.qitong.head.ast.Pos
-import com.qitong.head.runtime.HList
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HList
+import com.qitong.head.headstd.HMap
 
 enum class TokType {
     FUN, VAL, VAR, CLASS, DATA, IF, ELSE, RETURN,

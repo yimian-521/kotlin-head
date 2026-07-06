@@ -1,6 +1,6 @@
 package com.qitong.head.process
 
-import com.qitong.head.runtime.HList
+import com.qitong.head.headstd.HList
 
 /**
  * v0.12.0 — Java 检测通道接口（底层换 HList）

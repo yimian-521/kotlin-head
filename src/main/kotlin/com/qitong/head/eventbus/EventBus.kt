@@ -1,7 +1,7 @@
 package com.qitong.head.eventbus
 
 import java.util.concurrent.ConcurrentHashMap
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HMap
 import java.util.concurrent.Executors
 import java.util.concurrent.ConcurrentLinkedQueue
 

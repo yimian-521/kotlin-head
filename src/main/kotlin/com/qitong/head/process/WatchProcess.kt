@@ -1,6 +1,6 @@
 package com.qitong.head.process
 
-import com.qitong.head.runtime.HList
+import com.qitong.head.headstd.HList
 /**
  * 检测进程 —— v0.8.5
  *

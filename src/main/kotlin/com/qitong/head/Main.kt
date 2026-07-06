@@ -35,7 +35,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.12.2"
+    const val VERSION = "0.12.3"
 
     private val dev = DevMode.boot()
 
@@ -89,7 +89,7 @@ object Main {
         val styleFlag = args.find { it.startsWith("--style=") }?.removePrefix("--style=")
         if (styleFlag != null) {
             ProcessCoordinator.setStyle(try {
-                MainProcessStyle.valueOf(styleFlag.uppercase())
+                MainProcessStyle.valueOf(styleFlag.toUpperCase())
             } catch (_: Exception) { MainProcessStyle.FEDERAL })
         }
 
@@ -758,7 +758,7 @@ object Main {
             hPrintln("  kotlin-head v$VERSION  (主进程)")
             val cmds = lastProcessReports.entries.toList()
             cmds.forEachIndexed { ci, (tag, report) ->
-                val isLast = ci == cmds.lastIndex
+                val isLast = ci == cmds.size - 1
                 val branch = if (isLast) "└──" else "├──"
                 val indent = if (isLast) "    " else "│   "
                 
@@ -779,7 +779,7 @@ object Main {
                 // 检测进程层（旁路）
                 if (report.watchReports.isNotEmpty()) {
                     report.watchReports.forEachIndexed { wi, wr ->
-                        val wBranch = if (wi == report.watchReports.lastIndex) "└──" else "├──"
+                        val wBranch = if (wi == report.watchReports.size - 1) "└──" else "├──"
                         val wIndent = "$indent$wBranch"
                         val susIcon = when {
                             wr.suspicionLevel > 0.7f -> "🔴"

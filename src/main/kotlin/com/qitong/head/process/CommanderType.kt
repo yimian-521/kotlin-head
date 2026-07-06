@@ -1,6 +1,6 @@
 package com.qitong.head.process
 
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HMap
 /**
  * 指挥官类型 —— v0.8.5
  *

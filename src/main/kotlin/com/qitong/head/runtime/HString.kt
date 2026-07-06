@@ -1,4 +1,5 @@
 package com.qitong.head.runtime
+import com.qitong.head.headstd.*
 
 /**
  * HString — 头标库字符串（v0.10.0）

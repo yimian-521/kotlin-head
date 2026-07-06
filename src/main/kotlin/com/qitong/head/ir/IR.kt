@@ -1,7 +1,7 @@
 package com.qitong.head.ir
 
-import com.qitong.head.runtime.HList
-import com.qitong.head.runtime.HMap
+import com.qitong.head.headstd.HList
+import com.qitong.head.headstd.HMap
 import com.qitong.head.runtime.ProHList
 
 /**
