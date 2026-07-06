@@ -158,7 +158,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.8 ✅ | 定量混合打包：ApkPackCoordinator+java-head+军师三层诊断+修复七档+两步预览 |
 | v0.12.1 ✅ | BugDB 特调版：5000条规则 + 倒排索引 + 超预指纹缓存。kotlin-int+ 不可能级。 | |
 | v0.12.0 ✅ | 内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router | |
-| v0.12.0+ ✅ | 生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 + foldCache→HeadStd |
+| v0.12.1+ ✅ | 生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 + foldCache→HeadStd |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
 
 ---
