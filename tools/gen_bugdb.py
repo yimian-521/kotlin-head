@@ -4,7 +4,7 @@ BugDB 规则生成器 — 导入模板
 ================================
 别人复刻只需改下面三个参数：
 
-  LEVEL = "int"   → 地狱级  (100条，严重40%)
+  LEVEL = "int++"   → 地狱级  (100条，严重40%)
   LEVEL = "int++"  → 不可能级 (1000条，严重60%)
   LEVEL = "int++" → ？级    (5000条，全维度)
 
@@ -102,7 +102,7 @@ for i in range(need):
         f"修复:{t}#{i}")
 
 out=["package com.qitong.head.bugdb","",
-    f"//  kotlin-int LEVEL={LEVEL}",
+    f"//  kotlin-int LEVEL={LEVEL} {'地狱级' if LEVEL=='int' else '不可能级' if LEVEL=='int+' else '？级'}",
     f"//  {len(rules)}条 ({len(seeds)}种子 + {len(rules)-len(seeds)}批量)",
     f"//  严重度: SEVERE={SEVS.count('SEVERE')}/10 MODERATE={SEVS.count('MODERATE')}/10 MILD={SEVS.count('MILD')}/10","",
     "object BugRules {",
