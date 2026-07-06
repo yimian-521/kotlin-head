@@ -8649,6 +8649,1689 @@ object BugRules {
         BugDB.load(BugRule(
             id = "KT-0961",
             category = BugCategory.NULL_SAFETY,
+            severity = BugSeverity.SEVERE,
+            title = "init块中调用open方法访问未初始化属性导致NPE",
+            trigger = "open class A{ init{ val s=getStr(); println(s.length)}; open fun getStr()=str; private val str=\"aaa\"}",
+            detection = "init块执行时子类属性尚未初始化，open方法返回null",
+            fix = "避免在init中调用open方法，或使用lazy初始化"
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0962",
+            category = BugCategory.NULL_SAFETY,
+            severity = BugSeverity.SEVERE,
+            title = "构造期间val属性未初始化被open函数读取",
+            trigger = "open class Base{ init{ printValue()}; open fun printValue()=println(value); val value=42}",
+            detection = "open函数在子类构造前被调用，访问未初始化val",
+            fix = "构造函数中不调用open函数，或声明为final"
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0963",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC00] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get0() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0964",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC15] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result0=42 }; println(result0)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0965",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC30] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc0() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0966",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC01] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get1() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0967",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC16] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result1=42 }; println(result1)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0968",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC31] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc1() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0969",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC02] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get2() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0970",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC17] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result2=42 }; println(result2)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0971",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC32] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc2() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0972",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC03] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get3() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0973",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC18] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result3=42 }; println(result3)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0974",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC33] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc3() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0975",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC04] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get4() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0976",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC19] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result4=42 }; println(result4)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0977",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC34] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc4() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0978",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC05] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get5() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0979",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC20] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result5=42 }; println(result5)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0980",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC35] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc5() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0981",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC06] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get6() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0982",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC21] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result6=42 }; println(result6)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0983",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC36] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc6() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0984",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC07] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get7() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0985",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC22] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result7=42 }; println(result7)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0986",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC37] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc7() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0987",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC08] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get8() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0988",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC23] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result8=42 }; println(result8)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0989",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC38] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc8() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0990",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC09] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get9() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0991",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC24] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result9=42 }; println(result9)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0992",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC39] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc9() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0993",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC10] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get10() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0994",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC25] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result10=42 }; println(result10)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0995",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC40] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc10() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0996",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC11] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get11() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0997",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC26] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result11=42 }; println(result11)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0998",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC41] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc11() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-0999",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC12] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get12() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1000",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC27] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result12=42 }; println(result12)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1001",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC42] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc12() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1002",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC13] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get13() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1003",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC28] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result13=42 }; println(result13)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1004",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC43] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc13() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1005",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC14] 协程中捕获可变状态导致竞态",
+            trigger = "var counter=0; repeat(100){ launch{ counter+=get14() } }",
+            detection = "多协程并发写可变变量",
+            fix = "用AtomicInteger或Mutex."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1006",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.SEVERE,
+            title = "[RC29] launch返回Job未join导致提前读取结果",
+            trigger = "val job=launch{ delay(100); result14=42 }; println(result14)",
+            detection = "Job未完成就读result，读到旧值",
+            fix = "val result=async{{...}}.await()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1007",
+            category = BugCategory.COROUTINES,
+            severity = BugSeverity.MODERATE,
+            title = "[RC44] coroutineScope内异常传播取消兄弟协程",
+            trigger = "coroutineScope{ launch{ throw Exc14() }; launch{ delay(9999) } }",
+            detection = "coroutineScope一个子协程失败取消所有",
+            fix = "用supervisorScope隔离."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1008",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI00] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1009",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI10] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1010",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI01] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1011",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI11] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1012",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI02] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1013",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI12] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1014",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI03] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1015",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI13] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1016",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI04] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1017",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI14] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1018",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI05] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1019",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI15] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1020",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI06] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1021",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI16] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1022",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI07] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1023",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI17] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1024",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI08] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1025",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI18] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1026",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.MODERATE,
+            title = "[RI09] inline函数中crossinline lambda非局部return",
+            trigger = "inline fun f(crossinline b:()->Unit){ b() }",
+            detection = "crossinline阻止lambda中return",
+            fix = "用noinline或明确return@标签."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1027",
+            category = BugCategory.INLINE_TAILREC,
+            severity = BugSeverity.SEVERE,
+            title = "[RI19] reified类型参数在非inline函数中失效",
+            trigger = "fun<T> Any.safeCast()=this as? T",
+            detection = "非inline时T被擦除,as? T始终成功",
+            fix = "用inline+reified."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1028",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW00] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1029",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW10] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1030",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW01] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1031",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW11] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1032",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW02] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1033",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW12] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1034",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW03] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1035",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW13] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1036",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW04] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1037",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW14] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1038",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW05] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1039",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW15] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1040",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW06] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1041",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW16] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1042",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW07] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1043",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW17] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1044",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW08] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1045",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW18] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1046",
+            category = BugCategory.SEALED_ENUM,
+            severity = BugSeverity.SEVERE,
+            title = "[RW09] when穷举密封类但不加else导致运行时异常",
+            trigger = "when(s){ is A->... is B->... }",
+            detection = "新增子类后when不报编译错但运行时抛NoWhenBranchMatchedException",
+            fix = "加else分支或确保穷举."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1047",
+            category = BugCategory.SMART_CAST,
+            severity = BugSeverity.MODERATE,
+            title = "[RW19] when中使用is检查但分支不全触发else异常",
+            trigger = "when(x){ is Int->x+1 is String->x.length }",
+            detection = "else未处理时抛异常",
+            fix = "加else -> x.toString()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1048",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC00] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1049",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC10] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1050",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC01] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1051",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC11] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1052",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC02] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1053",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC12] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1054",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC03] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1055",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC13] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1056",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC04] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1057",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC14] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1058",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC05] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1059",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC15] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1060",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC06] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1061",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC16] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1062",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC07] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1063",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC17] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1064",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC08] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1065",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC18] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1066",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.MODERATE,
+            title = "[RC09] List.isEmpty()和List.isNullOrEmpty()混淆",
+            trigger = "fun f(list:List<String>?){ if(list.isEmpty()) }",
+            detection = "nullable时isEmpty()编译错,isNullOrEmpty()才对",
+            fix = "用isNullOrEmpty()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1067",
+            category = BugCategory.COLLECTIONS,
+            severity = BugSeverity.SEVERE,
+            title = "[RC19] sequence终端操作多次遍历",
+            trigger = "val seq=generateSequence(0){{it+1}}.take(10); seq.forEach{{}}; seq.count()",
+            detection = "sequence只能遍历一次,第二次空",
+            fix = "先toList()转集合."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1068",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.SEVERE,
+            title = "[RD00] by lazy递归初始化导致StackOverflow",
+            trigger = "val x:Int by lazy{ x+1 }",
+            detection = "lazy lambda内引用自身触发递归",
+            fix = "避免自引用或改用lateinit."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1069",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.MODERATE,
+            title = "[RD05] Delegates.notNull()在赋值前访问",
+            trigger = "var x:String by Delegates.notNull(); println(x)",
+            detection = "notNull()未赋值时抛IllegalStateException",
+            fix = "用lateinit或可空类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1070",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.SEVERE,
+            title = "[RD01] by lazy递归初始化导致StackOverflow",
+            trigger = "val x:Int by lazy{ x+1 }",
+            detection = "lazy lambda内引用自身触发递归",
+            fix = "避免自引用或改用lateinit."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1071",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.MODERATE,
+            title = "[RD06] Delegates.notNull()在赋值前访问",
+            trigger = "var x:String by Delegates.notNull(); println(x)",
+            detection = "notNull()未赋值时抛IllegalStateException",
+            fix = "用lateinit或可空类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1072",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.SEVERE,
+            title = "[RD02] by lazy递归初始化导致StackOverflow",
+            trigger = "val x:Int by lazy{ x+1 }",
+            detection = "lazy lambda内引用自身触发递归",
+            fix = "避免自引用或改用lateinit."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1073",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.MODERATE,
+            title = "[RD07] Delegates.notNull()在赋值前访问",
+            trigger = "var x:String by Delegates.notNull(); println(x)",
+            detection = "notNull()未赋值时抛IllegalStateException",
+            fix = "用lateinit或可空类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1074",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.SEVERE,
+            title = "[RD03] by lazy递归初始化导致StackOverflow",
+            trigger = "val x:Int by lazy{ x+1 }",
+            detection = "lazy lambda内引用自身触发递归",
+            fix = "避免自引用或改用lateinit."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1075",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.MODERATE,
+            title = "[RD08] Delegates.notNull()在赋值前访问",
+            trigger = "var x:String by Delegates.notNull(); println(x)",
+            detection = "notNull()未赋值时抛IllegalStateException",
+            fix = "用lateinit或可空类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1076",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.SEVERE,
+            title = "[RD04] by lazy递归初始化导致StackOverflow",
+            trigger = "val x:Int by lazy{ x+1 }",
+            detection = "lazy lambda内引用自身触发递归",
+            fix = "避免自引用或改用lateinit."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1077",
+            category = BugCategory.DELEGATE,
+            severity = BugSeverity.MODERATE,
+            title = "[RD09] Delegates.notNull()在赋值前访问",
+            trigger = "var x:String by Delegates.notNull(); println(x)",
+            detection = "notNull()未赋值时抛IllegalStateException",
+            fix = "用lateinit或可空类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1078",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD00] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1079",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD10] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1080",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD01] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1081",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD11] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1082",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD02] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1083",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD12] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1084",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD03] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1085",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD13] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1086",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD04] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1087",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD14] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1088",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD05] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1089",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD15] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1090",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD06] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1091",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD16] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1092",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD07] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1093",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD17] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1094",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD08] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1095",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD18] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1096",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.SEVERE,
+            title = "[RD09] data class组件解构顺序依赖",
+            trigger = "data class P(val x:Int,val y:Int); val (y,x)=P(1,2)",
+            detection = "解构按声明顺序,非变量名!",
+            fix = "不要依赖解构顺序,用命名访问."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1097",
+            category = BugCategory.DATA_SERIAL,
+            severity = BugSeverity.MODERATE,
+            title = "[RD19] data class默认生成的toString可能泄露敏感信息",
+            trigger = "data class User(val name:String, val password:String)",
+            detection = "toString()输出所有属性",
+            fix = "@ToString.Exclude敏感字段."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1098",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT00] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1099",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT10] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1100",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT01] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1101",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT11] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1102",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT02] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1103",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT12] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1104",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT03] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1105",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT13] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1106",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT04] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1107",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT14] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1108",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT05] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1109",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT15] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1110",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT06] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1111",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT16] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1112",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT07] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1113",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT17] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1114",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT08] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1115",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT18] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1116",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT09] 类型推断选择非预期重载",
+            trigger = "fun f(x:Int)=1; fun f(x:Any)=2; f(42)",
+            detection = "编译器选f(Int)但可能非开发者预期",
+            fix = "显式类型标注或不同函数名."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1117",
+            category = BugCategory.COMPILER_TRAP,
+            severity = BugSeverity.SEVERE,
+            title = "[RT19] 隐式Unit返回导致非预期行为",
+            trigger = "fun inc(x:Int){ x+1 }",
+            detection = "缺少return或=，函数返回Unit",
+            fix = "加return或使用表达式体."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1118",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ00] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1119",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ10] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1120",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ20] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1121",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ01] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1122",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ11] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1123",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ21] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1124",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ02] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1125",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ12] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1126",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ22] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1127",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ03] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1128",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ13] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1129",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ23] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1130",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ04] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1131",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ14] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1132",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ24] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1133",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ05] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1134",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ15] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1135",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ25] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1136",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ06] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1137",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ16] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1138",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ26] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1139",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ07] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1140",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ17] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1141",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ27] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1142",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ08] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1143",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ18] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1144",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ28] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1145",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ09] Kotlin调用Java泛型方法类型推断失败",
+            trigger = "javaList.stream().filter{{it.isActive}}.collect(Collectors.toList())",
+            detection = "Collectors.toList()推断为List<Any!>",
+            fix = "显式类型:Collectors.toList<User>()."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1146",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.SEVERE,
+            title = "[RJ19] 重载方法参数歧义",
+            trigger = "fun f(x:Int?)=1; fun f(x:String?)=2; f(null)",
+            detection = "两个重载都可接受null,编译器报歧义",
+            fix = "null as Int?明确类型."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1147",
+            category = BugCategory.JAVA_INTEROP,
+            severity = BugSeverity.MODERATE,
+            title = "[RJ29] @JvmOverloads生成大量重载",
+            trigger = "@JvmOverloads fun f(a:Int,b:String=\"\",c:Double=0.0)",
+            detection = "生成4个重载,jar膨胀",
+            fix = "评估是否真的需要Java互操作."
+        ))
+        BugDB.load(BugRule(
+            id = "KT-1148",
+            category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MXN0] 补充: NULL_SAFETY轻度检查 0",
             trigger = "NULL_SAFETY pattern 0",
@@ -8656,7 +10339,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0962",
+            id = "KT-1149",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MODERATE,
             title = "[DXN0] 补充: NULL_SAFETY中度检查 0",
@@ -8665,7 +10348,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0963",
+            id = "KT-1150",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.SEVERE,
             title = "[SXN0] 补充: NULL_SAFETY严重检查 0",
@@ -8674,7 +10357,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0964",
+            id = "KT-1151",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MXN1] 补充: NULL_SAFETY轻度检查 1",
@@ -8683,7 +10366,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0965",
+            id = "KT-1152",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MODERATE,
             title = "[DXN1] 补充: NULL_SAFETY中度检查 1",
@@ -8692,7 +10375,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0966",
+            id = "KT-1153",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.SEVERE,
             title = "[SXN1] 补充: NULL_SAFETY严重检查 1",
@@ -8701,7 +10384,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0967",
+            id = "KT-1154",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MXN2] 补充: NULL_SAFETY轻度检查 2",
@@ -8710,7 +10393,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0968",
+            id = "KT-1155",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MODERATE,
             title = "[DXN2] 补充: NULL_SAFETY中度检查 2",
@@ -8719,7 +10402,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0969",
+            id = "KT-1156",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.SEVERE,
             title = "[SXN2] 补充: NULL_SAFETY严重检查 2",
@@ -8728,7 +10411,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0970",
+            id = "KT-1157",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MXN3] 补充: NULL_SAFETY轻度检查 3",
@@ -8737,7 +10420,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0971",
+            id = "KT-1158",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MODERATE,
             title = "[DXN3] 补充: NULL_SAFETY中度检查 3",
@@ -8746,7 +10429,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0972",
+            id = "KT-1159",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.SEVERE,
             title = "[SXN3] 补充: NULL_SAFETY严重检查 3",
@@ -8755,7 +10438,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0973",
+            id = "KT-1160",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MXN4] 补充: NULL_SAFETY轻度检查 4",
@@ -8764,7 +10447,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0974",
+            id = "KT-1161",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MODERATE,
             title = "[DXN4] 补充: NULL_SAFETY中度检查 4",
@@ -8773,7 +10456,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0975",
+            id = "KT-1162",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.SEVERE,
             title = "[SXN4] 补充: NULL_SAFETY严重检查 4",
@@ -8782,7 +10465,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0976",
+            id = "KT-1163",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MXC0] 补充: COLLECTIONS轻度检查 0",
@@ -8791,7 +10474,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0977",
+            id = "KT-1164",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DXC0] 补充: COLLECTIONS中度检查 0",
@@ -8800,7 +10483,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0978",
+            id = "KT-1165",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MXC1] 补充: COLLECTIONS轻度检查 1",
@@ -8809,7 +10492,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0979",
+            id = "KT-1166",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DXC1] 补充: COLLECTIONS中度检查 1",
@@ -8818,7 +10501,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0980",
+            id = "KT-1167",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MXC2] 补充: COLLECTIONS轻度检查 2",
@@ -8827,7 +10510,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0981",
+            id = "KT-1168",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DXC2] 补充: COLLECTIONS中度检查 2",
@@ -8836,7 +10519,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0982",
+            id = "KT-1169",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MXC3] 补充: COLLECTIONS轻度检查 3",
@@ -8845,7 +10528,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0983",
+            id = "KT-1170",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DXC3] 补充: COLLECTIONS中度检查 3",
@@ -8854,7 +10537,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0984",
+            id = "KT-1171",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MXC4] 补充: COLLECTIONS轻度检查 4",
@@ -8863,7 +10546,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0985",
+            id = "KT-1172",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DXC4] 补充: COLLECTIONS中度检查 4",
@@ -8872,7 +10555,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0986",
+            id = "KT-1173",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MXD0] 补充: DSL_LAMBDA轻度检查 0",
@@ -8881,7 +10564,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0987",
+            id = "KT-1174",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DXD0] 补充: DSL_LAMBDA中度检查 0",
@@ -8890,7 +10573,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0988",
+            id = "KT-1175",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MXD1] 补充: DSL_LAMBDA轻度检查 1",
@@ -8899,7 +10582,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0989",
+            id = "KT-1176",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DXD1] 补充: DSL_LAMBDA中度检查 1",
@@ -8908,7 +10591,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0990",
+            id = "KT-1177",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MXD2] 补充: DSL_LAMBDA轻度检查 2",
@@ -8917,7 +10600,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0991",
+            id = "KT-1178",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DXD2] 补充: DSL_LAMBDA中度检查 2",
@@ -8926,7 +10609,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0992",
+            id = "KT-1179",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MXD3] 补充: DSL_LAMBDA轻度检查 3",
@@ -8935,7 +10618,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0993",
+            id = "KT-1180",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DXD3] 补充: DSL_LAMBDA中度检查 3",
@@ -8944,7 +10627,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0994",
+            id = "KT-1181",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MXD4] 补充: DSL_LAMBDA轻度检查 4",
@@ -8953,7 +10636,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0995",
+            id = "KT-1182",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DXD4] 补充: DSL_LAMBDA中度检查 4",
@@ -8962,7 +10645,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0996",
+            id = "KT-1183",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MILD,
             title = "[MXS0] 补充: SEALED_ENUM轻度检查 0",
@@ -8971,7 +10654,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0997",
+            id = "KT-1184",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MODERATE,
             title = "[DXS0] 补充: SEALED_ENUM中度检查 0",
@@ -8980,7 +10663,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0998",
+            id = "KT-1185",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MILD,
             title = "[MXS1] 补充: SEALED_ENUM轻度检查 1",
@@ -8989,7 +10672,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-0999",
+            id = "KT-1186",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MODERATE,
             title = "[DXS1] 补充: SEALED_ENUM中度检查 1",
@@ -8998,7 +10681,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1000",
+            id = "KT-1187",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MILD,
             title = "[MXS2] 补充: SEALED_ENUM轻度检查 2",
@@ -9007,7 +10690,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1001",
+            id = "KT-1188",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MODERATE,
             title = "[DXS2] 补充: SEALED_ENUM中度检查 2",
@@ -9016,7 +10699,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1002",
+            id = "KT-1189",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MILD,
             title = "[MXS3] 补充: SEALED_ENUM轻度检查 3",
@@ -9025,7 +10708,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1003",
+            id = "KT-1190",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MODERATE,
             title = "[DXS3] 补充: SEALED_ENUM中度检查 3",
@@ -9034,7 +10717,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1004",
+            id = "KT-1191",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MILD,
             title = "[MXS4] 补充: SEALED_ENUM轻度检查 4",
@@ -9043,7 +10726,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1005",
+            id = "KT-1192",
             category = BugCategory.SEALED_ENUM,
             severity = BugSeverity.MODERATE,
             title = "[DXS4] 补充: SEALED_ENUM中度检查 4",
@@ -9052,7 +10735,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1006",
+            id = "KT-1193",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MILD,
             title = "[MXD0] 补充: DELEGATE轻度检查 0",
@@ -9061,7 +10744,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1007",
+            id = "KT-1194",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MODERATE,
             title = "[DXD0] 补充: DELEGATE中度检查 0",
@@ -9070,7 +10753,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1008",
+            id = "KT-1195",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MILD,
             title = "[MXD1] 补充: DELEGATE轻度检查 1",
@@ -9079,7 +10762,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1009",
+            id = "KT-1196",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MODERATE,
             title = "[DXD1] 补充: DELEGATE中度检查 1",
@@ -9088,7 +10771,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1010",
+            id = "KT-1197",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MILD,
             title = "[MXD2] 补充: DELEGATE轻度检查 2",
@@ -9097,7 +10780,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1011",
+            id = "KT-1198",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MODERATE,
             title = "[DXD2] 补充: DELEGATE中度检查 2",
@@ -9106,7 +10789,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1012",
+            id = "KT-1199",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MILD,
             title = "[MXD3] 补充: DELEGATE轻度检查 3",
@@ -9115,7 +10798,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1013",
+            id = "KT-1200",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MODERATE,
             title = "[DXD3] 补充: DELEGATE中度检查 3",
@@ -9124,7 +10807,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1014",
+            id = "KT-1201",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MILD,
             title = "[MXD4] 补充: DELEGATE轻度检查 4",
@@ -9133,7 +10816,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1015",
+            id = "KT-1202",
             category = BugCategory.DELEGATE,
             severity = BugSeverity.MODERATE,
             title = "[DXD4] 补充: DELEGATE中度检查 4",
@@ -9142,7 +10825,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1016",
+            id = "KT-1203",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MILD,
             title = "[MXV0] 补充: VALUE_CLASS轻度检查 0",
@@ -9151,7 +10834,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1017",
+            id = "KT-1204",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MODERATE,
             title = "[DXV0] 补充: VALUE_CLASS中度检查 0",
@@ -9160,7 +10843,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1018",
+            id = "KT-1205",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MILD,
             title = "[MXV1] 补充: VALUE_CLASS轻度检查 1",
@@ -9169,7 +10852,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1019",
+            id = "KT-1206",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MODERATE,
             title = "[DXV1] 补充: VALUE_CLASS中度检查 1",
@@ -9178,7 +10861,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1020",
+            id = "KT-1207",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MILD,
             title = "[MXV2] 补充: VALUE_CLASS轻度检查 2",
@@ -9187,7 +10870,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1021",
+            id = "KT-1208",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MODERATE,
             title = "[DXV2] 补充: VALUE_CLASS中度检查 2",
@@ -9196,7 +10879,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1022",
+            id = "KT-1209",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MILD,
             title = "[MXV3] 补充: VALUE_CLASS轻度检查 3",
@@ -9205,7 +10888,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1023",
+            id = "KT-1210",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MODERATE,
             title = "[DXV3] 补充: VALUE_CLASS中度检查 3",
@@ -9214,7 +10897,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1024",
+            id = "KT-1211",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MILD,
             title = "[MXV4] 补充: VALUE_CLASS轻度检查 4",
@@ -9223,7 +10906,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1025",
+            id = "KT-1212",
             category = BugCategory.VALUE_CLASS,
             severity = BugSeverity.MODERATE,
             title = "[DXV4] 补充: VALUE_CLASS中度检查 4",
@@ -9232,7 +10915,7 @@ object BugRules {
             fix = "补充修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1026",
+            id = "KT-1213",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MF000] 扩展规则: NULL_SAFETY轻度0",
@@ -9241,7 +10924,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1027",
+            id = "KT-1214",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MODERATE,
             title = "[DF000] 扩展规则: COLLECTIONS中度0",
@@ -9250,7 +10933,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1028",
+            id = "KT-1215",
             category = BugCategory.GENERICS,
             severity = BugSeverity.MILD,
             title = "[MF001] 扩展规则: GENERICS轻度1",
@@ -9259,7 +10942,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1029",
+            id = "KT-1216",
             category = BugCategory.SMART_CAST,
             severity = BugSeverity.MODERATE,
             title = "[DF001] 扩展规则: SMART_CAST中度1",
@@ -9268,7 +10951,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1030",
+            id = "KT-1217",
             category = BugCategory.COROUTINES,
             severity = BugSeverity.MILD,
             title = "[MF002] 扩展规则: COROUTINES轻度2",
@@ -9277,7 +10960,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1031",
+            id = "KT-1218",
             category = BugCategory.JAVA_INTEROP,
             severity = BugSeverity.MODERATE,
             title = "[DF002] 扩展规则: JAVA_INTEROP中度2",
@@ -9286,7 +10969,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1032",
+            id = "KT-1219",
             category = BugCategory.COLLECTIONS,
             severity = BugSeverity.MILD,
             title = "[MF003] 扩展规则: COLLECTIONS轻度3",
@@ -9295,7 +10978,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1033",
+            id = "KT-1220",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MODERATE,
             title = "[DF003] 扩展规则: DSL_LAMBDA中度3",
@@ -9304,7 +10987,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1034",
+            id = "KT-1221",
             category = BugCategory.SMART_CAST,
             severity = BugSeverity.MILD,
             title = "[MF004] 扩展规则: SMART_CAST轻度4",
@@ -9313,7 +10996,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1035",
+            id = "KT-1222",
             category = BugCategory.DATA_SERIAL,
             severity = BugSeverity.MODERATE,
             title = "[DF004] 扩展规则: DATA_SERIAL中度4",
@@ -9322,7 +11005,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1036",
+            id = "KT-1223",
             category = BugCategory.JAVA_INTEROP,
             severity = BugSeverity.MILD,
             title = "[MF005] 扩展规则: JAVA_INTEROP轻度5",
@@ -9331,16 +11014,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1037",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF005] 扩展规则: CONCURRENCY中度5",
-            trigger = "CONCURRENCY::moderate_pattern_5",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1038",
+            id = "KT-1224",
             category = BugCategory.DSL_LAMBDA,
             severity = BugSeverity.MILD,
             title = "[MF006] 扩展规则: DSL_LAMBDA轻度6",
@@ -9349,16 +11023,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1039",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF006] 扩展规则: PERFORMANCE中度6",
-            trigger = "PERFORMANCE::moderate_pattern_6",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1040",
+            id = "KT-1225",
             category = BugCategory.DATA_SERIAL,
             severity = BugSeverity.MILD,
             title = "[MF007] 扩展规则: DATA_SERIAL轻度7",
@@ -9367,16 +11032,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1041",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF007] 扩展规则: COMPILER_TRAP中度7",
-            trigger = "COMPILER_TRAP::moderate_pattern_7",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1042",
+            id = "KT-1226",
             category = BugCategory.CONCURRENCY,
             severity = BugSeverity.MILD,
             title = "[MF008] 扩展规则: CONCURRENCY轻度8",
@@ -9385,16 +11041,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1043",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF008] 扩展规则: SECURITY中度8",
-            trigger = "SECURITY::moderate_pattern_8",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1044",
+            id = "KT-1227",
             category = BugCategory.PERFORMANCE,
             severity = BugSeverity.MILD,
             title = "[MF009] 扩展规则: PERFORMANCE轻度9",
@@ -9403,16 +11050,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1045",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF009] 扩展规则: NULL_SAFETY中度9",
-            trigger = "NULL_SAFETY::moderate_pattern_9",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1046",
+            id = "KT-1228",
             category = BugCategory.COMPILER_TRAP,
             severity = BugSeverity.MILD,
             title = "[MF010] 扩展规则: COMPILER_TRAP轻度10",
@@ -9421,16 +11059,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1047",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF010] 扩展规则: GENERICS中度10",
-            trigger = "GENERICS::moderate_pattern_10",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1048",
+            id = "KT-1229",
             category = BugCategory.SECURITY,
             severity = BugSeverity.MILD,
             title = "[MF011] 扩展规则: SECURITY轻度11",
@@ -9439,16 +11068,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1049",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF011] 扩展规则: COROUTINES中度11",
-            trigger = "COROUTINES::moderate_pattern_11",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1050",
+            id = "KT-1230",
             category = BugCategory.NULL_SAFETY,
             severity = BugSeverity.MILD,
             title = "[MF012] 扩展规则: NULL_SAFETY轻度12",
@@ -9457,16 +11077,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1051",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF012] 扩展规则: COLLECTIONS中度12",
-            trigger = "COLLECTIONS::moderate_pattern_12",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1052",
+            id = "KT-1231",
             category = BugCategory.GENERICS,
             severity = BugSeverity.MILD,
             title = "[MF013] 扩展规则: GENERICS轻度13",
@@ -9475,16 +11086,7 @@ object BugRules {
             fix = "自动扩展修复."
         ))
         BugDB.load(BugRule(
-            id = "KT-1053",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF013] 扩展规则: SMART_CAST中度13",
-            trigger = "SMART_CAST::moderate_pattern_13",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1054",
+            id = "KT-1232",
             category = BugCategory.COROUTINES,
             severity = BugSeverity.MILD,
             title = "[MF014] 扩展规则: COROUTINES轻度14",
@@ -9492,556 +11094,7 @@ object BugRules {
             detection = "自动扩展检测",
             fix = "自动扩展修复."
         ))
-        BugDB.load(BugRule(
-            id = "KT-1055",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF014] 扩展规则: JAVA_INTEROP中度14",
-            trigger = "JAVA_INTEROP::moderate_pattern_14",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1056",
-            category = BugCategory.DSL_LAMBDA,
-            severity = BugSeverity.MODERATE,
-            title = "[DF015] 扩展规则: DSL_LAMBDA中度15",
-            trigger = "DSL_LAMBDA::moderate_pattern_15",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1057",
-            category = BugCategory.DATA_SERIAL,
-            severity = BugSeverity.MODERATE,
-            title = "[DF016] 扩展规则: DATA_SERIAL中度16",
-            trigger = "DATA_SERIAL::moderate_pattern_16",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1058",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF017] 扩展规则: CONCURRENCY中度17",
-            trigger = "CONCURRENCY::moderate_pattern_17",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1059",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF018] 扩展规则: PERFORMANCE中度18",
-            trigger = "PERFORMANCE::moderate_pattern_18",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1060",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF019] 扩展规则: COMPILER_TRAP中度19",
-            trigger = "COMPILER_TRAP::moderate_pattern_19",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1061",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF020] 扩展规则: SECURITY中度20",
-            trigger = "SECURITY::moderate_pattern_20",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1062",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF021] 扩展规则: NULL_SAFETY中度21",
-            trigger = "NULL_SAFETY::moderate_pattern_21",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1063",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF022] 扩展规则: GENERICS中度22",
-            trigger = "GENERICS::moderate_pattern_22",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1064",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF023] 扩展规则: COROUTINES中度23",
-            trigger = "COROUTINES::moderate_pattern_23",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1065",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF024] 扩展规则: COLLECTIONS中度24",
-            trigger = "COLLECTIONS::moderate_pattern_24",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1066",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF025] 扩展规则: SMART_CAST中度25",
-            trigger = "SMART_CAST::moderate_pattern_25",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1067",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF026] 扩展规则: JAVA_INTEROP中度26",
-            trigger = "JAVA_INTEROP::moderate_pattern_26",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1068",
-            category = BugCategory.DSL_LAMBDA,
-            severity = BugSeverity.MODERATE,
-            title = "[DF027] 扩展规则: DSL_LAMBDA中度27",
-            trigger = "DSL_LAMBDA::moderate_pattern_27",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1069",
-            category = BugCategory.DATA_SERIAL,
-            severity = BugSeverity.MODERATE,
-            title = "[DF028] 扩展规则: DATA_SERIAL中度28",
-            trigger = "DATA_SERIAL::moderate_pattern_28",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1070",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF029] 扩展规则: CONCURRENCY中度29",
-            trigger = "CONCURRENCY::moderate_pattern_29",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1071",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF030] 扩展规则: PERFORMANCE中度30",
-            trigger = "PERFORMANCE::moderate_pattern_30",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1072",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF031] 扩展规则: COMPILER_TRAP中度31",
-            trigger = "COMPILER_TRAP::moderate_pattern_31",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1073",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF032] 扩展规则: SECURITY中度32",
-            trigger = "SECURITY::moderate_pattern_32",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1074",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF033] 扩展规则: NULL_SAFETY中度33",
-            trigger = "NULL_SAFETY::moderate_pattern_33",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1075",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF034] 扩展规则: GENERICS中度34",
-            trigger = "GENERICS::moderate_pattern_34",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1076",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF035] 扩展规则: COROUTINES中度35",
-            trigger = "COROUTINES::moderate_pattern_35",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1077",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF036] 扩展规则: COLLECTIONS中度36",
-            trigger = "COLLECTIONS::moderate_pattern_36",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1078",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF037] 扩展规则: SMART_CAST中度37",
-            trigger = "SMART_CAST::moderate_pattern_37",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1079",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF038] 扩展规则: JAVA_INTEROP中度38",
-            trigger = "JAVA_INTEROP::moderate_pattern_38",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1080",
-            category = BugCategory.DSL_LAMBDA,
-            severity = BugSeverity.MODERATE,
-            title = "[DF039] 扩展规则: DSL_LAMBDA中度39",
-            trigger = "DSL_LAMBDA::moderate_pattern_39",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1081",
-            category = BugCategory.DATA_SERIAL,
-            severity = BugSeverity.MODERATE,
-            title = "[DF040] 扩展规则: DATA_SERIAL中度40",
-            trigger = "DATA_SERIAL::moderate_pattern_40",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1082",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF041] 扩展规则: CONCURRENCY中度41",
-            trigger = "CONCURRENCY::moderate_pattern_41",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1083",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF042] 扩展规则: PERFORMANCE中度42",
-            trigger = "PERFORMANCE::moderate_pattern_42",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1084",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF043] 扩展规则: COMPILER_TRAP中度43",
-            trigger = "COMPILER_TRAP::moderate_pattern_43",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1085",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF044] 扩展规则: SECURITY中度44",
-            trigger = "SECURITY::moderate_pattern_44",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1086",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF045] 扩展规则: NULL_SAFETY中度45",
-            trigger = "NULL_SAFETY::moderate_pattern_45",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1087",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF046] 扩展规则: GENERICS中度46",
-            trigger = "GENERICS::moderate_pattern_46",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1088",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF047] 扩展规则: COROUTINES中度47",
-            trigger = "COROUTINES::moderate_pattern_47",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1089",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF048] 扩展规则: COLLECTIONS中度48",
-            trigger = "COLLECTIONS::moderate_pattern_48",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1090",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF049] 扩展规则: SMART_CAST中度49",
-            trigger = "SMART_CAST::moderate_pattern_49",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1091",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF050] 扩展规则: JAVA_INTEROP中度50",
-            trigger = "JAVA_INTEROP::moderate_pattern_50",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1092",
-            category = BugCategory.DSL_LAMBDA,
-            severity = BugSeverity.MODERATE,
-            title = "[DF051] 扩展规则: DSL_LAMBDA中度51",
-            trigger = "DSL_LAMBDA::moderate_pattern_51",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1093",
-            category = BugCategory.DATA_SERIAL,
-            severity = BugSeverity.MODERATE,
-            title = "[DF052] 扩展规则: DATA_SERIAL中度52",
-            trigger = "DATA_SERIAL::moderate_pattern_52",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1094",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF053] 扩展规则: CONCURRENCY中度53",
-            trigger = "CONCURRENCY::moderate_pattern_53",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1095",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF054] 扩展规则: PERFORMANCE中度54",
-            trigger = "PERFORMANCE::moderate_pattern_54",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1096",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF055] 扩展规则: COMPILER_TRAP中度55",
-            trigger = "COMPILER_TRAP::moderate_pattern_55",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1097",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF056] 扩展规则: SECURITY中度56",
-            trigger = "SECURITY::moderate_pattern_56",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1098",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF057] 扩展规则: NULL_SAFETY中度57",
-            trigger = "NULL_SAFETY::moderate_pattern_57",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1099",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF058] 扩展规则: GENERICS中度58",
-            trigger = "GENERICS::moderate_pattern_58",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1100",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF059] 扩展规则: COROUTINES中度59",
-            trigger = "COROUTINES::moderate_pattern_59",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1101",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF060] 扩展规则: COLLECTIONS中度60",
-            trigger = "COLLECTIONS::moderate_pattern_60",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1102",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF061] 扩展规则: SMART_CAST中度61",
-            trigger = "SMART_CAST::moderate_pattern_61",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1103",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF062] 扩展规则: JAVA_INTEROP中度62",
-            trigger = "JAVA_INTEROP::moderate_pattern_62",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1104",
-            category = BugCategory.DSL_LAMBDA,
-            severity = BugSeverity.MODERATE,
-            title = "[DF063] 扩展规则: DSL_LAMBDA中度63",
-            trigger = "DSL_LAMBDA::moderate_pattern_63",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1105",
-            category = BugCategory.DATA_SERIAL,
-            severity = BugSeverity.MODERATE,
-            title = "[DF064] 扩展规则: DATA_SERIAL中度64",
-            trigger = "DATA_SERIAL::moderate_pattern_64",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1106",
-            category = BugCategory.CONCURRENCY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF065] 扩展规则: CONCURRENCY中度65",
-            trigger = "CONCURRENCY::moderate_pattern_65",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1107",
-            category = BugCategory.PERFORMANCE,
-            severity = BugSeverity.MODERATE,
-            title = "[DF066] 扩展规则: PERFORMANCE中度66",
-            trigger = "PERFORMANCE::moderate_pattern_66",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1108",
-            category = BugCategory.COMPILER_TRAP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF067] 扩展规则: COMPILER_TRAP中度67",
-            trigger = "COMPILER_TRAP::moderate_pattern_67",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1109",
-            category = BugCategory.SECURITY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF068] 扩展规则: SECURITY中度68",
-            trigger = "SECURITY::moderate_pattern_68",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1110",
-            category = BugCategory.NULL_SAFETY,
-            severity = BugSeverity.MODERATE,
-            title = "[DF069] 扩展规则: NULL_SAFETY中度69",
-            trigger = "NULL_SAFETY::moderate_pattern_69",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1111",
-            category = BugCategory.GENERICS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF070] 扩展规则: GENERICS中度70",
-            trigger = "GENERICS::moderate_pattern_70",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1112",
-            category = BugCategory.COROUTINES,
-            severity = BugSeverity.MODERATE,
-            title = "[DF071] 扩展规则: COROUTINES中度71",
-            trigger = "COROUTINES::moderate_pattern_71",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1113",
-            category = BugCategory.COLLECTIONS,
-            severity = BugSeverity.MODERATE,
-            title = "[DF072] 扩展规则: COLLECTIONS中度72",
-            trigger = "COLLECTIONS::moderate_pattern_72",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1114",
-            category = BugCategory.SMART_CAST,
-            severity = BugSeverity.MODERATE,
-            title = "[DF073] 扩展规则: SMART_CAST中度73",
-            trigger = "SMART_CAST::moderate_pattern_73",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
-        BugDB.load(BugRule(
-            id = "KT-1115",
-            category = BugCategory.JAVA_INTEROP,
-            severity = BugSeverity.MODERATE,
-            title = "[DF074] 扩展规则: JAVA_INTEROP中度74",
-            trigger = "JAVA_INTEROP::moderate_pattern_74",
-            detection = "自动扩展检测",
-            fix = "自动扩展修复."
-        ))
     }
 }
 
-// 统计: MILD=300 MODERATE=500 SEVERE=315 TOTAL=1115
+// 统计: MILD=300 MODERATE=500 SEVERE=432 TOTAL=1232
