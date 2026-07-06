@@ -1,5 +1,5 @@
 # kotlin-head — 有头编译器
-**v0.12.1** · Kotlin · AGPL-3.0 + 商业许可
+**v0.12.2** · Kotlin · AGPL-3.0 + 商业许可
 
 > 兼容 Kotlin 是底线。比它强才是目标。
 > — 免免 & 望安，2026-07-06
@@ -27,7 +27,7 @@
 
 ## 当前版本
 
-**v0.12.1** — BugDB 5000条特调版 + 生态重构（2026-07-06 免免 &amp; 望安）
+**v0.12.2** — BugDB 5000条特调版 + 生态重构（2026-07-06 免免 &amp; 望安）
 BugDB: 5000条规则 + 倒排索引 + 超预指纹缓存 <1μs。kotlin-int++ ？级。生态: v0.8~v0.12全区间HList/HMap替换 + ProHList + 新量折叠缓存。
 
 ## ✨ 核心功能
@@ -182,6 +182,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.8 ✅ | 定量混合打包：ApkPackCoordinator+java-head+军师三层诊断+修复七档+两步预览 |
 | v0.12.0 ✅ | 内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router |
 | v0.12.1 ✅ | BugDB 特调版：5000条规则 + 倒排索引 + 超预指纹缓存 + kotlin-int++ ？级。生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 |
+| v0.12.2 ✅ | 双开关特调版：军师建议开关 + APK只编译开关。编译是底线，操作是可选层 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
 
 ## 📋 版本历史
@@ -189,6 +190,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | 版本 | 关键特性 |
 |------|---------|
 | v1.0.0 | 架构全面超越 javac/Node.js 官方工具链 |
+| v0.12.2 | 双开关特调版：军师建议 + APK只编译 |
 | v0.12.1 | BugDB 5000条特调版 + 生态重构 |
 | v0.12.0 | 内存树 + HED V5超预索引 |
 | v0.11.8 | 定量混合打包 + java-head |
