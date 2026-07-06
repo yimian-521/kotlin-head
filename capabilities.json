@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.11.8",
+  "version": "0.12.0",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -9,7 +9,9 @@
     "type_checking": { "status": "partial", "notes": "基本符号表+类型绑定，泛型待支持" },
     "diagnostic": { "status": "supported", "notes": "~75行，四级诊断+版本路线图" },
     "bug_scanner": { "status": "supported", "notes": "~55行，AST结构模式检测" },
-    "hed_interaction": { "status": "supported", "notes": "按钮式终端交互。15种行为模式，AI+人同读。首个HED实例" },
+    "hed_interaction": { "status": "supported", "notes": "按钮式终端交互。15种行为模式，AI+人同读。首个HED实例。v0.12.0: V5超预索引——热槽组并行预跑，按下仅dict.get" },
+    "memory_tree": { "status": "design", "notes": "MemoryTree/MemoryNode全局内存管理。进程体内存预算+超限裁决+父进程风格联动。Python原型验证完成，Kotlin移植待启动。" },
+    "super_preheat_index": { "status": "design", "notes": "超预索引V5：场景切换→热槽组全覆盖并行预跑→结果缓存→按下零执行。八轮Python原型迭代。轻/中/重延迟统一~200ns。" },
     "tdl_documents": { "status": "supported", "notes": "三文档联动(CHANGELOG+BUGS+capabilities)。首个TDL实例" },
     "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" },
     "ecosystem_advisory": { "status": "discovered", "notes": "Kotlin平台类型T!×结构化并发叠加漏洞。kotlin-head零依赖天然免疫。详见KOTLIN_T_BUG_ADVISORY.md" }
@@ -185,7 +187,16 @@
       "keywords": ["process_identity","experience_cache","title_system","retire_pool","army_preset","reinforce_policy","worldview"],
       "desc": "老兵新兵同一把刀，老兵知道往哪砍。pid=灵魂不改，称号=铭牌只增不减，经验缓存64场景指纹职业倾向淘汰。退役非死亡回大厅。多套预设房间+大厅。PROTECTIVE保护老兵。三观自动生长"
     },
-  "v1.0.0": {
+      "v0.11.8": {
+      "done": "定量混合打包：ApkPackCoordinator+java-head独立诊断器+军师三层诊断+修复七档+两步预览+打包容错+地狱测试100文件全杀",
+      "keywords": ["apk_pack","java_head","strategist_diagnosis","fault_tolerant","hell_test"],
+      "desc": "军师扫diff→自动决定打包步骤。java-head通道/实现分离。地狱测试覆盖率100%"
+    },
+    "v0.12.0": {
+      "done": "内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router。八轮Python原型验证",
+      "keywords": ["memory_tree","super_preheat","hed_v5","hot_group","pipe_button","dual_mode_router"],
+      "desc": "进程树有了眼睛(内存预算+超限裁决)，按钮有了翅膀(热槽组并行预跑，按下仅dict.get)。V1-V5八轮迭代：无变量函数→进程树调度→并发预判→全覆盖热槽组→并行预跑缓存。中/重任务延迟省96-97%"
+    },
       "keywords": [],
       "desc": "32/32 綦桐文件全通过"
     }

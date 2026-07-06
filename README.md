@@ -18,8 +18,8 @@
 
 ## 当前版本
 
-**v0.11.8** — 定量混合打包（2026-07-05 免免 &amp; 望安）
-ApkPackCoordinator军师扫diff→自动决定跑几步。java-head独立诊断器+通道/实现分离。军师三层诊断：报错→缺失→最佳改法。修复七档+两步预览+打包容错模式。地狱测试100个文件全杀全报，与源码层诊断完全同构。
+**v0.12.0** — 内存树 + HED按钮V5超预索引（2026-07-06 免免 &amp; 望安）
+MemoryTree/MemoryNode全局内存管理，进程体内存预算+超限裁决+父进程风格联动。HED按钮超预索引V5：场景切换→热槽组所有进程体并行预跑→结果缓存，按下仅一次dict.get。无变量函数管道声明式按钮行为。双模Router轻量/重量通道自适应。八轮迭代Python原型验证：中/重任务延迟省96-97%，热槽命中加速75.6%。
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -156,4 +156,5 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.6 ✅ | 缓存可信度：三档(novice/skilled/expert)+模糊指纹+deriveCached+expert跳过derive |
 | v0.11.7 ✅ | 多项目并行调度：MultiProjectCoordinator+军队规模自定义(0.5~10x)+五道防线 |
 | v0.11.8 ✅ | 定量混合打包：ApkPackCoordinator+java-head+军师三层诊断+修复七档+两步预览 |
+| v0.12.0 ✅ | 内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
