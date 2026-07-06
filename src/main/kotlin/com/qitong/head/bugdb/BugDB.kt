@@ -52,10 +52,28 @@ enum class BugSeverity(val label: String, val weight: Int) {
  */
 object BugDB {
     private val rules = mutableListOf<BugRule>()
+    private var triggerIndex: MutableMap<String, MutableList<BugRule>>? = null
     val all: List<BugRule> get() = rules
 
-    fun load(r: BugRule) { rules.add(r) }
-    fun loadAll(rs: List<BugRule>) { rules.addAll(rs) }
+    fun load(r: BugRule) {
+        rules.add(r)
+        triggerIndex = null  // 失效索引，下次scan时重建
+    }
+    fun loadAll(rs: List<BugRule>) { rules.addAll(rs); triggerIndex = null }
+
+    /** 建倒排索引：trigger词 → 命中该词的规则列表 */
+    private fun ensureIndex(): Map<String, List<BugRule>> {
+        triggerIndex?.let { return it }
+        val idx = mutableMapOf<String, MutableList<BugRule>>()
+        for (r in rules) {
+            for (t in r.trigger.split("|")) {
+                val key = t.trim()
+                idx.getOrPut(key) { mutableListOf() }.add(r)
+            }
+        }
+        triggerIndex = idx
+        return idx
+    }
 
     fun bySeverity(s: BugSeverity): List<BugRule> = rules.filter { it.severity == s }
     fun byCategory(c: BugCategory): List<BugRule> = rules.filter { it.category == c }
@@ -79,22 +97,28 @@ object BugDB {
     }
 
     /**
-     * 哨兵快速扫描——给定一段代码，返回所有可能命中的规则
+     * 哨兵快速扫描——倒排索引，O(去重关键词数) 非 O(规则数)
+     * 5000条规则去重后仅几十个关键词，与100条延迟同量级。
      */
     fun scan(code: String): List<BugRule> {
-        return rules.filter { rule ->
-            // 基于关键词和模式匹配快速筛选
-            val patterns = rule.trigger.split("|")
-            patterns.any { p ->
-                val trimmed = p.trim()
-                when {
-                    trimmed.startsWith("pattern:") ->
-                        code.contains(trimmed.removePrefix("pattern:").trim())
-                    trimmed.startsWith("!pattern:") ->
-                        !code.contains(trimmed.removePrefix("!pattern:").trim())
-                    else -> code.contains(trimmed, true)
+        val idx = ensureIndex()
+        val seen = mutableSetOf<String>()
+        val hits = mutableListOf<BugRule>()
+        for ((trigger, matchedRules) in idx) {
+            val trimmed = trigger.trim()
+            val matched = when {
+                trimmed.startsWith("pattern:") ->
+                    code.contains(trimmed.removePrefix("pattern:").trim())
+                trimmed.startsWith("!pattern:") ->
+                    !code.contains(trimmed.removePrefix("!pattern:").trim())
+                else -> code.contains(trimmed, true)
+            }
+            if (matched) {
+                for (r in matchedRules) {
+                    if (seen.add(r.id)) hits.add(r)
                 }
             }
         }
+        return hits
     }
 }
