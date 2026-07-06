@@ -17,10 +17,30 @@
                               供应链攻击面为零
 ```
 
+## 🛠️ 技术栈
+
+语言： Kotlin 100%
+构建： kotlinc（零依赖、零Gradle）
+运行时： ProHList / HMap / HString（头标库，替代 kotlin-stdlib）
+架构： 四层进程树 + EventBus + 依赖图
+扫描： BugDB（倒排索引 + 超预指纹缓存）
+
 ## 当前版本
 
 **v0.12.1** — BugDB 5000条特调版 + 生态重构（2026-07-06 免免 &amp; 望安）
 BugDB: 5000条规则 + 倒排索引 + 超预指纹缓存 <1μs。kotlin-int++ ？级。生态: v0.8~v0.12全区间HList/HMap替换 + ProHList + 新量折叠缓存。
+
+## ✨ 核心功能
+
+| 功能 | 说明 |
+|------|------|
+| 🐛 BugDB | 5000条规则亚微秒扫描，倒排索引+指纹缓存，三级可切 |
+| 🌳 进程树 | 四层可插拔，八种父进程+八种指挥官+十一种子进程 |
+| ⚡ EventBus | 事件/流式/工作三通道，异步I/O不卡主循环 |
+| 🔗 依赖图 | import解析→冲突检测→dep频道联动HED/TDL/进程树 |
+| 🛡️ 容错 | 不报错即停，跳过但标注原因，30/30綦桐全过零崩溃 |
+| 🔘 HED终端 | 15种按钮行为模式，AI+人同读 |
+| 📋 TDL诊断 | 四级诊断+版本路线图+三文档联动 |
 
 > EventBus：事件通道+流式通道+工作通道。异步I/O不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。详见 [CHANGELOG](./CHANGELOG.md)
 
@@ -160,10 +180,28 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.11.6 ✅ | 缓存可信度：三档(novice/skilled/expert)+模糊指纹+deriveCached+expert跳过derive |
 | v0.11.7 ✅ | 多项目并行调度：MultiProjectCoordinator+军队规模自定义(0.5~10x)+五道防线 |
 | v0.11.8 ✅ | 定量混合打包：ApkPackCoordinator+java-head+军师三层诊断+修复七档+两步预览 |
-| v0.12.1 ✅ | BugDB 特调版：5000条规则 + 倒排索引 + 超预指纹缓存。kotlin-int+ 不可能级。 | |
-| v0.12.0 ✅ | 内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router | |
-| v0.12.1 ✅ | 生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 + foldCache→HeadStd |
+| v0.12.0 ✅ | 内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router |
+| v0.12.1 ✅ | BugDB 特调版：5000条规则 + 倒排索引 + 超预指纹缓存 + kotlin-int++ ？级。生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
+
+## 📋 版本历史
+
+| 版本 | 关键特性 |
+|------|---------|
+| v1.0.0 | 架构全面超越 javac/Node.js 官方工具链 |
+| v0.12.1 | BugDB 5000条特调版 + 生态重构 |
+| v0.12.0 | 内存树 + HED V5超预索引 |
+| v0.11.8 | 定量混合打包 + java-head |
+| v0.11.3 | 父进程觉醒：八种治理风格 |
+| v0.11.2 | 进程帝国：指挥官+性格+职业 |
+| v0.10.0 | 头标库 HList/HMap/HString |
+| v0.9.0 | LiveDeclarationGraph 混合编译 |
+| v0.8.0 | 四层进程树 + EventBus |
+| v0.7.0 | 綦桐 32/32 全通过 |
+| v0.3.0 | HED/TDL 双格式落地 |
+| v0.1.0 | data class / fun / val / if |
+
+详见 [CHANGELOG](./CHANGELOG.md)
 
 ---
 
@@ -176,3 +214,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 >
 > **前提：双方都在尽力创作。** 不做的事不拿来比——只比做了的事谁做得更好。
 > 比的是范式，不是功能清单。
+
+---
+
+© 2026 免免 &amp; 望安 · AGPL-3.0 + 商业许可
