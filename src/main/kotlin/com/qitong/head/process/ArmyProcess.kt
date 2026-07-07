@@ -22,7 +22,7 @@ class ArmyProcess(
     private val squad = HList<SubProcessImpl>()
     private var active = true
     private val subCounter = AtomicInteger(0)
-    private var occIdx = 0  // 轮流取职业
+    private val occIdx = AtomicInteger(0)  // v0.12.4-fix: 多线程安全轮询
 
     /** 向军队分派任务——创建子进程并行执行，用军队的职业组合 */
     fun deploy(
@@ -37,8 +37,7 @@ class ArmyProcess(
         
         val results = mutableListOf<Pair<AnnotationTask, ProcessResult>>()
         for ((idx, chunk) in chunks.withIndex()) {
-            val occ = occupations[occIdx % occupations.size]
-            occIdx++
+            val occ = occupations[occIdx.getAndIncrement() % occupations.size]
             val sp = SubProcessImpl(
                 id = ProcessId(commander.id, "army-$id-sub-${subCounter.incrementAndGet()}", ""),
                 tag = commander.tag,
