@@ -14,10 +14,7 @@
     "super_preheat_index": { "status": "design", "notes": "超预索引V5：场景切换→热槽组全覆盖并行预跑→结果缓存→按下零执行。八轮Python原型迭代。轻/中/重延迟统一~200ns。" },
     "tdl_documents": { "status": "supported", "notes": "三文档联动(CHANGELOG+BUGS+capabilities)。首个TDL实例" },
     "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" },
-    "ecosystem_advisory": { "status": "discovered", "notes": "Kotlin平台类型T!×结构化并发叠加漏洞。kotlin-head零依赖天然免疫。详见KOTLIN_T_BUG_ADVISORY.md" },
-    "sim_ui": { "status": "supported", "notes": "源码模拟测试——不装APK测APK功能。--list/--click/--params/--bench/--name五链路全通。6种按钮格式(HED/Compose/View/XML/DropdownMenu/FAB)。三层命名降级。自举：扫Main.kt列出42个HED按钮" },
-    "cognitive_compiler": { "status": "design", "notes": "认知编译器架构——大脑(注意力引擎)/肝脏(深度追踪)/手臂(水熊虫探针)/沙盒(分体式+开关门)/免疫(三层试探)。全语言无。进程树在编译器层的人体投影" },
-    "projection_mechanism": { "status": "design", "notes": "缓存式无变量函数·投影机制——父变量决策+子变量投影。10000UI 89μs验证。BugScanner六类变量故障诊断" }
+    "ecosystem_advisory": { "status": "discovered", "notes": "Kotlin平台类型T!×结构化并发叠加漏洞。kotlin-head零依赖天然免疫。详见KOTLIN_T_BUG_ADVISORY.md" }
   },
   "bugs_active": 0,
   "bugs_resolved": 7,
@@ -198,26 +195,38 @@
     "v0.12.0": {
       "done": "内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router。八轮Python原型验证",
       "keywords": ["memory_tree","super_preheat","hed_v5","hot_group","pipe_button","dual_mode_router"],
-      "desc": "进程树有了眼睛(内存预算+超限裁决)，按钮有了翅膀(热槽组并行预跑，按下仅dict.get)。V1-V5八轮迭代：无变量函数→进程树调度→并发预判→全覆盖热槽组→并行预跑缓存。中/重任务延迟省96-97%"
+      "desc": "进程树有了眼睛(内存预算+超限裁决)，按钮有了翅膀(热槽组并行预跑，按下仅dict.get)。V1-V5八轮迭代"
+    },
+    "v0.12.0+生态重构": {
+      "done": "v0.8~v0.12全区间HList/HMap替换+ProHList进化(add直通+remove标记+apply惰性清理)。11文件+518/-256行",
+      "desc": "EventBus→HMap, IR→ProHList, 进程树全HList/HMap。老模块不动，新模块全头标库"
+    },
+    "v0.12.1": {
+      "done": "BugDB 5000条规则(倒排索引+超预指纹缓存<1μs)。kotlin-int+不可能级。20分类全覆盖",
+      "desc": "SEVERE60%/MODERATE30%/MILD10%。倒排索引95x+指纹缓存3x。gen_bugdb.py可复刻"
+    },
+    "v0.12.2": {
+      "done": "双开关特调版：军师建议开关[8]+APK只编译开关[9]。同一套代码两个开关各管各的",
+      "desc": "编译是底线，操作是可选层"
     },
     "v0.12.3": {
-      "done": "八军生态+专武绑定+军师闪电双体系：八种进程体(爆裂/哨卫/侦察/收集/攻坚/精英/军师/闪电)+指挥官专武+headstd统一标准库+34编译修复+全版本零错",
-      "keywords": ["eight_army", "specialist_binding", "strategist", "lightning", "headstd", "dual_system"],
-      "desc": "八种进程体精选重定义，指挥官各绑专属职业。军师三层体系(纯信息调度权限>0.5级)+闪电跑图体系。headstd四文件独立标准库(HList+HMap+SceneTypes+HeadStd)35KB零错。v0.12.2+全量编译零错"
+      "done": "八军生态+专武绑定+军师闪电双体系：八种进程体各有独立生态位，指挥官专武默认独占。14个Python模拟全验证",
+      "keywords": ["eight_army","weapon_binding","strategist_system","lightning_system","dual_dimension_rep","autophagy","assist_tracking","preset_template"],
+      "desc": "八种进程体独立生态位。军师三层纯信息调度。闪电跑图动态重分配。双维复制率。自噬吞并+沙盒清零。助攻追踪。增派预设模板。绝境验证15对700翻盘",
+      "pending_kotlin": "HED[12]军队配置面板(预设模板/专武绑定开关/军师闪电开关)+八军进程体Kotlin落地+指挥官绑定接口"
     },
     "v0.12.4": {
-      "done": "动态模式识别(deriveTrend)+军师独行扩军+RoomSlotManager栈位+基类匹配(matchStrategist)+headstd.jar。审计修复：isHostile统一+去重+isActive兵力判断+occIdx AtomicInteger+容量3%余量",
-      "keywords": ["deriveTrend", "dynamic_pattern", "trend", "headstd_jar", "strategist_solo"],
-      "desc": "deriveTrend根据Bug变化趋势自动调整兵种+预备兵机制。headstd.jar 35KB零错作为独立制品发布到GitHub libs/。剩余路线图三项开发中"
+      "done": "军师动态模式识别+独行扩军+指挥官自定义配队+军师基类匹配+headstd全版本兼容。v0.12.4路线图五项全✅",
+      "keywords": ["strategist_dynamic","solo_expansion","squad_config","strategist_match","headstd_compat"],
+      "desc": "derive()加时间维度(趋势→切兵种)。无队友时自动检测+create临时ArmyProcess。RoomSlotManager栈位分配。matchStrategist按bug密度选兵种。headstd.jar全版本零错"
     },
     "v0.12.5": {
-      "done": "源码UI模拟(sim_ui.js五链路全通)+认知编译器架构(大脑/肝脏/手臂/沙盒)+投影机制(缓存式无变量函数10000UI验证)",
-      "keywords": ["sim_ui", "source_sim", "cognitive_compiler", "attention_engine", "tardigrade_probe", "split_sandbox", "door_control", "projection_mechanism", "variable_avatar", "cache_varless"],
-      "desc": "--list/--click/--params/--bench/--name五链路全通。编译器自举扫自己42个HED按钮。认知编译器六器官：注意力引擎/深度追踪/水熊虫探针/分体式沙盒(开关门)/三层试探/探针自修复。分体式沙盒本质不是隔离是门可以关——冻结≠冻死，父进程死不掉试探永远继续。投影机制：父变量决策+子变量投影，10000UI 89μs。BugScanner六类变量故障诊断"
-    },
-    "v1.0.0": {
-      "done": "32/32 綦桐文件全通过",
+      "done": "--sim-ui源码模拟测试(五链路全通)+分体式沙盒六审修复(14条bug，免免10条独杀6条)",
+      "keywords": ["sim_ui","sandbox","six_audit","mianmian","if_vs_equals"],
+      "desc": "无APK测试APK功能：--list/--click/--params/--bench/--name全通。沙盒模拟器六审：阿言+小安+望安+DeepSeek望安+Claude+免免。免免独杀：if语义、连锁烫伤、parentAlive无体温计、开门≠返回门、终结不用成败。核心洞察：AI看写了什么，免免看什么该写但没写"
     }
-  }
+  },
+  "bugs_active": 0,
+  "bugs_resolved": 7
 }
 }

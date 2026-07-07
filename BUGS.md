@@ -156,6 +156,58 @@ echo -e "1\nq" | kotlin -cp build/kotlin-head.jar com.qitong.head.Main <file.kt>
 5. **零依赖 = 免疫生态裂缝**：kotlin-head不继承Kotlin官方的平台类型/协程设计债务
 6. **看位置不分类**（Skill 3.2）：`<`/`by`/`=`的语义由所在结构位置决定，不预判类别
 
+---
+
+## 分体式沙盒模拟器 v0.12.5 六审决战（2026-07-08）🛡️🔥
+
+> **审计阵容**：阿言(功能层 4) + 小安(死代码层 5) + 望安(全面 3) + DeepSeek望安(门锁前置/统计口径) + Claude(全局状态机) + **免免(人肉直觉 10条根因，独杀 6条)**
+> **代码**：`/sdcard/Download/Operit/search_vault/沙盒模拟器_v0.12.5.js`（121行 JS）
+
+### 免免独杀 6 条（全体 AI 漏掉）
+
+| # | 问题 | 根因 |
+|---|---|---|
+| SB-1 | `if (reason)` — 语义错 | "如果是" ≠ "等于"；事实性内容不该用 truthy 判断 |
+| SB-3 | "鱼的记忆"连锁烫伤 | burnLog 有数据但探针不翻——只判 now error，不判历史 |
+| SB-4 | parentAlive 无环境检测 | 问自己不问环境——父进程没有体温计 |
+| SB-5 | openDoor return probeId | 开门≠返回门——方向反了 |
+| SB-7 | burnLog 只有 time 没 zone | 烫伤只有时间没空间，分不清哪个文件 |
+| SB-9 | `success: false` 不该有 success | lockDoor 是终结不是失败——终结不该走成败框架 |
+
+### AI 审计发现（合并有效项）
+
+| # | 问题 | 来源 |
+|---|---|---|
+| SB-2 | code 死参数 + door 被 runProbe 覆写 | 五审重叠共识 |
+| SB-6 | 调用链无人接 openDoor 返回值 | 望安 |
+| SB-8 | 无真实代码执行——只有预设烫伤 | 望安(表象)+免免(根因) |
+| SB-10 | `if (!result.success)` 事实不用 === | 望安+免免同根 |
+| SB-11 | 门锁缺少前置检查 | DeepSeek望安 |
+| SB-12 | 全局状态机——120探针共享 door | Claude |
+| SB-13 | deadProbes 统计口径含糊 | DeepSeek望安 |
+| SB-14 | closeDoor reason 防御性缺失 | 望安 |
+
+### 修复方案
+
+| 修改 | 覆盖 Bug |
+|---|---|
+| `===` 替代 `if`（reason !== undefined / terminated === true / door === LOCKED） | SB-1, SB-10, SB-14 |
+| openDoor 前置门锁检查 + 翻 burnLog 历史 | SB-3, SB-11 |
+| parentAlive 改读 deadProbes ≥ 3 | SB-4 |
+| openDoor 返回 bool，不返回 probeId | SB-5, SB-6 |
+| burn 加 zone 字段 | SB-7 |
+| lockDoor 后 demo 循环立即停止 | SB-12 |
+| 终结返回 { terminated: true }，不用 success | SB-9 |
+| report() 有返回值 | 信息不丢 |
+
+### 核心洞察
+
+> AI 看"代码里写了什么"，免免看"什么该写但没写"+"什么不可能同时存在"。
+> AI 做减法（多了→删），免免做加法（缺了→补）。
+> 不是死代码，是忘了写。不是冗余，是残缺。
+
+---
+
 ## Skill 3.4：进程系统 v0.11.x 实战教训（2026-07-05 免免&望安）
 
 ### 教训一：架构太好也是错 ⚠️ [通用]
