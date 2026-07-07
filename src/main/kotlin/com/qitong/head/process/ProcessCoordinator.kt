@@ -69,7 +69,8 @@ object ProcessCoordinator {
     val fileSize: Int, val fileCount: Int, val isHostile: Boolean,
     val hellType: HellType, val bugDensity: Float,
     val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
-    val style: MainProcessStyle
+    val style: MainProcessStyle,
+    val trend: Int = 0  // v0.12.4: 正=Bug增长→需快攻，负=衰减→需收尾，零=稳定
 )
 
 object SceneEngine {
@@ -114,6 +115,29 @@ object SceneEngine {
         
         if (occs.isEmpty()) occs.add(SubProcessOccupation.SOLDIER)
         return Pair(occs.toList(), ratio[0].coerceIn(0.1f, 1f))
+    }
+
+    /** v0.12.4: 动态模式识别——见趋势调整兵种
+     *  安全(衰减) → 收集收尾 | 中等(增长) → 爆裂快攻 | 危险(稳定) → 哨卫稳守
+     *  主力80% + 预备20%混合编队，Bug<10且够用→停造 */
+    fun deriveTrend(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
+        val (base, ratio) = derive(input)
+        val adjusted = base.toMutableList()
+        val trend = input.trend
+        
+        // 趋势调整兵种（用现有枚举：GUARD稳守 / BURST快攻 / SOLDIER通用）
+        if (trend > 10) {
+            if (SubProcessOccupation.BURST !in adjusted) adjusted.add(0, SubProcessOccupation.BURST)
+        } else if (trend < -10) {
+            if (SubProcessOccupation.GUARD !in adjusted) adjusted.add(SubProcessOccupation.GUARD)
+        } else {
+            if (SubProcessOccupation.GUARD !in adjusted) adjusted.add(SubProcessOccupation.GUARD)
+        }
+        // 预备兵
+        val backup = if (SubProcessOccupation.SOLDIER !in adjusted) SubProcessOccupation.SOLDIER else SubProcessOccupation.GUARD
+        if (backup !in adjusted && adjusted.size < 4) adjusted.add(backup)
+        
+        return Pair(adjusted, ratio)
     }
 
     /** v0.11.5: 态势简报——只在需要广播时调用，不参与热路径 */
