@@ -218,6 +218,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v0.12.1 ✅ | BugDB 特调版：5000条规则 + 倒排索引 + 超预指纹缓存 + kotlin-int++ ？级。生态重构：v0.8~v0.12全区间HList/HMap替换 + ProHList进化 + 新量折叠缓存 |
 | v0.12.2 ✅ | 双开关特调版：军师建议开关 + APK只编译开关。编译是底线，操作是可选层 |
 | v0.12.3 ✅ | 八军生态+专武绑定+军师闪电双体系：八种进程体+指挥官专武+军师三层+闪电跑图+headstd统一标准库 |
+| v0.12.4 🏗️ | 动态模式识别(deriveTrend) + 军师独行扩军 + 指挥官自定义配队 + 军师基类匹配 |
 | v1.0.0 ✅ | 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟 + 进程树四层 + 三层容错 + 零崩溃 |
 
 ## 📋 版本历史
@@ -226,6 +227,7 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 |------|---------|
 | v1.0.0 | 架构全面超越 javac/Node.js 官方工具链 |
 | v0.12.3 | 八军生态+专武绑定+军师闪电+headstd |
+| v0.12.4 | 动态模式识别 + 军师扩军 |
 | v0.12.2 | 双开关特调版：军师建议 + APK只编译 |
 | v0.12.1 | BugDB 5000条特调版 + 生态重构 |
 | v0.12.0 | 内存树 + HED V5超预索引 |
