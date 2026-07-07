@@ -431,6 +431,7 @@ function findFunBody(funName) {
     if (src[i] === '}') depth--;
     i++;
   }
+  if (depth > 0) return null; // 🔧 修复#5: 括号不配对保护
   return src.substring(start, i - 1);
 }
 

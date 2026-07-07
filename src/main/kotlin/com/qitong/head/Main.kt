@@ -883,6 +883,7 @@ object Main {
             "ast" -> handleAst(byLabel)
             "diag" -> handleDiag(byLabel)
             "sim" -> handleSim(byLabel)
+            "simui" -> handleSimUi(byLabel)
             "admin" -> handleAdmin(byLabel)
             "dev" -> handleDev(byLabel)
             "multiproj" -> handleMultiProject(byLabel)
@@ -1278,48 +1279,66 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
         hPrintln("  [4] 命名按钮   → node tools/sim_ui.js --name <编号> <名字>")
         hPrintln()
         hPrintln("  [0] 返回主页")
+    // ─── sim-ui 交互（node调用）───
+    private fun execNode(jsPath: String, vararg args: String): Boolean {
+        try {
+            val cmd = arrayOf("node", jsPath, *args)
+            val proc = Runtime.getRuntime().exec(cmd)
+            // 🔧 修复#2: 消费 stderr，防止管道阻塞
+            val stderrThread = Thread { proc.errorStream.reader().forEachLine { /* 静默吃掉 */ } }
+            stderrThread.isDaemon = true
+            stderrThread.start()
+            proc.inputStream.reader().forEachLine { hPrintln("  $it") }
+            val exitCode = proc.waitFor()
+            return exitCode == 0
+        } catch (e: Exception) {
+            hPrintln("  ✖ 执行失败: ${e.message}")
+            return false
+        }
+    }
+
+    private fun findSimUiJs(): String? {
+        // 🔧 修复#4: 多路径兼容（Linux / Android / 本地）
+        val paths = listOf(
+            "/tmp/kotlin-head-gh/tools/sim_ui.js",
+            "/sdcard/Download/Operit/search_vault/kotlin-head/tools/sim_ui.js",
+            "./tools/sim_ui.js"
+        )
+        for (p in paths) {
+            if (File(p).exists()) return p
+        }
+        return null
     }
 
     private fun handleSimUi(key: String) {
         if (key == "0") { page = "main"; return }
-        val simJs = "/tmp/kotlin-head-gh/tools/sim_ui.js"
-        val simJsAlt = "/sdcard/Download/Operit/search_vault/kotlin-head/tools/sim_ui.js"
-        val jsPath = if (File(simJs).exists()) simJs else simJsAlt
-        if (!File(jsPath).exists()) {
+        val jsPath = findSimUiJs()
+        if (jsPath == null) {
             hPrintln("  ✖ sim_ui.js 未找到（请从 kotlin-head/tools/ 获取）")
             return
         }
         when (key) {
             "1" -> {
                 if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
-                try {
-                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--list", lastSrcPath))
-                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
-                    proc.waitFor()
-                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+                execNode(jsPath, "--list", lastSrcPath)
             }
             "2" -> {
                 if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
                 hPrint("  输入按钮编号: ")
                 val idx = readLine()?.trim() ?: return
-                try {
-                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--click", idx, lastSrcPath))
-                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
-                    proc.waitFor()
-                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+                execNode(jsPath, "--click", idx, lastSrcPath)
             }
             "3" -> {
                 hPrint("  变量名(逗号分隔,默认theme,fontSize,loading): ")
                 val vars = readLine()?.trim()?.ifEmpty { "theme,fontSize,loading" } ?: "theme,fontSize,loading"
                 hPrint("  每页UI数(默认250): ")
-                val uiCount = readLine()?.trim()?.ifEmpty { "250" } ?: "250"
+                val uiCountRaw = readLine()?.trim()?.ifEmpty { "250" } ?: "250"
                 hPrint("  页数(默认40): ")
-                val pages = readLine()?.trim()?.ifEmpty { "40" } ?: "40"
-                try {
-                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--bench", vars, uiCount, pages))
-                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
-                    proc.waitFor()
-                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+                val pagesRaw = readLine()?.trim()?.ifEmpty { "40" } ?: "40"
+                // 🔧 修复#3: 入参校验，拒绝NaN
+                val uiCount = uiCountRaw.toIntOrNull() ?: run { hPrintln("  ✖ UI数必须是数字"); return }
+                val pages = pagesRaw.toIntOrNull() ?: run { hPrintln("  ✖ 页数必须是数字"); return }
+                execNode(jsPath, "--bench", vars, uiCount.toString(), pages.toString())
             }
             "4" -> {
                 if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
@@ -1327,15 +1346,10 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                 val idx = readLine()?.trim() ?: return
                 hPrint("  新名字(空=回退, /=强制待命名): ")
                 val name = readLine()?.trim() ?: ""
-                try {
-                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--name", idx, name, lastSrcPath))
-                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
-                    proc.waitFor()
-                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+                execNode(jsPath, "--name", idx, name, lastSrcPath)
             }
             else -> {}
         }
     }
-        }
     }
 }
