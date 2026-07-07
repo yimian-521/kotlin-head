@@ -7,10 +7,10 @@ const DOOR = { OPEN: '🔓', CLOSED: '🔒', LOCKED: '🚫' };
 class Sandbox {
   constructor() {
     this.door = DOOR.OPEN;       // 门的状态
-    this.probes = [];             // 活跃探针
     this.burnLog = [];            // 烫伤记录
     this.deadProbes = 0;          // 死亡探针数
-    this.parentAlive = true;      // 父进程存活
+    this.parentAlive = true;      // 父进程存活（核心概念：永远不死）
+    this.activeProbe = null;      // 当前活跃探针id
   }
 
   // 🔓 开门：给探针一份副本，只读不写
@@ -23,7 +23,7 @@ class Sandbox {
   // 🔒 关门：探针超时/异常，门立刻锁死
   closeDoor(probeId, reason) {
     this.door = DOOR.CLOSED;
-    console.log(`  🔒 关门 → 探针#${probeId} ${reason}，门锁死，数据全部丢弃`);
+    if (reason) console.log(`  🔒 关门 → 探针#${probeId} ${reason}，门锁死，数据全部丢弃`);
   }
 
   // 🚫 锁死：永久阻断
@@ -34,8 +34,9 @@ class Sandbox {
 
   // 探针执行（在沙盒里跑）
   runProbe(probeId, code, isDangerous = false) {
-    const probe = this.openDoor(probeId, code);
-    this.door = DOOR.CLOSED; // 执行中关门
+    const probe = this.openDoor(probeId, code); // 返回值：{ id, code, copy, writable }
+    this.activeProbe = probe.id;
+    this.closeDoor(probeId, '执行中关门'); // 用 closeDoor 而不是直接赋值
 
     console.log(`  🫳 探针#${probeId} 执行中... (门已关)`);
     
@@ -114,11 +115,11 @@ if (mode === '--demo' || mode === '--all') {
   // 分体式沙盒
   console.log('--- 分体式沙盒（开关门）---');
   const sb = new Sandbox();
-  const dangers = [0, 4, 12, 23, 45, 67, 89, 101, 115]; // 分散的烫伤点
+  const dangers = [1, 5, 13, 24, 46, 68, 90, 102, 116]; // 会烫伤的探针编号（1-based）
   
   for (let i = 0; i < 120; i++) {
-    const isDanger = dangers.includes(i);
     const probeId = i + 1;
+    const isDanger = dangers.includes(probeId);
     const result = sb.runProbe(probeId, `testCode(${i})`, isDanger);
     
     if (!result.success) {
