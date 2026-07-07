@@ -190,6 +190,31 @@ object SceneEngine {
         cache.store(fp, result.first, result.second, "success")
         return result
     }
+
+    /** v0.12.4: 军师基类匹配——根据环境和队友类型返回匹配度
+     *  安全(低密度) → BURST/MICRO快攻 | 中等 → DIGEST缺方向受益最大
+     *  危险(高密度) → 全员匹配度低，应独行扩军 */
+    fun matchStrategist(bugDensity: Float, buddyType: SubProcessOccupation): Float {
+        return when {
+            bugDensity < 0.2f -> when (buddyType) {  // 安全
+                SubProcessOccupation.BURST -> 0.90f   // 快攻
+                SubProcessOccupation.MICRO -> 0.75f    // 精英级
+                SubProcessOccupation.GUARD -> 0.40f
+                SubProcessOccupation.DIGEST -> -0.15f
+                SubProcessOccupation.SOLDIER -> -0.25f
+                SubProcessOccupation.ASSAULT -> -0.20f
+            }
+            bugDensity < 0.5f -> when (buddyType) {  // 中等
+                SubProcessOccupation.DIGEST -> 0.85f   // 缺方向受益最大
+                SubProcessOccupation.MICRO -> 0.70f
+                SubProcessOccupation.BURST -> 0.60f
+                SubProcessOccupation.SOLDIER -> 0.45f
+                SubProcessOccupation.GUARD -> 0.40f
+                SubProcessOccupation.ASSAULT -> -0.05f
+            }
+            else -> return 0.10f  // 危险——不匹配，独行
+        }
+    }
     fun severityScore(occs: List<SubProcessOccupation>, ratio: Float, isHostile: Boolean): Int {
         var score = (occs.size * 2.5f).toInt()
         if (isHostile) score += 2
