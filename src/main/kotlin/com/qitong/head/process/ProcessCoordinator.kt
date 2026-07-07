@@ -257,6 +257,8 @@ object SceneEngine {
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
         broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
+        // v0.12.4: 军师独行扩军检测
+        checkSoloStrategist(bugDensity, 0)
     }
 
     /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
@@ -293,6 +295,27 @@ object SceneEngine {
     /** v0.11.3: 退役所有临时军队 */
     fun retireTemporary() {
         armyPool.filter { !it.isPermanent() }.forEach { it.retire() }
+    }
+
+    // v0.12.4: 军师独行扩军——总指挥层决策，军师不上报，总指挥主动扫描
+    fun handleStrategistSolo(bugDensity: Float, trend: Int) {
+        val isUrgent = bugDensity > 0.5f || trend > 20
+        val (occs, ratio) = SceneEngine.deriveTrend(
+            SceneInput(10000, 5, bugDensity > 0.5f, HellType.NONE, bugDensity, false, false, 0, activeStyle, trend)
+        )
+        val cap = if (isUrgent) 12 else 8
+        val army = ArmyProcess("solo-${armyCounter.incrementAndGet()}", cap, permanent = false, occupations = occs)
+        armyPool.add(army)
+        broadcast("system", "🧠 军师独行扩军 [urgent=$isUrgent] → ${occs.map { it.name }.joinToString("+")} cap=$cap")
+    }
+
+    private fun checkSoloStrategist(bugDensity: Float = 0f, trend: Int = 0): Boolean {
+        val strategists = commanders.values().filter { it.commanderType == CommanderType.STRATEGIST }
+        if (strategists.size == 1 && commanders.size == 1) {
+            handleStrategistSolo(bugDensity, trend)
+            return true
+        }
+        return false
     }
 
     // ─── 初始化：扫描并注册指挥官 ───
