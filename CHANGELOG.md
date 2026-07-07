@@ -2,28 +2,22 @@
 
 ## v0.12.4 (2026-07-07) — 动态模式识别 🧠
 
-> 军师不再只看静态快照——现在看趋势。SceneInput 新增时间维度。
+> 军师不再只看静态快照——现在看趋势。场景自适应。五轮审计闭环、六项修复。
 
-### deriveTrend — 动态模式识别
+### 五项功能
+- ① deriveTrend — SceneInput.trend 动态模式识别
+- ② 军师独行扩军 — handleStrategistSolo + checkSoloStrategist
+- ③ RoomSlotManager — 栈位分配 + 指挥官自定义配队
+- ④ 军师基类匹配 — matchStrategist(bugDensity, buddyType)
+- ⑤ headstd.jar — 35KB独立标准库，全版本兼容
 
-- SceneInput 新增 `trend` 字段（正=Bug增长，负=衰减，零=稳定）
-- `deriveTrend()`：Bug增长→BURST快攻压制，衰减→GUARD稳守收尾，稳定→GUARD维持防线
-- 预备兵机制：主力基础上加备用兵种（SOLDIER/GUARD），不浪费budget
-- 与 `derive()` 同构——输入参数→匹配策略→输出。一个维度变两个，决策更准
-
-### headstd.jar 独立标准库
-
-- 35KB，零错，已发布至 `libs/headstd.jar`
-- HList + HMap + SceneTypes + HeadStd 四合一
-- v0.8~v0.9 直接零错，v0.12.2+ 全量零错
-- 全版本用同一个 jar，被引用才链接，不调用的函数不进内存
-
-### 路线图
-
-- ✅ 动态模式识别（deriveTrend）
-- ⬜ 军师独行扩军
-- ⬜ 指挥官自定义配队
-- ⬜ 军师基类匹配
+### 审计修复
+- isHostile 与 isUrgent 信号统一（trend>20 也标记 hostile）
+- checkSoloStrategist 去重（armyPool 中已有活跃 solo 则跳过）
+- isActive 加兵力判断（0兵空壳不算活跃，不拦截新扩军）
+- occIdx 改为 AtomicInteger（多线程安全轮询）
+- assignRoomId + isRoomFull 双向同步 capacity*1.03f 余量
+- 注释修正：三分支描述精确化，80/20 标 🏗️
 
 ## v0.12.3 (2026-07-07) — 八军生态 + 专武绑定 + 军师闪电双体系 ⚔️🧠⚡
 

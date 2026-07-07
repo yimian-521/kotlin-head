@@ -203,7 +203,7 @@
       "desc": "八种进程体精选重定义，指挥官各绑专属职业。军师三层体系(纯信息调度权限>0.5级)+闪电跑图体系。headstd四文件独立标准库(HList+HMap+SceneTypes+HeadStd)35KB零错。v0.12.2+全量编译零错"
     },
     "v0.12.4": {
-      "done": "动态模式识别(deriveTrend)：SceneInput新增trend维度，Bug增长→BURST快攻压制/衰减→GUARD稳守收尾/稳定→GUARD维持防线+预备兵机制。headstd.jar发布(libs/headstd.jar)。路线图：军师独行扩军+指挥官自定义配队+军师基类匹配",
+      "done": "动态模式识别(deriveTrend)+军师独行扩军+RoomSlotManager栈位+基类匹配(matchStrategist)+headstd.jar。审计修复：isHostile统一+去重+isActive兵力判断+occIdx AtomicInteger+容量3%余量",
       "keywords": ["deriveTrend", "dynamic_pattern", "trend", "headstd_jar", "strategist_solo"],
       "desc": "deriveTrend根据Bug变化趋势自动调整兵种+预备兵机制。headstd.jar 35KB零错作为独立制品发布到GitHub libs/。剩余路线图三项开发中"
     },
