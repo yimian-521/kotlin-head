@@ -118,8 +118,8 @@ object SceneEngine {
     }
 
     /** v0.12.4: 动态模式识别——见趋势调整兵种
-     *  安全(衰减) → 收集收尾 | 中等(增长) → 爆裂快攻 | 危险(稳定) → 哨卫稳守
-     *  主力80% + 预备20%混合编队，Bug<10且够用→停造 */
+     *  衰减(trend<-10)→GUARD | 增长(trend>10)→BURST | 稳定(-10~10)→GUARD
+     *  🏗️ 主力80%+预备20%混合编队机制待实现 */
     fun deriveTrend(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
         val (base, ratio) = derive(input)
         val adjusted = base.toMutableList()
@@ -325,8 +325,9 @@ object SceneEngine {
     // v0.12.4: 军师独行扩军——总指挥层决策，军师不上报，总指挥主动扫描
     fun handleStrategistSolo(bugDensity: Float, trend: Int) {
         val isUrgent = bugDensity > 0.5f || trend > 20
+        val isHostile = bugDensity > 0.5f || trend > 20  // v0.12.4-fix: trend>20也标记hostile
         val (occs, ratio) = SceneEngine.deriveTrend(
-            SceneInput(10000, 5, bugDensity > 0.5f, HellType.NONE, bugDensity, false, false, 0, activeStyle, trend)
+            SceneInput(10000, 5, isHostile, HellType.NONE, bugDensity, false, false, 0, activeStyle, trend)
         )
         val cap = if (isUrgent) 12 else 8
         val army = ArmyProcess("solo-${armyCounter.incrementAndGet()}", cap, permanent = false, occupations = occs)
@@ -335,6 +336,9 @@ object SceneEngine {
     }
 
     private fun checkSoloStrategist(bugDensity: Float = 0f, trend: Int = 0): Boolean {
+        // v0.12.4-fix: 先检查是否已有活跃solo军队，避免重复创建
+        val hasSolo = armyPool.any { it.id.startsWith("solo-") && it.isActive() }
+        if (hasSolo) return false
         val strategists = commanders.values().filter { it.commanderType == CommanderType.STRATEGIST }
         if (strategists.size == 1 && commanders.size == 1) {
             handleStrategistSolo(bugDensity, trend)

@@ -398,5 +398,5 @@ object RoomSlotManager {
 
     fun roomSize(presetName: String): Int = roomSlots[presetName]?.size ?: 0
     fun roomCapacity(presetName: String): Int = roomCapacities[presetName] ?: 0
-    fun isRoomFull(presetName: String): Boolean = roomSize(presetName) >= roomCapacity(presetName)
+    fun isRoomFull(presetName: String): Boolean = roomSize(presetName) >= (roomCapacity(presetName) * 1.03f).toInt()  // v0.12.4: 3%余量，防满载误判
 }
