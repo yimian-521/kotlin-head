@@ -56,7 +56,7 @@ class ArmyProcess(
     }
 
     fun currentLoad(): Int = squad.size
-    fun isActive(): Boolean = active
+    fun isActive(): Boolean = active && currentLoad() > 0
     fun retire() { active = false }
     
     /** v0.11.3: 重新激活（被动→主动复用） */

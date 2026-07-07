@@ -337,7 +337,7 @@ object SceneEngine {
 
     private fun checkSoloStrategist(bugDensity: Float = 0f, trend: Int = 0): Boolean {
         // v0.12.4-fix: 先检查是否已有活跃solo军队，避免重复创建
-        val hasSolo = armyPool.any { it.id.startsWith("solo-") && it.isActive() }
+        val hasSolo = armyPool.any { it.id.startsWith("solo-") && it.isActive() && it.currentLoad() > 0 }
         if (hasSolo) return false
         val strategists = commanders.values().filter { it.commanderType == CommanderType.STRATEGIST }
         if (strategists.size == 1 && commanders.size == 1) {
