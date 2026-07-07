@@ -369,8 +369,9 @@ object RoomSlotManager {
     /** 分配最小可用编号（栈位机制） */
     fun assignRoomId(presetName: String): Int? {
         val capacity = roomCapacities[presetName] ?: return null
+        val effectiveCap = (capacity * 1.03f).toInt()  // v0.12.4: 与isRoomFull同步3%余量
         val slots = roomSlots.getOrPut(presetName) { mutableSetOf() }
-        for (id in 1..capacity) {
+        for (id in 1..effectiveCap) {
             if (id !in slots) {
                 slots.add(id)
                 return id
