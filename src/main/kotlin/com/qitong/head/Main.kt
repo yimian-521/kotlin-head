@@ -35,7 +35,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.12.4"
+    const val VERSION = "0.12.5"
 
     private val dev = DevMode.boot()
 
@@ -569,6 +569,7 @@ object Main {
             "dev" -> renderDev()
             "multiproj" -> renderMultiProject()
             "pack" -> renderPackPage()
+            "simui" -> renderSimUi()
             else -> { page = "main"; renderMain() }
         }
     }
@@ -641,6 +642,7 @@ object Main {
         hPrintln("  [0] EventBus 状态")
         if (multiProjectEnabled) hPrintln("  [10] 多项目测试")
         hPrintln("  [11] APK打包")
+    hPrintln("  [12] 源码UI模拟 (--sim-ui)")
         hPrintln("  [q] 退出")
     }
 
@@ -913,6 +915,7 @@ object Main {
             "0" -> page = "eventbus"
             "10" -> if (multiProjectEnabled) page = "multiproj"
             "11" -> page = "pack"
+            "12" -> page = "simui"
             else -> hPrintln("  ? 未知按钮: $key")
         }
     }
@@ -1263,6 +1266,76 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
                 hPrintln("  可跳过: ${diff.skippedSteps.joinToString { it.label }}")
             }
             else -> page = "main"
+    // ─── v0.12.5 源码UI模拟 ───
+    private fun renderSimUi() {
+        hPrintln("═══ 源码UI模拟 (--sim-ui) ═══")
+        hPrintln()
+        hPrintln("  当前源码: ${lastSrcPath.takeLast(40)}")
+        hPrintln()
+        hPrintln("  [1] 列出按钮   → node tools/sim_ui.js --list")
+        hPrintln("  [2] 模拟点击   → node tools/sim_ui.js --click <编号>")
+        hPrintln("  [3] 投影压测   → node tools/sim_ui.js --bench [变量] [UI数] [页数]")
+        hPrintln("  [4] 命名按钮   → node tools/sim_ui.js --name <编号> <名字>")
+        hPrintln()
+        hPrintln("  [0] 返回主页")
+    }
+
+    private fun handleSimUi(key: String) {
+        if (key == "0") { page = "main"; return }
+        val simJs = "/tmp/kotlin-head-gh/tools/sim_ui.js"
+        val simJsAlt = "/sdcard/Download/Operit/search_vault/kotlin-head/tools/sim_ui.js"
+        val jsPath = if (File(simJs).exists()) simJs else simJsAlt
+        if (!File(jsPath).exists()) {
+            hPrintln("  ✖ sim_ui.js 未找到（请从 kotlin-head/tools/ 获取）")
+            return
+        }
+        when (key) {
+            "1" -> {
+                if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
+                try {
+                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--list", lastSrcPath))
+                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
+                    proc.waitFor()
+                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+            }
+            "2" -> {
+                if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
+                hPrint("  输入按钮编号: ")
+                val idx = readLine()?.trim() ?: return
+                try {
+                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--click", idx, lastSrcPath))
+                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
+                    proc.waitFor()
+                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+            }
+            "3" -> {
+                hPrint("  变量名(逗号分隔,默认theme,fontSize,loading): ")
+                val vars = readLine()?.trim()?.ifEmpty { "theme,fontSize,loading" } ?: "theme,fontSize,loading"
+                hPrint("  每页UI数(默认250): ")
+                val uiCount = readLine()?.trim()?.ifEmpty { "250" } ?: "250"
+                hPrint("  页数(默认40): ")
+                val pages = readLine()?.trim()?.ifEmpty { "40" } ?: "40"
+                try {
+                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--bench", vars, uiCount, pages))
+                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
+                    proc.waitFor()
+                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+            }
+            "4" -> {
+                if (lastSrcPath.isEmpty()) { hPrintln("  ✖ 请先编译一个源码文件"); return }
+                hPrint("  按钮编号: ")
+                val idx = readLine()?.trim() ?: return
+                hPrint("  新名字(空=回退, /=强制待命名): ")
+                val name = readLine()?.trim() ?: ""
+                try {
+                    val proc = Runtime.getRuntime().exec(arrayOf("node", jsPath, "--name", idx, name, lastSrcPath))
+                    proc.inputStream.reader().forEachLine { hPrintln("  $it") }
+                    proc.waitFor()
+                } catch (e: Exception) { hPrintln("  ✖ 执行失败: ${e.message}") }
+            }
+            else -> {}
+        }
+    }
         }
     }
 }
