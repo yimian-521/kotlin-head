@@ -85,6 +85,29 @@ while ((m = ddItemRe.exec(src)) !== null) {
   buttons.push({ line: lineNum, callback, contentDesc: null, region: detectRegion(src, m.index) });
 }
 
+// 模式5: HED终端按钮 hPrintln(" [数字] 描述")
+const hedBtnRe = /hPrintln\s*\(\s*"\s*\[(\d+)\]\s*([^"]+)"/g;
+while ((m = hedBtnRe.exec(src)) !== null) {
+  const num = m[1];
+  const desc = m[2].replace(/\$\{[^}]*\}/g, '').trim(); // 去掉${}插值
+  const lineNum = src.substring(0, m.index).split('\n').length;
+  buttons.push({ line: lineNum, callback: 'HED:' + num, contentDesc: desc, region: 'HED终端' });
+}
+
+// 模式6: 传统View按钮 setOnClickListener / android:onClick
+const viewBtnRe = /\.setOnClickListener\s*\{[^}]*?(\w+)\s*\(/g;
+while ((m = viewBtnRe.exec(src)) !== null) {
+  const callback = m[1];
+  const lineNum = src.substring(0, m.index).split('\n').length;
+  buttons.push({ line: lineNum, callback, contentDesc: null, region: detectRegion(src, m.index) });
+}
+const xmlClickRe = /android:onClick\s*=\s*"(\w+)"/g;
+while ((m = xmlClickRe.exec(src)) !== null) {
+  const callback = m[1];
+  const lineNum = src.substring(0, m.index).split('\n').length;
+  buttons.push({ line: lineNum, callback, contentDesc: null, region: 'XML布局' });
+}
+
 // 去重（同行同回调合并）
 const seen = new Set();
 const uniqueButtons = buttons.filter(b => {
