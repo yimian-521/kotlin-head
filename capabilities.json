@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.12.2",
+  "version": "0.12.4",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -197,8 +197,18 @@
       "keywords": ["memory_tree","super_preheat","hed_v5","hot_group","pipe_button","dual_mode_router"],
       "desc": "进程树有了眼睛(内存预算+超限裁决)，按钮有了翅膀(热槽组并行预跑，按下仅dict.get)。V1-V5八轮迭代：无变量函数→进程树调度→并发预判→全覆盖热槽组→并行预跑缓存。中/重任务延迟省96-97%"
     },
-      "keywords": [],
-      "desc": "32/32 綦桐文件全通过"
+    "v0.12.3": {
+      "done": "八军生态+专武绑定+军师闪电双体系：八种进程体(爆裂/哨卫/侦察/收集/攻坚/精英/军师/闪电)+指挥官专武+headstd统一标准库+34编译修复+全版本零错",
+      "keywords": ["eight_army", "specialist_binding", "strategist", "lightning", "headstd", "dual_system"],
+      "desc": "八种进程体精选重定义，指挥官各绑专属职业。军师三层体系(纯信息调度权限>0.5级)+闪电跑图体系。headstd四文件独立标准库(HList+HMap+SceneTypes+HeadStd)35KB零错。v0.12.2+全量编译零错"
+    },
+    "v0.12.4": {
+      "done": "动态模式识别(deriveTrend)：SceneInput新增trend维度，Bug增长→BURST快攻压制/衰减→GUARD稳守收尾/稳定→GUARD维持防线+预备兵机制。headstd.jar发布(libs/headstd.jar)。路线图：军师独行扩军+指挥官自定义配队+军师基类匹配",
+      "keywords": ["deriveTrend", "dynamic_pattern", "trend", "headstd_jar", "strategist_solo"],
+      "desc": "deriveTrend根据Bug变化趋势自动调整兵种+预备兵机制。headstd.jar 35KB零错作为独立制品发布到GitHub libs/。剩余路线图三项开发中"
+    },
+    "v1.0.0": {
+      "done": "32/32 綦桐文件全通过",
     }
   }
 }
