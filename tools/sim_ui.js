@@ -296,6 +296,125 @@ else if (mode === '--name') {
   console.log('✅ 按钮[' + (idx + 1) + '] → ' + displayName + ' | 已持久化');
 }
 
+else if (mode === '--params') {
+  const idx = parseInt(args[1] || '') - 1;
+  if (isNaN(idx) || idx < 0 || idx >= uniqueButtons.length) {
+    console.error('✖ 无效按钮编号。用 --list 查看可用按钮。');
+    process.exit(1);
+  }
+  const btn = uniqueButtons[idx];
+  const name = resolveName(btn, idx);
+  console.log('=== 参数追踪：[' + (idx + 1) + '] "' + name + '" ===\n');
+
+  // 1. 在Composable参数表中找到这个回调的签名
+  let cbSignature = null;
+  const cbPattern = new RegExp(btn.callback + '\\s*:\\s*\\(([^)]*)\\)\\s*->\\s*(\\w+)', 'g');
+  while ((m = cbPattern.exec(src)) !== null) {
+    cbSignature = { params: m[1], returnType: m[2] };
+  }
+  // 2. 如果找不到精确匹配，找简化版（可能在lambda里直接调了onShareCard(card)）
+  if (!cbSignature) {
+    const simplePattern = new RegExp('\\{\\s*' + btn.callback + '\\s*\\(([^)]*)\\)', 'g');
+    while ((m = simplePattern.exec(src)) !== null) {
+      cbSignature = { params: m[1], returnType: 'Unit', isLambda: true };
+    }
+  }
+  // 2b. lambda穿透：在按钮附近源码中找实际调用
+  if (!cbSignature) {
+    const btnPos = src.indexOf(btn.callback, src.indexOf('onClick', Math.max(0, (btn.line - 3) * 80)));
+    if (btnPos > 0) {
+      // 在按钮附近200字符内找所有函数调用
+      const nearbyBlock = src.substring(Math.max(0, btnPos - 100), Math.min(src.length, btnPos + 400));
+      const callPattern = /(\w+)\s*\(\s*(\w+)\s*\)/g;
+      let cm;
+      while ((cm = callPattern.exec(nearbyBlock)) !== null) {
+        const maybeCb = cm[1];
+        const maybeArg = cm[2];
+        if (maybeCb !== btn.callback && maybeCb !== 'showMenu' && maybeCb[0] === maybeCb[0].toLowerCase()) {
+          // 追这个maybeCb的类型签名
+          const sigRe = new RegExp(maybeCb + '\\s*:\\s*\\(([^)]*)\\)\\s*->\\s*(\\w+)', 'g');
+          let sm;
+          while ((sm = sigRe.exec(src)) !== null) {
+            cbSignature = { params: sm[1], returnType: sm[2], actualCall: maybeCb, actualArgs: maybeArg };
+            break;
+          }
+          if (cbSignature) break;
+        }
+      }
+    }
+  }
+
+  if (cbSignature) {
+    console.log('  回调签名: ' + btn.callback + '(' + cbSignature.params + ')' + (cbSignature.isLambda ? ' ← lambda内联' : ''));
+    console.log('  返回类型: ' + cbSignature.returnType + '\n');
+
+    // 3. 提取参数名，找类型定义
+    const paramParts = cbSignature.params.split(',').map(p => p.trim());
+    const params = paramParts.map(p => {
+      const parts = p.split(':').map(s => s.trim());
+      return { name: parts[0], type: parts[1] || 'Any' };
+    });
+
+    params.forEach((param, pi) => {
+      console.log('  📦 参数 ' + (pi + 1) + ': ' + param.name + ': ' + param.type);
+
+      // 4. 找参数类型的data class定义
+      const dcPattern = new RegExp('data class ' + param.type + '\\s*\\(([^)]*)\\)', 'g');
+      let dcMatch;
+      while ((dcMatch = dcPattern.exec(src)) !== null) {
+        console.log('      └── 类型定义: data class ' + param.type);
+        const fields = dcMatch[1].split(',').map(f => {
+          const fp = f.trim().split(':').map(s => s.trim());
+          const fieldName = fp[0].replace(/^(val|var)\s+/, '');
+          const fieldType = fp[1] || 'Any';
+          const isNullable = f.includes('?');
+          const hasDefault = f.includes('=');
+          return { name: fieldName, type: fieldType, nullable: isNullable, hasDefault };
+        });
+
+        console.log('      字段 (共' + fields.length + '个):');
+        fields.forEach(f => {
+          const status = [];
+          if (f.nullable) status.push('可空');
+          if (f.hasDefault) status.push('有默认值');
+          
+          // 检查字段是否在函数体内被使用
+          const funBody = findFunBody(btn.callback) || '';
+          const fieldUsed = new RegExp('\\b' + f.name + '\\b').test(funBody) ||
+                           new RegExp(param.name + '\\.' + f.name).test(src);
+          if (!fieldUsed && !f.hasDefault) status.push('⚠ 未在回调中使用');
+
+          const riskIcon = f.nullable && !f.hasDefault ? '🔴' :
+                          f.nullable ? '🟡' :
+                          !fieldUsed && !f.hasDefault ? '⚪' : '✅';
+
+          console.log('        ' + riskIcon + ' ' + f.name + ': ' + f.type +
+            (status.length > 0 ? '  [' + status.join(', ') + ']' : ''));
+        });
+      }
+
+      if (!dcMatch) {
+        // 5. 在Composable函数体内追参数来源
+        console.log('      └── 来源追踪:');
+        // 找 items(cards) → card → 传入回调
+        const itemsPattern = /items\s*\(\s*(\w+)\s*\)\s*\{[^}]*?\1\s*->/g;
+        while ((m = itemsPattern.exec(src)) !== null) {
+          const sourceList = m[1];
+          // 找该列表的声明
+          const listDeclPattern = new RegExp('(val|var)\\s+' + sourceList + '\\s*:\\s*List<(' + param.type + ')>');
+          if (listDeclPattern.test(src)) {
+            console.log('        来源: ' + sourceList + ': List<' + param.type + '> (来自Composable参数)');
+          }
+        }
+        console.log('        ⚠ 跨文件追踪需要LiveDeclarationGraph（当前仅单文件正则）');
+      }
+    });
+  } else {
+    console.log('  ⚠ 未找到回调函数签名（可能是跨文件回调参数）');
+    console.log('  建议: 在调用方文件中搜索' + btn.callback + '的实现');
+  }
+}
+
 else {
   console.log('未知命令: ' + mode + '。用 --help 查看用法。');
 }
