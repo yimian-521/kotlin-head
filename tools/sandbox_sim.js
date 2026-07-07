@@ -1,23 +1,23 @@
 #!/usr/bin/env node
-// kotlin-head 分体式沙盒模拟器 v0.1.0
+// kotlin-head 分体式沙盒模拟器 v0.2.0
 // 验证核心概念：开关门 / 烫伤不传父进程 / 冻结≠冻死 / 父进程死不掉
+// v0.2.0: 小安审计修复——删activeProbe死存储/openDoor简化/checkParent注释/清理冗余
 
 const DOOR = { OPEN: '🔓', CLOSED: '🔒', LOCKED: '🚫' };
 
 class Sandbox {
   constructor() {
-    this.door = DOOR.OPEN;       // 门的状态
-    this.burnLog = [];            // 烫伤记录
-    this.deadProbes = 0;          // 死亡探针数
-    this.parentAlive = true;      // 父进程存活（核心概念：永远不死）
-    this.activeProbe = null;      // 当前活跃探针id
+    this.door = DOOR.OPEN;
+    this.burnLog = [];
+    this.deadProbes = 0;
+    this.parentAlive = true;      // 核心概念：永远不死，用于对比传统编译器必崩
   }
 
   // 🔓 开门：给探针一份副本，只读不写
   openDoor(probeId, code) {
     this.door = DOOR.OPEN;
     console.log(`  🔓 开门 → 探针#${probeId} 拿到代码副本（只读），进入沙盒`);
-    return { id: probeId, code, copy: true, writable: false };
+    return probeId; // 返回探针id供调用方记录
   }
 
   // 🔒 关门：探针超时/异常，门立刻锁死
@@ -34,22 +34,19 @@ class Sandbox {
 
   // 探针执行（在沙盒里跑）
   runProbe(probeId, code, isDangerous = false) {
-    const probe = this.openDoor(probeId, code); // 返回值：{ id, code, copy, writable }
-    this.activeProbe = probe.id;
-    this.closeDoor(probeId, '执行中关门'); // 用 closeDoor 而不是直接赋值
+    this.openDoor(probeId, code);
+    this.closeDoor(probeId, '执行中关门');
 
     console.log(`  🫳 探针#${probeId} 执行中... (门已关)`);
     
     try {
       if (isDangerous) {
-        // 模拟危险代码
         throw new Error(`🔥 三级烫伤: imageUrl 为 null → QQ SDK 主线程回调崩`);
       }
-      // 安全执行
-      const result = `探针#${probeId}: 安全通过 ✅`;
-      console.log(`  ✅ 探针#${probeId} 执行完成 → 结果: ${result}`);
-      this.door = DOOR.OPEN; // 正常完成，开门回收
-      return { success: true, result };
+      console.log(`  ✅ 探针#${probeId} 执行完成`);
+      // 门在 closeDoor 后是 CLOSED，安全执行完回到 OPEN
+      this.door = DOOR.OPEN;
+      return { success: true, result: `探针#${probeId}: 安全通过 ✅` };
     } catch (e) {
       // 烫了！
       this.deadProbes++;
@@ -162,8 +159,8 @@ if (mode === '--freeze' || mode === '--all') {
   console.log('  结论: 冻结只冻探针回来的路，父进程该干嘛干嘛\n');
 }
 
-if (mode === '--help' || !mode) {
-  console.log('kotlin-head 分体式沙盒模拟器 v0.1.0');
+if (mode === '--help') {
+  console.log('kotlin-head 分体式沙盒模拟器 v0.2.0');
   console.log('');
   console.log('用法: node tools/sandbox_sim.js [模式]');
   console.log('');
