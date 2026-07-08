@@ -64,7 +64,7 @@ object SimUiScanner {
         val stateVars = mutableSetOf<String>()
         walk(file.declarations, { node ->
             if (node is KtVal && "var" in node.modifiers) stateVars.add(node.name)
-        })
+        }, 0)
         val triggers = mutableListOf<VarInteraction>()
         walk(file.declarations, { node ->
             if (node is KtBinary) {
@@ -86,7 +86,7 @@ object SimUiScanner {
         val vars = variableScan(file)
         if (vars.varTriggers.isNotEmpty()) return vars.copy(source = "混合扫描：探针0命中 → 变量追踪 ${vars.varTriggers.size} 个")
         val unknowns = mutableListOf<KtCall>()
-        walk(file.declarations, { node -> if (node is KtCall) unknowns.add(node) })
+        walk(file.declarations, { node -> if (node is KtCall) unknowns.add(node) }, 0)
         return ScanResult(emptyList(), emptyList(), unknowns, "混合扫描：0探针 0变量 — 请手动标注交互点")
     }
 

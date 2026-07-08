@@ -75,9 +75,16 @@ object AnnotationAdapter {
                 val body = arg.body
                 val calls = mutableListOf<KtCall>()
                 when (body) {
-                    is KtBlock -> calls.addAll(body.statements.filterIsInstance<KtCall>())
+                    is KtBlock -> {
+                        calls.addAll(body.statements.filterIsInstance<KtCall>())
+                        // 免免：赋值也是交互——page = "detail"
+                        body.statements.filterIsInstance<KtBinary>().forEach { b ->
+                            val v = when (val l = b.left) { is KtRef -> l.name; else -> "?" }
+                            calls.add(KtCall(KtRef("$v=${exprToString(b.right)}", null, b.span), emptyList(), b.span))
+                        }
+                    }
                     is KtCall -> calls.add(body)
-                    else -> walkAst(listOf(body)) { if (it is KtCall) calls.add(it) }
+                    else -> walkAst(listOf(body), { if (it is KtCall) calls.add(it) }, 0)
                 }
                 if (calls.isNotEmpty()) {
                     return calls.joinToString(" → ") {
@@ -95,7 +102,7 @@ object AnnotationAdapter {
 
     private fun extractDeps(call: KtCall): List<String> {
         val deps = mutableListOf<String>()
-        walkAst(listOf(call)) { if (it is KtRef) deps.add(it.name) }
+        walkAst(listOf(call), { if (it is KtRef) deps.add(it.name) }, 0)
         return deps.distinct()
     }
 
