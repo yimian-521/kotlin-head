@@ -37,7 +37,7 @@ import com.qitong.head.ButtonRegistry.Command
  */
 object Main {
 
-    const val VERSION = "0.12.6"
+    const val VERSION = "0.12.7"
 
     private val dev = DevMode.boot()
 
@@ -931,54 +931,72 @@ object Main {
     }
 
     // ─── 输入处理 ───
-    private fun handle(input: String) {
-        // v0.12.6: 懒汉型精确匹配（按钮名 → 数组索引）
-        val idx = currentButtons.indexOfFirst { it.label.equals(input, ignoreCase = true) }
-        if (idx >= 0) { handleMain((idx + 1).toString()); return }
-        // 探测型 fallback：模糊搜索
-        val found = ButtonRegistry.searchByLabel(input)
-        if (found != null) {
-            val foundIdx = currentButtons.indexOf(found)
-            if (foundIdx >= 0) { handleMain((foundIdx + 1).toString()); return }
+    // v0.12.7 混合输出：决策门
+    private sealed class Route {
+        data class Hit(val btn: ButtonRegistry.Button) : Route()
+        data class Page(val input: String) : Route()
+    }
+
+    private val ALIASES = mapOf(
+        "ast" to "查看 AST 树", "ast视图" to "查看 AST 树", "ast树" to "查看 AST 树",
+        "diag" to "查看诊断", "诊断" to "查看诊断",
+        "编译" to "重新编译", "重编" to "重新编译",
+        "bugs" to "Bug 扫描", "bug扫描" to "Bug 扫描",
+        "返回主页" to "← 返回主页", "back" to "← 返回主页", "主页" to "← 返回主页"
+    )
+
+    private fun route(input: String): Route {
+        val resolved = ALIASES[input.toLowerCase()] ?: input
+        val numIdx = resolved.toIntOrNull()?.minus(1)
+        if (numIdx != null && numIdx >= 0) {
+            currentButtons.getOrNull(numIdx)?.let { return Route.Hit(it) }
         }
-        when (page) {
-            "main" -> handleMain(input)
-            "ast" -> handleAst(input)
-            "diag" -> handleDiag(input)
-            "sim" -> handleSim(input)
-            "admin" -> handleAdmin(input)
-            "bugs" -> if (input == "1") page = "main"
-            "roadmap" -> if (input == "1") page = "main"
-            "decomp" -> if (input == "1") page = "main"
-            "process" -> if (input == "1") page = "main"
-            "eventbus" -> if (input == "1") page = "main"
-            "dev" -> handleDev(input)
-            "multiproj" -> handleMultiProject(input)
-            "pack" -> handlePack(input)
-            "simui" -> handleSimUi(input)
-            "buttons" -> handleButtons(input)
-            else -> hPrintln("  ? 未知页面: $page")
+        currentButtons.find { it.label.equals(resolved, ignoreCase = true) }
+            ?.let { return Route.Hit(it) }
+        ButtonRegistry.searchByLabel(resolved)?.let { return Route.Hit(it) }
+        return Route.Page(input)
+    }
+
+    private fun handle(input: String) {
+        when (val r = route(input)) {
+            is Route.Hit  -> handleMain(r.btn)
+            is Route.Page -> dispatchToPage(input)
         }
         saveSession()
     }
-        saveSession()
+
+    /** 页面分发 */
+    private fun dispatchToPage(input: String) {
+        when (page) {
+            "main"     -> handleMain(input)
+            "ast"      -> handleAst(input)
+            "diag"     -> handleDiag(input)
+            "sim"      -> handleSim(input)
+            "admin"    -> handleAdmin(input)
+            "bugs"     -> if (input == "1") page = "main"
+            "roadmap"  -> if (input == "1") page = "main"
+            "decomp"   -> if (input == "1") page = "main"
+            "process"  -> if (input == "1") page = "main"
+            "eventbus" -> if (input == "1") page = "main"
+            "dev"      -> handleDev(input)
+            "multiproj"-> handleMultiProject(input)
+            "pack"     -> handlePack(input)
+            "simui"    -> handleSimUi(input)
+            "buttons"  -> handleButtons(input)
+            else -> hPrintln("  ? 未知页面: $page")
+        }
+    }
+
+    /** v0.12.7: Button对象路由——跳过索引解析 */
+    private fun handleMain(btn: ButtonRegistry.Button) {
+        executeButton(btn)
     }
 
     private fun handleMain(key: String) {
         if (key == "0") { page = "eventbus"; return }
         if (key == "t") { showTemplatePicker(); return }
         if (key == "e") { page = "buttons"; return }
-        val idx = key.toIntOrNull()?.minus(1) ?: -1
-        // 懒汉型：精确命中快照
-        var btn = currentButtons.getOrNull(idx)
-        // 探测型：快照失效时从 Registry 实时取（并发/时序安全）
-        if (btn == null) {
-            val fresh = ButtonRegistry.visibleButtons()
-            currentButtons = fresh
-            btn = fresh.getOrNull(idx)
-        }
-        if (btn == null) { hPrintln("  ? 未知命令: $key"); return }
-        executeButton(btn)
+        hPrintln("  ? 未知命令: $key")
     }
     
     private fun executeButton(btn: ButtonRegistry.Button) {
