@@ -194,12 +194,19 @@ object SimUiScanner {
 
     private fun extractAction(call: KtCall): String {
         // 找 lambda 参数（onClick = { ... }）
+        // 免免直觉1: if 是不是真的 if — body 可能是单表达式，不一定是 KtBlock
         for (arg in call.args) {
             if (arg is KtLambda) {
                 val body = arg.body
-                if (body is KtBlock) {
-                    val calls = body.statements.filterIsInstance<KtCall>()
-                    val targets = calls.map { 
+                val calls = mutableListOf<KtCall>()
+                when (body) {
+                    is KtBlock -> calls.addAll(body.statements.filterIsInstance<KtCall>())
+                    is KtCall -> calls.add(body)
+                    // 单表达式：KtIf/KtBinary/KtWhen 里可能嵌套调用，走 walk 收
+                    else -> walk(listOf(body)) { if (it is KtCall) calls.add(it) }
+                }
+                if (calls.isNotEmpty()) {
+                    val targets = calls.map {
                         when (val t = it.target) {
                             is KtRef -> t.name
                             is KtMemberAccess -> t.member
@@ -234,20 +241,38 @@ object SimUiScanner {
     }
 
     /** 遍历 AST 节点 */
-    private fun walk(nodes: List<KtNode>, visitor: (KtNode) -> Unit) {
+    // 免免直觉2: 会不会自己掉回自己 — 深度计数器防栈溢出
+    // 免免直觉3: 等号是不是该多画几道 — 补全 KtWhen/KtTry/KtFor/KtWhile/KtVal
+    private fun walk(nodes: List<KtNode>, visitor: (KtNode) -> Unit, depth: Int = 0) {
+        if (depth > 50) { visitor(KtRef("(递归超限)","",Span(0,0,0,0,0,null))); return }
         for (node in nodes) {
             visitor(node)
             when (node) {
-                is KtClass -> walk(node.members, visitor)
-                is KtFun -> node.body?.let { walk(listOf(it), visitor) }
-                is KtBlock -> walk(node.statements, visitor)
-                is KtIf -> {
-                    node.thenBranch?.let { walk(listOf(it), visitor) }
-                    node.elseBranch?.let { walk(listOf(it), visitor) }
+                is KtClass  -> walk(node.members, visitor, depth + 1)
+                is KtFun    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtVal    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtBlock  -> walk(node.statements, visitor, depth + 1)
+                is KtIf     -> {
+                    node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }
+                    node.elseBranch?.let { walk(listOf(it), visitor, depth + 1) }
                 }
-                is KtCall -> walk(node.args, visitor)
-                is KtLambda -> walk(listOf(node.body), visitor)
-                is KtBinary -> { walk(listOf(node.left, node.right), visitor) }
+                is KtWhen   -> node.branches.forEach { b ->
+                    b.condition?.let { walk(listOf(it), visitor, depth + 1) }
+                    walk(listOf(b.body), visitor, depth + 1)
+                }
+                is KtTry    -> {
+                    walk(node.tryBlock, visitor, depth + 1)
+                    node.catchBlocks.forEach { walk(listOf(it), visitor, depth + 1) }
+                    node.finallyBlock?.let { walk(listOf(it), visitor, depth + 1) }
+                }
+                is KtFor    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtWhile  -> {
+                    node.condition?.let { walk(listOf(it), visitor, depth + 1) }
+                    node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                }
+                is KtCall   -> walk(node.args, visitor, depth + 1)
+                is KtLambda -> walk(listOf(node.body), visitor, depth + 1)
+                is KtBinary -> { walk(listOf(node.left, node.right), visitor, depth + 1) }
                 else -> {}
             }
         }
