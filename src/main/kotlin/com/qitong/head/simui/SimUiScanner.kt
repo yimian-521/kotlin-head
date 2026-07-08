@@ -75,7 +75,7 @@ object SimUiScanner {
                     if (isButtonCall(name)) {
                         buttons.add(UiInteraction(
                             label = extractLabel(node),
-                            line = node.pos?.line ?: -1,
+                            line = node.span.start.line,
                             actionHint = extractAction(node),
                             varDependencies = extractDeps(node),
                             confidence = 1.0
@@ -105,7 +105,7 @@ object SimUiScanner {
         // 收集所有 var 声明
         val stateVars = mutableSetOf<String>()
         walk(file.declarations) { node ->
-            if (node is KtVal && (node as? KtVal)?.isVar == true) {
+            if (node is KtVal && "var" in node.modifiers) {
                 stateVars.add(node.name)
             }
         }
@@ -123,7 +123,7 @@ object SimUiScanner {
                         triggers.add(VarInteraction(
                             varName = leftName,
                             assignedValue = exprToString(node.right),
-                            line = node.pos?.line ?: -1,
+                            line = node.span.start.line,
                             inContext = "",
                             confidence = 0.6
                         ))
