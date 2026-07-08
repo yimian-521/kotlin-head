@@ -282,8 +282,7 @@ object Main {
         
         // v0.8.3: 依赖图合并 staging
         DependencyGraph.commit()
-        // v0.12.6: sim-ui 按钮注入（只清 simUiButtons，不走快照）
-        ButtonRegistry.clearSimUiInjections()
+        // v0.12.6: sim-ui 按钮注入（有新增才清旧，避免 Kotlin T!型静默丢失）
     }
     
     // ─── v0.8.0 进程树注解处理 ───
