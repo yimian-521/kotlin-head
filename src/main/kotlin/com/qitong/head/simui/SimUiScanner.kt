@@ -110,7 +110,7 @@ object SimUiScanner {
             }
         }
 
-        // 找到所有对这些变量的赋值（= 操作）
+        // 找到所有对这些变量的赋值（含复合赋值：= += -= *= /= %=）
         walk(file.declarations) { node ->
             when (node) {
                 is KtBinary -> {
@@ -119,12 +119,13 @@ object SimUiScanner {
                         is KtMemberAccess -> left.member
                         else -> ""
                     }
-                    if (leftName in stateVars && node.op == "=") {
+                    // 免免：支配域不够——"="只覆盖了简单赋值，漏了 += -= 等
+                    if (leftName in stateVars && node.op in setOf("=", "+=", "-=", "*=", "/=", "%=")) {
                         triggers.add(VarInteraction(
                             varName = leftName,
                             assignedValue = exprToString(node.right),
                             line = node.span.start.line,
-                            inContext = "",
+                            inContext = findContext(node),
                             confidence = 0.6
                         ))
                     }
@@ -184,11 +185,10 @@ object SimUiScanner {
                        "FloatingActionButton", "clickable", "onClick")
 
     private fun extractLabel(call: KtCall): String {
-        // 尝试从参数提取标签
+        // 免免：第一个KtLitStr不一定是标签——跳过单字符
         for (arg in call.args) {
-            if (arg is KtLitStr) return arg.value
+            if (arg is KtLitStr && arg.value.length > 1) return arg.value
         }
-        // 从命名参数找 "text" 或 "contentDescription"
         return "(未命名按钮)"
     }
 
@@ -240,6 +240,14 @@ object SimUiScanner {
         else -> expr.javaClass.simpleName
     }
 
+    /** 向上找节点所在的函数/类上下文 */
+    // 免免：inContext声明时为""且永远是""——声明≠事实
+    private fun findContext(node: KtNode): String {
+        // 简化版：从当前文件声明中找包含该行号的 KtFun/KtClass
+        // 由于没有父指针，此处返回 span 信息作为位置标记
+        return "L${node.span.start.line}"
+    }
+
     /** 遍历 AST 节点 */
     // 免免直觉2: 会不会自己掉回自己 — 深度计数器防栈溢出
     // 免免直觉3: 等号是不是该多画几道 — 补全 KtWhen/KtTry/KtFor/KtWhile/KtVal
@@ -248,22 +256,27 @@ object SimUiScanner {
         for (node in nodes) {
             visitor(node)
             when (node) {
-                is KtClass  -> walk(node.members, visitor, depth + 1)
-                is KtFun    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
-                is KtVal    -> node.value?.let { walk(listOf(it), visitor, depth + 1) }  // value 可空
-                is KtBlock  -> walk(node.statements, visitor, depth + 1)
-                is KtIf     -> {
+                is KtClass     -> walk(node.members, visitor, depth + 1)
+                is KtInterface -> walk(node.members, visitor, depth + 1)
+                is KtEnum      -> walk(node.members, visitor, depth + 1)
+                is KtFun       -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtVal       -> node.value?.let { walk(listOf(it), visitor, depth + 1) }  // value 可空
+                is KtBlock     -> walk(node.statements, visitor, depth + 1)
+                is KtIf        -> {
                     node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }
                     node.elseBranch?.let { walk(listOf(it), visitor, depth + 1) }
                 }
-                is KtWhen   -> {
+                is KtWhen      -> {
                     node.subject?.let { walk(listOf(it), visitor, depth + 1) }
                     node.branches.forEach { b ->
                         walk(listOf(b.condition), visitor, depth + 1)
                         walk(listOf(b.body), visitor, depth + 1)
                     }
                 }
-                is KtFor    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtFor       -> {
+                    walk(listOf(node.iterable), visitor, depth + 1)  // 免免：iterable 未递归→漏交互源
+                    node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                }
                 is KtWhile  -> {
                     node.condition?.let { walk(listOf(it), visitor, depth + 1) }
                     node.body?.let { walk(listOf(it), visitor, depth + 1) }
