@@ -27,11 +27,19 @@ object SimUiScanner {
 
     /** 标准 UI 交互（Button/onClick/Composable） */
     data class UiInteraction(
+        val id: String,            // 免免原则2：探针用id不用名字 — "Button@L10:5"
         val label: String,
         val line: Int,
         val actionHint: String,     // onClick 的目标推测
         val varDependencies: List<String>,  // 依赖的状态变量
         val confidence: Double      // 0..1，探针命中=1.0，变量推测=0.6
+    )
+
+    /** 手搓标记节点 — 免免原则1：生下来就有消费者 */
+    private data class SimMarker(
+        val id: String,        // "Button@L10:5"
+        val signature: String, // "Button+Lambda"
+        val call: KtCall       // 原始 AST 节点引用
     )
 
     /** 变量驱动的交互（赋值即交互） */
@@ -60,20 +68,17 @@ object SimUiScanner {
     //  阶段1：探针扫描
     // ═════════════════════════════════════════
 
-    private fun probeScan(file: KtFile): ScanResult {
+private fun probeScan(file: KtFile): ScanResult {
         val buttons = mutableListOf<UiInteraction>()
         val remains = mutableListOf<KtCall>()
         walk(file.declarations, { node ->
             when (node) {
                 is KtCall -> {
-                    val name = when (val t = node.target) {
-                        is KtRef -> t.name
-                        is KtMemberAccess -> t.member
-                        else -> "?"
-                    }
-                    // 显式探针：Button / IconButton / clickable / onClick
-                    if (isButtonCall(name)) {
+                    // 免免原则2：探针用id不用名字 — 名字初筛→lambda验证→生成标记
+                    val marker = tryMarkButton(node)
+                    if (marker != null) {
                         buttons.add(UiInteraction(
+                            id = marker.id,
                             label = extractLabel(node),
                             line = node.span.start.line,
                             actionHint = extractAction(node),
@@ -86,7 +91,7 @@ object SimUiScanner {
                 }
                 else -> {}
             }
-        }
+        })
         return ScanResult(
             buttons = buttons,
             varTriggers = emptyList(),
@@ -180,9 +185,30 @@ object SimUiScanner {
     //  工具函数
     // ═════════════════════════════════════════
 
-    private fun isButtonCall(name: String): Boolean =
-        name in setOf("Button", "IconButton", "TextButton", "OutlinedButton",
-                       "FloatingActionButton", "clickable", "onClick")
+    // 免免原则2：探针用id不用名字 — 名字初筛→lambda验证→生成SimMarker
+    private fun tryMarkButton(call: KtCall): SimMarker? {
+        val name = when (val t = call.target) {
+            is KtRef -> t.name
+            is KtMemberAccess -> t.member
+            else -> return null
+        }
+        // 阶段1：名字初筛（保留集合做快速过滤）
+        if (name !in BUTTON_CANDIDATES) return null
+        // 阶段2：lambda验证 — 按钮的核心特征是有回调lambda，不是名字
+        val hasLambda = call.args.any { it is KtLambda }
+        if (!hasLambda) return null
+        // 阶段3：生成手搓标记 — 身份不依赖字符串
+        return SimMarker(
+            id = "${name}@L${call.span.start.line}",
+            signature = "$name+Lambda",
+            call = call
+        )
+    }
+
+    private val BUTTON_CANDIDATES = setOf(
+        "Button", "IconButton", "TextButton", "OutlinedButton",
+        "FloatingActionButton", "clickable", "onClick"
+    )
 
     private fun extractLabel(call: KtCall): String {
         // 免免：第一个KtLitStr不一定是标签——跳过单字符
