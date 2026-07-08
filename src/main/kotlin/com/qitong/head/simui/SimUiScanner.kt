@@ -244,13 +244,13 @@ object SimUiScanner {
     // 免免直觉2: 会不会自己掉回自己 — 深度计数器防栈溢出
     // 免免直觉3: 等号是不是该多画几道 — 补全 KtWhen/KtTry/KtFor/KtWhile/KtVal
     private fun walk(nodes: List<KtNode>, visitor: (KtNode) -> Unit, depth: Int = 0) {
-        if (depth > 50) { visitor(KtRef("(递归超限)","",Span(0,0,0,0,0,null))); return }
+        if (depth > 50) return  // 不塞假节点，静默截断
         for (node in nodes) {
             visitor(node)
             when (node) {
                 is KtClass  -> walk(node.members, visitor, depth + 1)
                 is KtFun    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
-                is KtVal    -> walk(listOf(node.value), visitor, depth + 1)  // 字段是 value 不是 body
+                is KtVal    -> node.value?.let { walk(listOf(it), visitor, depth + 1) }  // value 可空
                 is KtBlock  -> walk(node.statements, visitor, depth + 1)
                 is KtIf     -> {
                     node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }
