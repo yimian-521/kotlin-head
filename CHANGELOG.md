@@ -12,7 +12,7 @@
 | 三层数据源 | 按钮池 | systemButtons(不可变)+simUiButtons(单次编译)+customButtons(持久化) |
 | 懒汉型 | 精确路由 | 数组索引O(1): currentButtons[idx].action() |
 | 探测型 | 模糊fallback | searchByLabel: 精确equals→模糊contains |
-| @Volatile | 并发安全 | 快照失效时从Registry实时取 |
+| `@Volatile` | 并发安全 | 快照失效时从Registry实时取 |
 
 **修改文件**：
 - 新增 `ButtonRegistry.kt` (~140行): Command枚举+三层数据源+save/load持久化
