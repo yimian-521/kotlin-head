@@ -35,11 +35,17 @@ object SimUiScanner {
         val confidence: Double      // 0..1，探针命中=1.0，变量推测=0.6
     )
 
-    /** 手搓标记节点 — 免免原则1：生下来就有消费者 */
+    /** 原生探针节点 — 免免原则1：生下来就完整，轻量+全能 */
+    enum class MarkerKind { BUTTON, CLICKABLE, VAR_ASSIGN, UNKNOWN }
+
     private data class SimMarker(
-        val id: String,        // "Button@L10:5"
-        val signature: String, // "Button+Lambda"
-        val call: KtCall       // 原始 AST 节点引用
+        val id: String,              // "Button@L10:5"
+        val kind: MarkerKind,        // 探针类型
+        val label: String,           // 提取的标签
+        val actionHint: String,      // onClick 目标推测
+        val deps: List<String>,      // 依赖变量
+        val confidence: Double,      // 0..1
+        val sourceNode: KtNode       // 原始AST引用（仅溯源，不依赖其字段）
     )
 
     /** 变量驱动的交互（赋值即交互） */
@@ -74,16 +80,16 @@ private fun probeScan(file: KtFile): ScanResult {
         walk(file.declarations, { node ->
             when (node) {
                 is KtCall -> {
-                    // 免免原则2：探针用id不用名字 — 名字初筛→lambda验证→生成标记
+                    // 免免原则1+2：手搓原生探针节点 — 名字初筛→lambda验证→自描述标记
                     val marker = tryMarkButton(node)
                     if (marker != null) {
                         buttons.add(UiInteraction(
                             id = marker.id,
-                            label = extractLabel(node),
+                            label = marker.label,
                             line = node.span.start.line,
-                            actionHint = extractAction(node),
-                            varDependencies = extractDeps(node),
-                            confidence = 1.0
+                            actionHint = marker.actionHint,
+                            varDependencies = marker.deps,
+                            confidence = marker.confidence
                         ))
                     } else {
                         remains.add(node)
@@ -185,25 +191,33 @@ private fun probeScan(file: KtFile): ScanResult {
     //  工具函数
     // ═════════════════════════════════════════
 
-    // 免免原则2：探针用id不用名字 — 名字初筛→lambda验证→生成SimMarker
+    // 免免原则1+2：原生探针节点 — 名字初筛→lambda验证→自描述标记（轻量+全能）
     private fun tryMarkButton(call: KtCall): SimMarker? {
         val name = when (val t = call.target) {
             is KtRef -> t.name
             is KtMemberAccess -> t.member
             else -> return null
         }
-        // 阶段1：名字初筛（保留集合做快速过滤）
-        if (name !in BUTTON_CANDIDATES) return null
-        // 阶段2：lambda验证 — 按钮的核心特征是有回调lambda，不是名字
+        // 阶段1：名字初筛
+        if (name !in BUTTON_CANDIDATES && name !in _externalCandidates) return null
+        // 阶段2：lambda验证 — 按钮的核心特征，不是名字
         val hasLambda = call.args.any { it is KtLambda }
         if (!hasLambda) return null
-        // 阶段3：生成手搓标记 — 身份不依赖字符串
+        // 阶段3：构建自描述探针节点 — 一次性提取所有信息，下游不翻AST
         return SimMarker(
             id = "${name}@L${call.span.start.line}",
-            signature = "$name+Lambda",
-            call = call
+            kind = MarkerKind.BUTTON,
+            label = extractLabel(call),
+            actionHint = extractAction(call),
+            deps = extractDeps(call),
+            confidence = 1.0,
+            sourceNode = call
         )
     }
+
+    // 免免原则3：适配层接口 — 外部扩展候选集，不直接改 BUTTON_CANDIDATES
+    private val _externalCandidates = mutableSetOf<String>()
+    fun registerButton(id: String) { _externalCandidates.add(id) }
 
     private val BUTTON_CANDIDATES = setOf(
         "Button", "IconButton", "TextButton", "OutlinedButton",
