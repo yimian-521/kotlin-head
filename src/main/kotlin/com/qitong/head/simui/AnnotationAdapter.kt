@@ -102,7 +102,8 @@ object AnnotationAdapter {
 
     private fun extractDeps(call: KtCall): List<String> {
         val deps = mutableListOf<String>()
-        walkAst(listOf(call), { if (it is KtRef) deps.add(it.name) }, 0)
+        // 免免：从 call.args 开始，排除 call.target（函数名）——Button/navigateTo 不是状态依赖
+        walkAst(call.args, { if (it is KtRef) deps.add(it.name) }, 0)
         return deps.distinct()
     }
 
