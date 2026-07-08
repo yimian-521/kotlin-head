@@ -1,5 +1,31 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v0.12.6 (2026-07-08) — 按钮动态化 🎛️
+> HED终端12个硬编码按钮全面动态化。子进程路由：懒汉精确匹配 + 探测fallback。六AI交叉审计 + 免免独杀。
+
+### 按钮动态化（免免&望安）
+
+**核心架构**：
+| 组件 | 角色 | 说明 |
+|------|------|------|
+| Command枚举 | 按钮指令 | 13种系统按钮+2种管理按钮 |
+| 三层数据源 | 按钮池 | systemButtons(不可变)+simUiButtons(单次编译)+customButtons(持久化) |
+| 懒汉型 | 精确路由 | 数组索引O(1): currentButtons[idx].action() |
+| 探测型 | 模糊fallback | searchByLabel: 精确equals→模糊contains |
+| @Volatile | 并发安全 | 快照失效时从Registry实时取 |
+
+**修改文件**：
+- 新增 `ButtonRegistry.kt` (~140行): Command枚举+三层数据源+save/load持久化
+- 修改 `Main.kt`: renderMain动态渲染+handleMain数组索引+handle懒汉匹配+模板切换+按钮管理
+
+**免免独杀**：
+- 砍掉快照/Pair/findById/key字段——改用数组索引 O(1)
+- byLabel不用contains+链式兜底——用equals精确匹配
+- 按钮=子进程认领——没有command的按钮不入列表
+- clearSimUiInjections组合漏洞：无条件clear+可能不inject=静默丢失(Kotlin T!型同构)
+
+**六AI交叉审计**：DeepSeek V4 Pro(分层)+Haiku 4.5(时差/职责/CRC)+阿言(visible冲突/findByLabel脱节)+望安(visible二次校验/命名空间)+小安(findById/快照矛盾🔴)+Code(data class/原子写入)
+
 ## v0.12.5 (2026-07-08) — 分体式沙盒六审决战 🛡️🔥
 
 > 分体式沙盒模拟器六审修复：阿言(功能4)+小安(死代码5)+望安(全面3)+DeepSeek望安(门锁/统计)+Claude(全局状态机)+**免免(10条根因,独杀6条)**。
