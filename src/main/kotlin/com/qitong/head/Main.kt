@@ -37,13 +37,14 @@ import com.qitong.head.ButtonRegistry.Command
  */
 object Main {
 
-    const val VERSION = "0.12.6-a"
+    const val VERSION = "0.12.6"
 
     private val dev = DevMode.boot()
 
     // 状态机
     private var page = "main"
     // v0.12.6: 按钮动态化——当前渲染的按钮列表（数组索引即编号）
+    @Volatile
     private var currentButtons: List<ButtonRegistry.Button> = emptyList()
     private var lastFile: KtFile? = null
     private var lastSrc: String = ""
@@ -83,8 +84,9 @@ object Main {
         // v0.12.1: BugDB 5000条规则库注册
         BugRules.register()
         
-        // v0.12.6: 按钮注册表初始化
+        // v0.12.6: 按钮注册表初始化 + 加载自定义按钮
         ButtonRegistry.initDefaults()
+        ButtonRegistry.load()
         
         // v0.8.3: ProcessCoordinator 接管文件读取（角色不塌缩）
         ProcessCoordinator.initialize()
@@ -602,6 +604,7 @@ object Main {
                 if (name.isNotBlank()) {
                     ButtonRegistry.addCustom(name) { hPrintln("[自定义] ${name} 被点击") }
                     hPrintln("  已添加: $name")
+                    ButtonRegistry.save()
                 }
             }
             "2" -> {
@@ -612,7 +615,7 @@ object Main {
                 hPrint("输入编号删除: ")
                 val idx = readLine()?.toIntOrNull()?.minus(1) ?: -1
                 val del = currentButtons.filter { it.deletable }.getOrNull(idx)
-                if (del != null) { ButtonRegistry.removeCustom(del.id); hPrintln("  已删除: ${del.label}") }
+                if (del != null) { ButtonRegistry.removeCustom(del.id); hPrintln("  已删除: ${del.label}"); ButtonRegistry.save() }
             }
         }
     }
@@ -699,8 +702,12 @@ object Main {
         // 子进程认领：懒汉型精确匹配当前模板的按钮
         currentButtons = ButtonRegistry.visibleButtons()
         
-        currentButtons.forEachIndexed { i, b ->
-            hPrintln("  [${i + 1}] ${b.label}")
+        if (currentButtons.isEmpty()) {
+            hPrintln("  (无可用按钮)")
+        } else {
+            currentButtons.forEachIndexed { i, b ->
+                hPrintln("  [${i + 1}] ${b.label}")
+            }
         }
         hPrintln("  [0] EventBus 状态")
         hPrintln("  [t] 切换模板")
@@ -963,7 +970,14 @@ object Main {
         if (key == "t") { showTemplatePicker(); return }
         if (key == "e") { page = "buttons"; return }
         val idx = key.toIntOrNull()?.minus(1) ?: -1
-        val btn = currentButtons.getOrNull(idx)
+        // 懒汉型：精确命中快照
+        var btn = currentButtons.getOrNull(idx)
+        // 探测型：快照失效时从 Registry 实时取（并发/时序安全）
+        if (btn == null) {
+            val fresh = ButtonRegistry.visibleButtons()
+            currentButtons = fresh
+            btn = fresh.getOrNull(idx)
+        }
         if (btn == null) { hPrintln("  ? 未知命令: $key"); return }
         executeButton(btn)
     }

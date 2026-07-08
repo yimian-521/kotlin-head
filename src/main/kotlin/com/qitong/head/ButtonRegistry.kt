@@ -100,7 +100,10 @@ object ButtonRegistry {
     fun removeCustom(id: String) { customButtons.removeAll { it.id == id && it.deletable } }
 
     // ── 模板切换 ──
-    fun setTemplate(name: String) { if (TEMPLATES.containsKey(name)) currentTemplate = name }
+    fun setTemplate(name: String) { 
+        if (TEMPLATES.containsKey(name)) currentTemplate = name 
+        else hPrintln("  ? 无此模板: $name")
+    }
 
     // ── 懒汉型：精确匹配（系统按钮用）──
     fun findByCommand(cmd: Command): Button? = systemButtons.find { it.command == cmd }
@@ -113,7 +116,25 @@ object ButtonRegistry {
         return visibleButtons().find { it.label.contains(input, ignoreCase = true) }
     }
 
-    // ── 持久化（占位）──
-    fun save() { /* TODO: 存到 ~/.kotlin-head/button_custom.json */ }
-    fun load() { /* TODO: 从文件加载 */ }
+    // ── 持久化 ──
+    private val storageFile by lazy { java.io.File("/sdcard/Download/Operit/search_vault/kotlin-head/button_custom.json") }
+    
+    fun save() {
+        try {
+            val data = customButtons.map { mapOf("id" to it.id, "label" to it.label) }
+            storageFile.writeText(com.qitong.head.internal.JsonUtil.encode(data))
+        } catch (_: Exception) { /* 静默失败，不影响编译 */ }
+    }
+    
+    fun load() {
+        try {
+            if (!storageFile.exists()) return
+            val raw = com.qitong.head.internal.JsonUtil.decode(storageFile.readText()) as? List<*> ?: return
+            raw.forEach { item ->
+                val m = item as? Map<*, *> ?: return@forEach
+                val label = m["label"] as? String ?: return@forEach
+                addCustom(label) { hPrintln("[自定义] $label 被点击") }
+            }
+        } catch (_: Exception) { /* 损坏则跳过，下次保存覆盖 */ }
+    }
 }
