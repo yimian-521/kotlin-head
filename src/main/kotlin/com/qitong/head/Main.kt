@@ -24,6 +24,8 @@ import com.qitong.head.pass.*
 import com.qitong.head.internal.JsonUtil
 import java.io.File
 import com.qitong.head.runtime.*
+import com.qitong.head.ButtonRegistry
+import com.qitong.head.ButtonRegistry.Command
 
 /**
  * 有头编译器（kotlin-head）—— 按钮终端主入口。
@@ -35,12 +37,14 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.12.5"
+    const val VERSION = "0.12.6-a"
 
     private val dev = DevMode.boot()
 
     // 状态机
     private var page = "main"
+    // v0.12.6: 按钮动态化——当前渲染的按钮列表（数组索引即编号）
+    private var currentButtons: List<ButtonRegistry.Button> = emptyList()
     private var lastFile: KtFile? = null
     private var lastSrc: String = ""
     private var lastDiags: List<TypeChecker.Diag> = emptyList()
@@ -78,6 +82,9 @@ object Main {
         
         // v0.12.1: BugDB 5000条规则库注册
         BugRules.register()
+        
+        // v0.12.6: 按钮注册表初始化
+        ButtonRegistry.initDefaults()
         
         // v0.8.3: ProcessCoordinator 接管文件读取（角色不塌缩）
         ProcessCoordinator.initialize()
@@ -273,6 +280,8 @@ object Main {
         
         // v0.8.3: 依赖图合并 staging
         DependencyGraph.commit()
+        // v0.12.6: sim-ui 按钮注入（只清 simUiButtons，不走快照）
+        ButtonRegistry.clearSimUiInjections()
     }
     
     // ─── v0.8.0 进程树注解处理 ───
@@ -553,6 +562,61 @@ object Main {
     private var strategistEnabled = false
     private var packCompileOnly = false
 
+
+    // ─── v0.12.6 模板选择 ───
+    private fun showTemplatePicker() {
+        hPrintln("═══ 选择按钮模板 ═══")
+        hPrintln()
+        ButtonRegistry.TEMPLATES.forEach { (name, _) ->
+            val marker = if (name == ButtonRegistry.currentTemplate) " ← 当前" else ""
+            hPrintln("  [$name]$marker")
+        }
+        hPrintln()
+        hPrintln("  输入模板名切换，或 [q] 返回")
+        hPrint("
+> ")
+        val input = readLine() ?: ""
+        if (input.isNotBlank() && input != "q") {
+            ButtonRegistry.setTemplate(input.trim())
+            page = "main"
+        } else { page = "main" }
+    }
+    
+    private fun renderButtons() {
+        hPrintln("═══ 按钮管理 ═══")
+        hPrintln()
+        hPrintln("  当前模板: ${ButtonRegistry.currentTemplate}")
+        hPrintln("  按钮数: ${currentButtons.size}")
+        hPrintln()
+        hPrintln("  [1] 添加自定义按钮")
+        hPrintln("  [2] 删除自定义按钮")
+        hPrintln("  [0] 返回主页")
+    }
+    
+    private fun handleButtons(key: String) {
+        when (key) {
+            "0" -> page = "main"
+            "1" -> {
+                hPrint("按钮名: ")
+                val name = readLine() ?: ""
+                if (name.isNotBlank()) {
+                    ButtonRegistry.addCustom(name) { hPrintln("[自定义] ${name} 被点击") }
+                    hPrintln("  已添加: $name")
+                }
+            }
+            "2" -> {
+                hPrintln("  可删除的自定义按钮:")
+                currentButtons.filter { it.deletable }.forEachIndexed { i, b ->
+                    hPrintln("    [${i+1}] ${b.label} (${b.id})")
+                }
+                hPrint("输入编号删除: ")
+                val idx = readLine()?.toIntOrNull()?.minus(1) ?: -1
+                val del = currentButtons.filter { it.deletable }.getOrNull(idx)
+                if (del != null) { ButtonRegistry.removeCustom(del.id); hPrintln("  已删除: ${del.label}") }
+            }
+        }
+    }
+
     // ─── 按钮渲染 ───
     private fun renderPage() {
         when (page) {
@@ -570,6 +634,7 @@ object Main {
             "multiproj" -> renderMultiProject()
             "pack" -> renderPackPage()
             "simui" -> renderSimUi()
+            "buttons" -> renderButtons()
             else -> { page = "main"; renderMain() }
         }
     }
@@ -628,21 +693,18 @@ object Main {
         }
     }
     private fun renderMain() {
-        hPrintln("═══ 主页 ═══  ${lastSrcPath.takeLast(30)}")
+        hPrintln("═══ 主页 ═══  ${lastSrcPath.takeLast(30)}  [模板: ${ButtonRegistry.currentTemplate}]")
         hPrintln()
-        hPrintln("  [1] 查看 AST 树")
-        hPrintln("  [2] 查看诊断 (${diagSummary()})")
-        hPrintln("  [3] 重新编译")
-        hPrintln("  [4] 模拟运行")
-        hPrintln("  [5] 管理员")
-        hPrintln("  [6] Bug 扫描 (BugDB:$lastBugdbHits, Scanner:${lastFindings.size})")
-        hPrintln("  [7] 能力路线图")
-        hPrintln("  [8] 反编译管线")
-        hPrintln("  [9] 进程树 (${lastProcessReports.size}个领域)")
+        
+        // 子进程认领：懒汉型精确匹配当前模板的按钮
+        currentButtons = ButtonRegistry.visibleButtons()
+        
+        currentButtons.forEachIndexed { i, b ->
+            hPrintln("  [${i + 1}] ${b.label}")
+        }
         hPrintln("  [0] EventBus 状态")
-        if (multiProjectEnabled) hPrintln("  [10] 多项目测试")
-        hPrintln("  [11] APK打包")
-    hPrintln("  [12] 源码UI模拟 (--sim-ui)")
+        hPrintln("  [t] 切换模板")
+        hPrintln("  [e] 按钮管理")
         hPrintln("  [q] 退出")
     }
 
@@ -672,6 +734,7 @@ object Main {
         hPrintln("  [1] 返回主页")
         hPrintln("  [2] 清除所有缓存")
         hPrintln("  [3] 开发者功能")
+        hPrintln("  [4] 按钮模板")
     }
 
     // ─── 新页面 v0.6.1 ───
@@ -863,61 +926,70 @@ object Main {
 
     // ─── 输入处理 ───
     private fun handle(input: String) {
-        // AI 匹配按钮名（不用数字）
-        val byLabel = when (input) {
-            "查看ast树", "ast", "ast视图" -> "1"
-            "查看诊断", "diagnostic", "diag", "诊断" -> "2"
-            "重新编译", "compile", "编译", "rebuild" -> "3"
-            "模拟运行", "sim", "模拟" -> "4"
-            "管理员", "admin", "管理" -> "5"
-            "返回主页", "back", "主页", "main", "返回" -> "1"
-            "清除所有缓存", "清除缓存", "clearcache" -> "2"
-            "bug扫描", "bug", "bugs", "扫描" -> "6"
-            "能力路线图", "路线图", "roadmap", "版本" -> "7"
-            "反编译管线", "反编译", "decomp", "decompilation" -> "8"
-            else -> input
+        // v0.12.6: 懒汉型精确匹配（按钮名 → 数组索引）
+        val idx = currentButtons.indexOfFirst { it.label.equals(input, ignoreCase = true) }
+        if (idx >= 0) { handleMain((idx + 1).toString()); return }
+        // 探测型 fallback：模糊搜索
+        val found = ButtonRegistry.searchByLabel(input)
+        if (found != null) {
+            val foundIdx = currentButtons.indexOf(found)
+            if (foundIdx >= 0) { handleMain((foundIdx + 1).toString()); return }
         }
-
         when (page) {
-            "main" -> handleMain(byLabel)
-            "ast" -> handleAst(byLabel)
-            "diag" -> handleDiag(byLabel)
-            "sim" -> handleSim(byLabel)
-            "simui" -> handleSimUi(byLabel)
-            "admin" -> handleAdmin(byLabel)
-            "dev" -> handleDev(byLabel)
-            "multiproj" -> handleMultiProject(byLabel)
-            "pack" -> handlePack(byLabel)
-            "bugs" -> if (byLabel == "1") page = "main"
-            "roadmap" -> if (byLabel == "1") page = "main"
-            "decomp" -> if (byLabel == "1") page = "main"
-            "process" -> if (byLabel == "1") page = "main"
-            "eventbus" -> if (byLabel == "1") page = "main"
+            "main" -> handleMain(input)
+            "ast" -> handleAst(input)
+            "diag" -> handleDiag(input)
+            "sim" -> handleSim(input)
+            "admin" -> handleAdmin(input)
+            "bugs" -> if (input == "1") page = "main"
+            "roadmap" -> if (input == "1") page = "main"
+            "decomp" -> if (input == "1") page = "main"
+            "process" -> if (input == "1") page = "main"
+            "eventbus" -> if (input == "1") page = "main"
+            "dev" -> handleDev(input)
+            "multiproj" -> handleMultiProject(input)
+            "pack" -> handlePack(input)
+            "simui" -> handleSimUi(input)
+            "buttons" -> handleButtons(input)
+            else -> hPrintln("  ? 未知页面: $page")
         }
+        saveSession()
+    }
         saveSession()
     }
 
     private fun handleMain(key: String) {
-        when (key) {
-            "1" -> page = "ast"
-            "2" -> page = "diag"
-            "3" -> {
-                hPrintln("  重新编译中...")
-                lastSrc = File(lastSrcPath).readText()
-                compile(lastSrc)
-                hPrintln("  完成 ✓")
-            }
-            "4" -> page = "sim"
-            "5" -> page = "admin"
-            "6" -> page = "bugs"
-            "7" -> page = "roadmap"
-            "8" -> page = "decomp"
-            "9" -> page = "process"
-            "0" -> page = "eventbus"
-            "10" -> if (multiProjectEnabled) page = "multiproj"
-            "11" -> page = "pack"
-            "12" -> page = "simui"
-            else -> hPrintln("  ? 未知按钮: $key")
+        if (key == "0") { page = "eventbus"; return }
+        if (key == "t") { showTemplatePicker(); return }
+        if (key == "e") { page = "buttons"; return }
+        val idx = key.toIntOrNull()?.minus(1) ?: -1
+        val btn = currentButtons.getOrNull(idx)
+        if (btn == null) { hPrintln("  ? 未知命令: $key"); return }
+        executeButton(btn)
+    }
+    
+    private fun executeButton(btn: ButtonRegistry.Button) {
+        if (btn.command != null) { dispatchCommand(btn.command); return }
+        btn.customAction?.invoke() ?: hPrintln("  ? 按钮无操作")
+    }
+    
+    private fun dispatchCommand(cmd: Command) {
+        page = when (cmd) {
+            Command.AST_VIEW -> "ast"
+            Command.DIAG_VIEW -> "diag"
+            Command.COMPILE -> { compile(lastSrc); "main" }
+            Command.SIM -> "sim"
+            Command.ADMIN -> "admin"
+            Command.BUGS -> "bugs"
+            Command.ROADMAP -> "roadmap"
+            Command.DECOMP -> "decomp"
+            Command.PROCESS -> "process"
+            Command.EVENTBUS -> "eventbus"
+            Command.MULTIPROJ -> "multiproj"
+            Command.PACK -> "pack"
+            Command.SIMUI -> "simui"
+            Command.TEMPLATE -> { showTemplatePicker(); "main" }
+            Command.BUTTONS -> "buttons"
         }
     }
 
@@ -938,6 +1010,7 @@ object Main {
                 hPrintln("  缓存已清除 ✓")
             }
             "3" -> page = "dev"
+        "4" -> page = "buttons"
             else -> hPrintln("  ? 未知按钮: $key")
         }
     }
