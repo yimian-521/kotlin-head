@@ -8,6 +8,8 @@ import com.qitong.head.bugdb.BugSeverity
 import com.qitong.head.lexer.Lexer
 import com.qitong.head.parser.Parser
 import com.qitong.head.parser.PrecProfile
+import com.qitong.head.parser.ParseDiag
+import com.qitong.head.parser.ParseDiagLevel
 import com.qitong.head.checker.TypeChecker
 import com.qitong.head.diagnostic.Diagnostic
 import com.qitong.head.process.ProcessCoordinator
@@ -238,7 +240,7 @@ object Main {
         }
         
         // 合并 Parser 层诊断 + TypeChecker 诊断
-        val parserDiags = parser.parserDiags()
+        val parserDiags = parser.parserDiags().map { it.toTypeCheckerDiag() }
         val checkerDiags = if (lastFile != null) {
             TypeChecker().check(lastFile!!)
         } else emptyList()
@@ -1487,3 +1489,13 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
     }
     }
 }
+
+/** v0.12.8 适配层：ParseDiag → TypeChecker.Diag */
+private fun com.qitong.head.parser.ParseDiag.toTypeCheckerDiag() = com.qitong.head.checker.TypeChecker.Diag(
+    level = when (this.level) {
+        com.qitong.head.parser.ParseDiagLevel.WARN -> com.qitong.head.checker.TypeChecker.DiagLevel.WARN
+        com.qitong.head.parser.ParseDiagLevel.EXPECTED -> com.qitong.head.checker.TypeChecker.DiagLevel.EXPECTED
+    },
+    msg = this.msg,
+    pos = this.pos
+)
