@@ -63,7 +63,7 @@ object SimUiScanner {
     private fun probeScan(file: KtFile): ScanResult {
         val buttons = mutableListOf<UiInteraction>()
         val remains = mutableListOf<KtCall>()
-        walk(file.declarations) { node ->
+        walk(file.declarations, { node ->
             when (node) {
                 is KtCall -> {
                     val name = when (val t = node.target) {
@@ -104,14 +104,14 @@ object SimUiScanner {
         
         // 收集所有 var 声明
         val stateVars = mutableSetOf<String>()
-        walk(file.declarations) { node ->
+        walk(file.declarations, { node ->
             if (node is KtVal && "var" in node.modifiers) {
                 stateVars.add(node.name)
             }
         }
 
         // 找到所有对这些变量的赋值（含复合赋值：= += -= *= /= %=）
-        walk(file.declarations) { node ->
+        walk(file.declarations, { node ->
             when (node) {
                 is KtBinary -> {
                     val leftName = when (val left = node.left) {
@@ -165,7 +165,7 @@ object SimUiScanner {
         
         // 都未命中 → 诚实声明
         val unknowns = mutableListOf<KtCall>()
-        walk(file.declarations) { node ->
+        walk(file.declarations, { node ->
             if (node is KtCall) unknowns.add(node)
         }
         return ScanResult(
@@ -203,7 +203,7 @@ object SimUiScanner {
                     is KtBlock -> calls.addAll(body.statements.filterIsInstance<KtCall>())
                     is KtCall -> calls.add(body)
                     // 单表达式：KtIf/KtBinary/KtWhen 里可能嵌套调用，走 walk 收
-                    else -> walk(listOf(body)) { if (it is KtCall) calls.add(it) }
+                    else -> walk(listOf(body), { if (it is KtCall) calls.add(it) }
                 }
                 if (calls.isNotEmpty()) {
                     val targets = calls.map {
@@ -222,7 +222,7 @@ object SimUiScanner {
 
     private fun extractDeps(call: KtCall): List<String> {
         val deps = mutableListOf<String>()
-        walk(listOf(call)) { node ->
+        walk(listOf(call), { node ->
             if (node is KtRef) deps.add(node.name)
         }
         return deps.distinct()
