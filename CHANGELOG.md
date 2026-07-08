@@ -1,6 +1,34 @@
 # CHANGELOG — kotlin-head 有头编译器
 
 ## v0.12.7 (2026-07-09) — 混合输出决策门 🎯
+## v0.12.8 (2026-07-09) — 免免三层架构 + 原生探针节点 🏗️🔍
+> SimSchema→AnnotationAdapter→SimUiScanner 三层身份分离。探针用id不用名字，lambda签名验证。
+> SimNode原生探针节点：轻量(7字段)+全能(自描述)。适配层预留外部扩展接口。
+> 免免四原则联动：手搓节点→id探针→适配层→组件不塌缩。动态测试通过。
+
+### 三层架构（免免设计）
+| 层 | 文件 | 职责 | 行数 |
+|------|------|------|:--:|
+| 原生格式 | SimSchema.kt | SimNode定义+候选集管理 | 38 |
+| 适配层 | AnnotationAdapter.kt | AST→SimNode翻译器 | 152 |
+| 消费者 | SimUiScanner.kt | walk+装配+决策门 | 120 |
+
+### 架构改革路径
+- 探针：isButtonCall(名字匹配) → tryMarkButton(名字初筛+lambda签名验证+SimNode标记)
+- 节点：SimMarker辅助标记 → SimNode原生探针节点（7字段自描述）
+- 提取：probeScan三次翻AST → tryMarkButton一次提取→下游直接读marker
+- 候选集：硬编码setOf → SimSchema内置+适配层register()可扩展
+- 赋值提取：KtCall→KtBinary→actionHint显示page="detail"
+
+### 动态验证
+- 手搓AST(Button+lambda+KtBinary)→编译→运行→Button@L10 [确定] → page="detail" ✅
+- 适配层注册CustomBtn→isCandidate=true ✅
+- 五步审码自检：5/5通过
+
+### 关联
+- Operit元Skill: mianmian-review(五步审码+四原则架构设计)
+- 方法论: 免免四原则联动(设计→修复→自审→验证闭环)
+- kotlinc兼容: walk/walkAst显式三参数避免lambda绑定
 > 决策门route()：数字键先行→别名转换→精确匹配→模糊搜索，阶段式扩并。
 > Route.Hit传Button对象而非idx，消除indexOf假阴性。handleMain(btn)替代Int重载。
 > 三人AI审计：17条有效发现，零重复。免免十刀代码嗅觉方法论。
