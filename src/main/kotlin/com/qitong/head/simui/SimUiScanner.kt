@@ -181,7 +181,7 @@ object SimUiScanner {
 
     private fun isButtonCall(name: String): Boolean =
         name in setOf("Button", "IconButton", "TextButton", "OutlinedButton",
-                       "FloatingActionButton", "clickable", "onClick", "HED")
+                       "FloatingActionButton", "clickable", "onClick")
 
     private fun extractLabel(call: KtCall): String {
         // 尝试从参数提取标签
@@ -250,20 +250,18 @@ object SimUiScanner {
             when (node) {
                 is KtClass  -> walk(node.members, visitor, depth + 1)
                 is KtFun    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
-                is KtVal    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtVal    -> walk(listOf(node.value), visitor, depth + 1)  // 字段是 value 不是 body
                 is KtBlock  -> walk(node.statements, visitor, depth + 1)
                 is KtIf     -> {
                     node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }
                     node.elseBranch?.let { walk(listOf(it), visitor, depth + 1) }
                 }
-                is KtWhen   -> node.branches.forEach { b ->
-                    b.condition?.let { walk(listOf(it), visitor, depth + 1) }
-                    walk(listOf(b.body), visitor, depth + 1)
-                }
-                is KtTry    -> {
-                    walk(node.tryBlock, visitor, depth + 1)
-                    node.catchBlocks.forEach { walk(listOf(it), visitor, depth + 1) }
-                    node.finallyBlock?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtWhen   -> {
+                    node.subject?.let { walk(listOf(it), visitor, depth + 1) }
+                    node.branches.forEach { b ->
+                        walk(listOf(b.condition), visitor, depth + 1)
+                        walk(listOf(b.body), visitor, depth + 1)
+                    }
                 }
                 is KtFor    -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
                 is KtWhile  -> {
