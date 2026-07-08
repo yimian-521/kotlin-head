@@ -26,6 +26,7 @@ import java.io.File
 import com.qitong.head.runtime.*
 import com.qitong.head.ButtonRegistry
 import com.qitong.head.ButtonRegistry.Command
+import com.qitong.head.simui.SimUiScanner
 
 /**
  * 有头编译器（kotlin-head）—— 按钮终端主入口。
@@ -282,6 +283,8 @@ object Main {
         
         // v0.8.3: 依赖图合并 staging
         DependencyGraph.commit()
+        // v0.12.8: 混合扫描——编译完成自动分析UI交互
+        if (lastFile != null) lastSimUiResult = SimUiScanner.scan(lastFile!!)
         // v0.12.6: sim-ui 按钮注入（有新增才清旧，避免 Kotlin T!型静默丢失）
     }
     
@@ -558,6 +561,7 @@ object Main {
     private var multiProjectEnabled = false
     private var lastMultiReports: List<MultiProjectCoordinator.ProjectReport> = emptyList()
     private var lastPackReport: ApkPackCoordinator.PackReport? = null
+    private var lastSimUiResult: SimUiScanner.ScanResult? = null
 
     // v0.12.1: 军师建议 + APK只编译（编译是底线，操作是可选层）
     private var strategistEnabled = false
@@ -1373,14 +1377,40 @@ for (m in node.members) sb.append(formatAst(m, indent + 1))
             else -> page = "main"
     // ─── v0.12.5 源码UI模拟 ───
     private fun renderSimUi() {
-        hPrintln("═══ 源码UI模拟 (--sim-ui) ═══")
+        hPrintln("═══ 源码UI模拟 v0.12.8 ═══")
         hPrintln()
-        hPrintln("  当前源码: ${lastSrcPath.takeLast(40)}")
-        hPrintln()
-        hPrintln("  [1] 列出按钮   → node tools/sim_ui.js --list")
-        hPrintln("  [2] 模拟点击   → node tools/sim_ui.js --click <编号>")
-        hPrintln("  [3] 投影压测   → node tools/sim_ui.js --bench [变量] [UI数] [页数]")
-        hPrintln("  [4] 命名按钮   → node tools/sim_ui.js --name <编号> <名字>")
+        val result = lastSimUiResult
+        if (result == null) {
+            hPrintln("  请先编译源码")
+        } else {
+            hPrintln("  扫描策略: ${result.source}")
+            hPrintln()
+            // 探针扫描结果
+            if (result.buttons.isNotEmpty()) {
+                hPrintln("  ── 阶段1: 探针扫描 (${result.buttons.size}个) ──")
+                result.buttons.forEachIndexed { i, b ->
+                    hPrintln("  [${i+1}] ${b.label} · 第${b.line}行 · ${b.actionHint}")
+                }
+                hPrintln()
+            }
+            // 变量追踪结果
+            if (result.varTriggers.isNotEmpty()) {
+                hPrintln("  ── 阶段2: 变量追踪 (${result.varTriggers.size}个) ──")
+                result.varTriggers.forEachIndexed { i, v ->
+                    hPrintln("  [v${i+1}] ${v.varName} = ${v.assignedValue} · 第${v.line}行")
+                }
+                hPrintln()
+            }
+            // 未知交互
+            if (result.unknowns.isNotEmpty()) {
+                hPrintln("  ── 阶段3: 未识别交互 (${result.unknowns.size}个) ──")
+                hPrintln("  (需手动标注 — 变量赋值即交互标记)")
+                hPrintln()
+            }
+            if (result.buttons.isEmpty() && result.varTriggers.isEmpty()) {
+                hPrintln("  (未发现交互点)")
+            }
+        }
         hPrintln()
         hPrintln("  [0] 返回主页")
     // ─── sim-ui 交互（node调用）───
