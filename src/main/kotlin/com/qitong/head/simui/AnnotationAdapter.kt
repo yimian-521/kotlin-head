@@ -125,10 +125,10 @@ object AnnotationAdapter {
         for (node in nodes) {
             visitor(node)
             when (node) {
-                is KtClass     -> walkAst(node.members, visitor, depth + 1)
-                is KtInterface -> walkAst(node.members, visitor, depth + 1)
-                is KtEnum      -> walkAst(node.members, visitor, depth + 1)
-                is KtFun       -> node.body?.let { walkAst(listOf(it), visitor, depth + 1) }
+                is KtClass     -> walkAst(node.members, visitor, 0)    // 沙盒
+                is KtInterface -> walkAst(node.members, visitor, 0)    // 沙盒
+                is KtEnum      -> walkAst(node.members, visitor, 0)    // 沙盒
+                is KtFun       -> node.body?.let { walkAst(listOf(it), visitor, 0) }  // 沙盒
                 is KtVal       -> node.value?.let { walkAst(listOf(it), visitor, depth + 1) }
                 is KtBlock     -> walkAst(node.statements, visitor, depth + 1)
                 is KtIf        -> {

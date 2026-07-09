@@ -97,10 +97,10 @@ object SimUiScanner {
         for (node in nodes) {
             visitor(node)
             when (node) {
-                is KtClass     -> walk(node.members, visitor, depth + 1)
-                is KtInterface -> walk(node.members, visitor, depth + 1)
-                is KtEnum      -> walk(node.members, visitor, depth + 1)
-                is KtFun       -> node.body?.let { walk(listOf(it), visitor, depth + 1) }
+                is KtClass     -> walk(node.members, visitor, 0)    // 沙盒：新作用域
+                is KtInterface -> walk(node.members, visitor, 0)    // 沙盒
+                is KtEnum      -> walk(node.members, visitor, 0)    // 沙盒
+                is KtFun       -> node.body?.let { walk(listOf(it), visitor, 0) }  // 沙盒
                 is KtVal       -> node.value?.let { walk(listOf(it), visitor, depth + 1) }
                 is KtBlock     -> walk(node.statements, visitor, depth + 1)
                 is KtIf        -> { node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }; node.elseBranch?.let { walk(listOf(it), visitor, depth + 1) } }

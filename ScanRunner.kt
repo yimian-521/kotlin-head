@@ -98,9 +98,9 @@ fun diagnose(file: KtFile, src: String): List<String> {
                 }
                 is KtFor -> { walk(listOf(node.iterable), depth + 1); node.body?.let { walk(listOf(it), depth + 1) } }
                 is KtWhile -> { node.condition?.let { walk(listOf(it), depth + 1) }; node.body?.let { walk(listOf(it), depth + 1) } }
-                is KtClass -> walk(node.members, depth + 1)
-                is KtObject -> walk(node.members, depth + 1)
-                is KtFun -> node.body?.let { walk(listOf(it), depth + 1) }
+                is KtClass -> walk(node.members, 0)    // 沙盒
+                is KtObject -> walk(node.members, 0)    // 沙盒
+                is KtFun -> node.body?.let { walk(listOf(it), 0) }  // 沙盒
                 is KtCall -> walk(node.args, depth + 1)
                 is KtBinary -> { walk(listOf(node.left), depth + 1); walk(listOf(node.right), depth + 1) }
                 else -> {}
