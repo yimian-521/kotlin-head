@@ -3,6 +3,7 @@ import com.qitong.head.ast.*
 import com.qitong.head.lexer.Lexer
 import com.qitong.head.parser.Parser
 import com.qitong.head.simui.SimUiScanner
+import com.qitong.head.tomb.BugTombstone
 import java.io.File
 
 fun main(args: Array<String>) {
@@ -13,19 +14,9 @@ fun main(args: Array<String>) {
     val file = Parser(tokens).parseFile()
     val result = SimUiScanner.scan(file)
     
-    // ══════════ 墓碑引擎（测试版：硬编码注册表） ══════════
-    val tombs = mutableListOf<Triple<String, Int, String>>()
-    // 直接注册——跳过文件解析
-    val registry = listOf(
-        Triple("SimUiScanner", 109, "NPE: when else分支null吞错 → b.condition?.let + b.body?.let (v0.12.8)"),
-        Triple("SimUiScanner", 116, "KtCall.target漏遍历 → walk(listOf(node.target)) (v0.12.8)"),
-        Triple("Parser", 241, "传染性 → ParseDiag适配层 toTypeCheckerDiag() (v0.12.8)")
-    )
-    for ((key, line, info) in registry) {
-        if (fileName.contains(key, ignoreCase = true)) {
-            tombs.add(Triple(key, line, info))
-        }
-    }
+    // ══════════ 墓碑引擎 ══════════
+    val entries = BugTombstone.query(fileName)
+    val tombs = entries.map { Triple(it.fileKey, it.line, "${it.type} → ${it.fix} (${it.version})") }.toMutableList()
     
     println("=== kotlin-head v0.12.8 ===")
     
