@@ -70,7 +70,8 @@ object ProcessCoordinator {
     val hellType: HellType, val bugDensity: Float,
     val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
     val style: MainProcessStyle,
-    val trend: Int = 0  // v0.12.4: 正=Bug增长→需快攻，负=衰减→需收尾，零=稳定
+    val trend: Int = 0,  // v0.12.4: 正=Bug增长→需快攻，负=衰减→需收尾，零=稳定
+    val tombstones: Int = 0  // v0.12.9: 已知bug修复合约数量——墓碑引擎查询结果
 )
 
 object SceneEngine {
@@ -164,6 +165,7 @@ object SceneEngine {
             MainProcessStyle.EMERGENCY -> r.add("紧急"); MainProcessStyle.CONSERVATIVE -> r.add("保守")
             MainProcessStyle.CONTRACT -> r.add("契约"); else -> r.add("联邦")
         }
+        if (input.tombstones > 0) r.add("⚰️×${input.tombstones}")
         return r.joinToString("·")
     }
 
@@ -269,13 +271,13 @@ object SceneEngine {
     val javaChannel: JavaDetectionChannel get() = JavaHeadAdapter.channel
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false, fileName: String = "") {
         val strategy = activeStyle
         if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
         if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
         if (fileSize < 500 && fileCount <= 1 && !isHostile) return
         
-        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
+        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy, tombstones = com.qitong.head.tomb.BugTombstone.count(fileName))
         val (occs, ratio) = SceneEngine.derive(input)
         val estTasks = (fileSize / 500).coerceIn(1, 100)
         val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
