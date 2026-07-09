@@ -17,9 +17,8 @@ fun main(args: Array<String>) {
     // ══════════ 墓碑引擎 ══════════
     val entries = BugTombstone.query(fileName, src)
     val tombs = entries.map { e ->
-        val marker = if (e.line < 0) "⚠️偏移" else "L${e.line}"
-        val origin = if (e.line < 0) " (原L${-e.line})" else ""
-        Triple(e.fileKey, e.line, "$marker · ${e.type} → ${e.fix} (${e.version})$origin")
+        val shift = if (e.line < 0) " ⚠️偏移(原L${-e.line})" else ""
+        Triple(e.fileKey, e.line, "${e.type} → ${e.fix} (${e.version})$shift")
     }.toMutableList()
     
     println("=== kotlin-head v0.12.8 ===")
