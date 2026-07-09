@@ -5,13 +5,11 @@ package com.qitong.head.tomb
  * 进程树上场前查询：此文件有多少已知bug修复合约。
  * 日常零开销，查询时零遗漏。
  *
- * 🟡 已知取舍（设计如此，非缺陷）：
- * - 匹配用 contains() 模糊匹配：故意宽松，"SimUiScanner"不会误匹配"Sim"
- * - 行号是修复时的历史快照：重构导致行号偏移为预期行为，墓碑不是实时追踪器
+ * 🟡 已知取舍：行号是修复时的历史快照——重构导致偏移为预期行为，墓碑不是实时追踪器
  */
 object BugTombstone {
     data class Entry(
-        val fileKey: String,   // 文件名匹配关键字（模糊匹配，如"SimUiScanner"可匹配任何包含此串的文件名）
+        val fileKey: String,   // 精确源文件名（如"SimUiScanner.kt"），查询时==比较
         val line: Int,          // bug所在行号（修复时的快照，重构后可能偏移）
         val type: String,       // bug类型
         val fix: String,        // 修复方案
@@ -26,10 +24,11 @@ object BugTombstone {
         registry.add(Entry(fileKey, line, type, fix, version))
     }
 
-    /** 按文件名查询墓碑列表。线程安全。 */
+    /** 按文件名查询墓碑列表——精确匹配源文件名。线程安全。 */
     @Synchronized
     fun query(fileName: String): List<Entry> {
-        return registry.toList().filter { fileName.contains(it.fileKey, ignoreCase = true) }
+        val name = java.io.File(fileName).name  // 提取纯文件名，忽略路径
+        return registry.toList().filter { it.fileKey == name }
     }
 
     /** 查询墓碑数量 */
@@ -45,14 +44,14 @@ object BugTombstone {
     // ══════════ 默认注册表：已知bug修复合约 ══════════
     private val defaultRegistry = listOf(
         // v0.12.8 SimUiScanner修复
-        Entry("SimUiScanner", 109,
+        Entry("SimUiScanner.kt", 109,
             "NPE: when else分支null吞错",
             "b.condition?.let + b.body?.let", "v0.12.8"),
-        Entry("SimUiScanner", 116,
+        Entry("SimUiScanner.kt", 116,
             "KtCall.target漏遍历",
             "walk(listOf(node.target))", "v0.12.8"),
         // v0.12.8 Parser解耦
-        Entry("Parser", 241,
+        Entry("Parser.kt", 241,
             "传染性: ParseDiag→TypeChecker.Diag",
             "toTypeCheckerDiag()适配层", "v0.12.8")
     )
