@@ -121,40 +121,41 @@ object AnnotationAdapter {
 
     /** 轻量 AST walk — 适配层专用，不依赖 SimUiScanner.walk */
     private fun walkAst(nodes: List<KtNode>, visitor: (KtNode) -> Unit, depth: Int = 0) {
-        if (depth > 128) return
-        for (node in nodes) {
+        // 迭代栈——堆内存管够，零截断
+        val stack = mutableListOf<Pair<KtNode, Int>>()
+        for (i in nodes.indices.reversed()) stack.add(nodes[i] to depth)
+        while (stack.isNotEmpty()) {
+            val (node, d) = stack.removeAt(stack.lastIndex)
             visitor(node)
             when (node) {
-                is KtClass     -> walkAst(node.members, visitor, 0)    // 沙盒
-                is KtInterface -> walkAst(node.members, visitor, 0)    // 沙盒
-                is KtEnum      -> walkAst(node.members, visitor, 0)    // 沙盒
-                is KtFun       -> node.body?.let { walkAst(listOf(it), visitor, 0) }  // 沙盒
-                is KtVal       -> node.value?.let { walkAst(listOf(it), visitor, depth + 1) }
-                is KtBlock     -> walkAst(node.statements, visitor, depth + 1)
+                is KtClass     -> pushAstAll(stack, node.members, 0)    // 沙盒
+                is KtInterface -> pushAstAll(stack, node.members, 0)
+                is KtEnum      -> pushAstAll(stack, node.members, 0)
+                is KtFun       -> node.body?.let { stack.add(it to 0) }  // 沙盒
+                is KtVal       -> node.value?.let { stack.add(it to d + 1) }
+                is KtBlock     -> pushAstAll(stack, node.statements, d + 1)
                 is KtIf        -> {
-                    node.thenBranch?.let { walkAst(listOf(it), visitor, depth + 1) }
-                    node.elseBranch?.let { walkAst(listOf(it), visitor, depth + 1) }
+                    node.thenBranch?.let { stack.add(it to d + 1) }
+                    node.elseBranch?.let { stack.add(it to d + 1) }
                 }
                 is KtWhen      -> {
-                    node.subject?.let { walkAst(listOf(it), visitor, depth + 1) }
+                    node.subject?.let { stack.add(it to d + 1) }
                     node.branches.forEach { b ->
-                        walkAst(listOf(b.condition), visitor, depth + 1)
-                        walkAst(listOf(b.body), visitor, depth + 1)
+                        b.condition?.let { stack.add(it to d + 1) }
+                        b.body?.let { stack.add(it to d + 1) }
                     }
                 }
-                is KtFor       -> {
-                    walkAst(listOf(node.iterable), visitor, depth + 1)
-                    node.body?.let { walkAst(listOf(it), visitor, depth + 1) }
-                }
-                is KtWhile     -> {
-                    node.condition?.let { walkAst(listOf(it), visitor, depth + 1) }
-                    node.body?.let { walkAst(listOf(it), visitor, depth + 1) }
-                }
-                is KtCall      -> walkAst(node.args, visitor, depth + 1)
-                is KtLambda    -> walkAst(listOf(node.body), visitor, depth + 1)
-                is KtBinary    -> { walkAst(listOf(node.left, node.right), visitor, depth + 1) }
+                is KtFor       -> { stack.add(node.iterable to d + 1); node.body?.let { stack.add(it to d + 1) } }
+                is KtWhile     -> { node.condition?.let { stack.add(it to d + 1) }; node.body?.let { stack.add(it to d + 1) } }
+                is KtCall      -> { stack.add(node.target to d + 1); pushAstAll(stack, node.args, d + 1) }
+                is KtLambda    -> stack.add(node.body to d + 1)
+                is KtBinary    -> { stack.add(node.left to d + 1); stack.add(node.right to d + 1) }
                 else -> {}
             }
         }
+    }
+    
+    private fun pushAstAll(stack: MutableList<Pair<KtNode, Int>>, nodes: List<KtNode>, depth: Int) {
+        for (i in nodes.indices.reversed()) stack.add(nodes[i] to depth)
     }
 }
