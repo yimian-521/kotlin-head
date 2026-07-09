@@ -106,7 +106,10 @@ object SimUiScanner {
                 is KtIf        -> { node.thenBranch?.let { walk(listOf(it), visitor, depth + 1) }; node.elseBranch?.let { walk(listOf(it), visitor, depth + 1) } }
                 is KtWhen      -> {
                     node.subject?.let { walk(listOf(it), visitor, depth + 1) }
-                    node.branches.forEach { b -> walk(listOf(b.condition), visitor, depth + 1); walk(listOf(b.body), visitor, depth + 1) }
+                    node.branches.forEach { b ->
+                        b.condition?.let { walk(listOf(it), visitor, depth + 1) }
+                        walk(listOf(b.body), visitor, depth + 1)
+                    }
                 }
                 is KtFor       -> { walk(listOf(node.iterable), visitor, depth + 1); node.body?.let { walk(listOf(it), visitor, depth + 1) } }
                 is KtWhile     -> { node.condition?.let { walk(listOf(it), visitor, depth + 1) }; node.body?.let { walk(listOf(it), visitor, depth + 1) } }
