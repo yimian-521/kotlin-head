@@ -1,4 +1,24 @@
 # CHANGELOG — kotlin-head 有头编译器
+## v0.12.9 (2026-07-09) — ⚰️ 墓碑引擎：bug修复合约+动态偏移追踪
+> 编译器行业首个bug修复合约系统。修完不扔，原地立碑。
+> 特征码动态偏移——代码自己当自己指纹，重构后自动追踪行号。全网首创。
+### BugTombstone 墓碑引擎
+- `register/query/count/summary` 四接口，零依赖
+- @Synchronized 线程安全 + 精确文件名==匹配
+- defaultRegistry 数据与逻辑分离
+### 进程树对接
+- SceneInput 加 `tombstones` 字段
+- `briefOf` 显示 ⚰️×N
+- `prepareArmy` 自动查询墓碑——指挥官带战场地图上场
+### 动态偏移追踪（行业首创）
+- Entry 加 `fingerprint` 字段：存修复位置代码行内容
+- query 加 `sourceCode` 参数：`indexOf` 定位→自动计算新行号
+- 前插10行→L110自动追踪到L120(+10)
+- 特征码被删→标 ⚠️偏移(原行号)
+### 默认注册表
+- SimUiScanner.kt → L109 NPE + L116 target漏遍历
+- Parser.kt → L241 传染性适配层
+- 无关文件 → 零输出（沉默）
 
 ## v0.12.7 (2026-07-09) — 混合输出决策门 🎯
 ## v0.12.8 (2026-07-09) — 免免三层架构 + 原生探针节点 🏗️🔍
