@@ -93,7 +93,7 @@ object SimUiScanner {
     // ══════════ AST 遍历 ══════════
 
     private fun walk(nodes: List<KtNode>, visitor: (KtNode) -> Unit, depth: Int = 0) {
-        if (depth > 50) return
+        if (depth > 128) return
         for (node in nodes) {
             visitor(node)
             when (node) {

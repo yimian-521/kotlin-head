@@ -75,7 +75,7 @@ fun diagnose(file: KtFile, src: String): List<String> {
     
     // AST级：硬编码常量、静默路径
     fun walk(nodes: List<KtNode>, depth: Int = 0) {
-        if (depth > 60) return
+        if (depth > 128) return
         for (node in nodes) {
             when (node) {
                 is KtVal -> {

@@ -121,7 +121,7 @@ object AnnotationAdapter {
 
     /** 轻量 AST walk — 适配层专用，不依赖 SimUiScanner.walk */
     private fun walkAst(nodes: List<KtNode>, visitor: (KtNode) -> Unit, depth: Int = 0) {
-        if (depth > 50) return
+        if (depth > 128) return
         for (node in nodes) {
             visitor(node)
             when (node) {

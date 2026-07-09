@@ -234,7 +234,7 @@ class Parser(
                 var braceSkips = 0
                 var consecLbrace = 0  // ★ 连续 LBRACE 计数器——检测花括号泛滥
                 while (depth > 0 && !isEof() && totalSkips < 2000 && braceSkips < 300) {
-                    if (depth > 60) { warnSkip("花括号嵌套过深(>$depth)", "略过整块"); break }
+                    if (depth > 128) { warnSkip("花括号嵌套过深(>$depth)", "略过整块"); break }
                     val tt = peek().type
                     if (isDeclarationStart(tt)) break
                     when (tt) {
