@@ -108,12 +108,12 @@ object SimUiScanner {
                     node.subject?.let { walk(listOf(it), visitor, depth + 1) }
                     node.branches.forEach { b ->
                         b.condition?.let { walk(listOf(it), visitor, depth + 1) }
-                        walk(listOf(b.body), visitor, depth + 1)
+                        b.body?.let { walk(listOf(it), visitor, depth + 1) }
                     }
                 }
                 is KtFor       -> { walk(listOf(node.iterable), visitor, depth + 1); node.body?.let { walk(listOf(it), visitor, depth + 1) } }
                 is KtWhile     -> { node.condition?.let { walk(listOf(it), visitor, depth + 1) }; node.body?.let { walk(listOf(it), visitor, depth + 1) } }
-                is KtCall      -> walk(node.args, visitor, depth + 1)
+                is KtCall      -> { walk(listOf(node.target), visitor, depth + 1); walk(node.args, visitor, depth + 1) }
                 is KtLambda    -> walk(listOf(node.body), visitor, depth + 1)
                 is KtBinary    -> walk(listOf(node.left, node.right), visitor, depth + 1)
                 else -> {}
