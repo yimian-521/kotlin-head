@@ -18,6 +18,7 @@ import com.qitong.head.pass.*
 import com.qitong.head.internal.JsonUtil
 import java.io.File
 import com.qitong.head.runtime.*
+import com.qitong.head.embedded.QitongEmbedded
 
 /**
  * 有头编译器（kotlin-head）—— 按钮终端主入口。
@@ -29,7 +30,7 @@ import com.qitong.head.runtime.*
  */
 object Main {
 
-    const val VERSION = "0.11.4"
+    const val VERSION = "0.12.9-qitong"
 
     private val dev = DevMode.boot()
 
@@ -53,7 +54,7 @@ object Main {
         hPrintln()
 
         if (args.isEmpty()) {
-            hPrintln("用法: kotlin-head <源码.kt> [--sim|--ast|--diag]")
+            hPrintln("用法: kotlin-head <源码.kt> [--sim|--ast|--diag|--cli|analyze]")
             return
         }
 
@@ -96,6 +97,21 @@ object Main {
 
         // 恢复上次状态
         restoreSession()
+
+        // ── CLI 模式：输出纯 JSON，不进入交互循环 ──
+        val cliFlag = args.any { it == "--cli" || it == "analyze" }
+        if (cliFlag) {
+            val result = QitongEmbedded.analyze(lastSrc, lastSrcPath)
+            val json = JsonUtil.encode(mapOf(
+                "success" to result.success,
+                "version" to result.version,
+                "bugs" to result.bugs.map { mapOf("message" to it.message, "severity" to it.severity, "span" to it.span) },
+                "diagnostics" to result.diagnostics.map { mapOf("message" to it.message, "level" to it.level) },
+                "error" to result.error
+            ))
+            println(json)
+            return
+        }
 
         // 管道/flag 模式：直接跳转，不进入交互循环
         when {
