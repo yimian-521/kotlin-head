@@ -5,6 +5,8 @@ const { Lexer, TokType } = require('./lexer')
 const { Parser } = require('./parser')
 const { TypeChecker } = require('./checker')
 const { BugScanner } = require('./bugscan')
+const crypto = require('crypto')
+const fs = require('fs')
 
 const VERSION = '1.1.0-node'
 
@@ -39,12 +41,33 @@ class Snapshot {
 }
 function snapshot() { return new Snapshot(hotSrc, hotResult) }
 
-// === prefill 预填 ===
+// === 预编译缓存: 首次分析结果写盘，重启直接读 ===
+const CACHE_FILE = '.kotlin-head-cache.json'
+let cacheMap = null
+function _loadCache() {
+    if (cacheMap) return
+    try { cacheMap = new Map(JSON.parse(fs.readFileSync(CACHE_FILE,'utf8'))) }
+    catch(e) { cacheMap = new Map() }
+}
+function _saveCache() {
+    try { fs.writeFileSync(CACHE_FILE, JSON.stringify([...cacheMap]),'utf8') }
+    catch(e) {}
+}
+function _hash(src) { return crypto.createHash('sha256').update(src).digest('hex').slice(0,16) }
+
+/** prefill with cache: 首次读盘→纳秒; 无缓存→全分析→写盘 */
 function prefill(src) {
+    _loadCache()
+    const key = _hash(src)
+    if (cacheMap.has(key)) {
+        const r = cacheMap.get(key)
+        l1.set(src, r)
+        hotSrc = src; hotResult = r
+        return
+    }
     const r = analyzeSync(src)
-    l1.set(src, r)
-    if (l1.size > L1_MAX) { const first = l1.keys().next().value; l1.delete(first) }
-    hotSrc = src; hotResult = r
+    cacheMap.set(key, r)
+    _saveCache()
 }
 
 // === analyzeSync: 全编译 (Lexer→Token输出, 无Parser) ===
