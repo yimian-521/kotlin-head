@@ -12,6 +12,11 @@ object QitongEmbedded {
 
     @JvmField var hotSrc: String? = null
     @JvmField var hotRes: AnalysisResult = AnalysisResult(true, VERSION, emptyList(), emptyList(), null)
+    /** 联存器命中——调用方直接 === hotSrc 零方法调用更快，hit() 是轻量别名 */
+    fun hit(src: String): AnalysisResult? {
+        if (src === hotSrc) { cU++; return hotRes }
+        return null
+    }
 
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
