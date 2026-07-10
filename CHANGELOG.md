@@ -1,5 +1,6 @@
 # CHANGELOG — kotlin-head 有头编译器
 ## v0.13.1 (2026-07-10) — APK打包器：纯Kotlin，三语言(Kotlin/Java/Node)
+## v1.0.1 (2026-07-10) — Node全栈+CompactVM追平TCC
 
 ## v1.0.0 (2026-07-10) — 皮秒里程碑：132μs→0ps，12项原创概念
 
