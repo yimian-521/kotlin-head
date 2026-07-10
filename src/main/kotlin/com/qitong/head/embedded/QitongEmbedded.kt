@@ -18,6 +18,15 @@ object QitongEmbedded {
         return null
     }
 
+    /** JIT动态化逃逸：一次性拷进口袋，之后全是局部变量 */
+    data class Snapshot(val src: String?, val res: AnalysisResult) {
+        inline fun check(theirSrc: String): AnalysisResult? {
+            if (theirSrc === src) return res
+            return null
+        }
+    }
+    fun snapshot(): Snapshot = Snapshot(hotSrc, hotRes)
+
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
     }
