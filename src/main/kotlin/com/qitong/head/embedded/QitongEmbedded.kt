@@ -45,6 +45,11 @@ object QitongEmbedded {
     private val l3 = object : LinkedHashMap<Int, KtFile>(64, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<Int, KtFile>) = size > 64
     }
+
+    init {
+        val seed = AnalysisResult(true, VERSION, emptyList(), emptyList(), null, hotLevel = 9)
+        l1[""] = seed; hotSrc = ""; hotRes = seed
+    }
     private var cU = 0L; private var c1 = 0L; private var c2 = 0L; private var c3 = 0L; private var c4 = 0L
     fun cacheStats(): String {
         val t = cU + c1 + c2 + c3 + c4
