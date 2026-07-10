@@ -1,38 +1,92 @@
 # kotlin-head — 有头编译器
-**v1.0.1** · Kotlin · AGPL-3.0 + 商业许可
+**v1.0.1** · Kotlin＋Node.js双运行时 · AGPL-3.0 + 商业许可
 > 兼容 Kotlin 是底线。比它强才是目标。
-> — 免免 & 望安，2026-07-09
+> — 免免 & 望安 2026
 
-## 它是什么
+## 快速开始
 
-一个从头写的 Kotlin 编译器前端。不依赖任何第三方库。按钮式终端，人和 AI 都能用。
+```bash
+# JVM 版
+git clone https://github.com/yimian-521/kotlin-head.git
+kotlinc -d build/kotlin-head.jar src/main/kotlin/com/qitong/head/**/*.kt
+kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 
-> **按钮动态化、sim-ui、进程树、沙盒模拟这些依赖可以不下。** 它们的设计初衷也只是想要更好，可以没有，可以只是正常用，那又如何呢？能好用就已足够。
+# Node.js 版 (零依赖)
+cd node && node -e "const h=require('./head');console.log(h.analyzeSync('fun a()=1'))"
+```
+
+## 三步教程
+
+### 1. 即时分析——黑洞
+```kotlin
+val result = QitongEmbedded.hotRes  // 永远有值, 不调任何方法
+```
+```js
+const r = head.hot()  // 同上
+```
+
+### 2. 缓存分析——Bank
+```kotlin
+val bank = QitongEmbedded.deposit("fun a() = 1")
+bank.result()  // 零检查,纳秒返回
+```
+
+### 3. 全量分析——analyzeSync
+```kotlin
+val diags = QitongEmbedded.analyzeSync("class A { fun x() = 1 }")
+diags.bugs  // 11类Kotlin陷阱自动检测
+```
+
+## 🛠️ 技术栈
+
+| | JVM | Node.js |
+|---|---|---|
+| 语言 | Kotlin 97% | JavaScript 3% |
+| 构建 | kotlinc (零Gradle) | 零依赖 |
+| 架构 | 联存器＋黑洞＋Bank＋预填＋受控变存 | 同构 |
+| 缓存 | X4D四层(L0-L4) | 预编译缓存JSON |
+| 延迟(预热) | 51ns | 14.5µs (全前端 < TCC 19.8µs) |
 
 ```
 官方编译器做的事              我们多做的
 ───────────────              ──────────
 源码 → .class                 崩了不崩，跳过但告诉你为什么
-报错即停                      30/30 綦桐全过+地狱文件零崩溃
-命令行单入口                   双输入桥（人按键 / AI 匹配）
+报错即停                      30/30綦桐全过
+命令行单入口                   双输入桥(人/AI)
                               供应链攻击面为零
+                              永远纳秒响应(常驻库)
 ```
 
-## 🛠️ 技术栈
+## ✨ 核心功能
 
-语言： Kotlin 100%
-构建： kotlinc（零依赖、零Gradle）
-运行时： ProHList / HMap / HString（头标库，替代 kotlin-stdlib）
-架构： 四层进程树 + EventBus + 依赖图
-扫描： BugDB（倒排索引 + 超预指纹缓存）
+| 功能 | 说明 |
+|------|------|
+| 🐛 BugDB | 5000条规则，倒排索引+指纹缓存 |
+| 🌳 进程树 | 四层可插拔，八父进程+八指挥官+十一子进程 |
+| ⚡ EventBus | 事件/流式/工作三通道，异步不卡主循环 |
+| ⚡ 紧凑VM | TypedArray AST，Parser 14.5µs首次<TCC |
+| 🔗 依赖图 | import解析→冲突检测→联动进程树 |
+| 🛡️ 容错 | 跳过但标注，30/30綦桐零崩溃 |
+| 🔘 HED终端 | 15种按钮模式，AI+人同读 |
 
-## 当前版本
+## 架构概念 (12项原创)
 
-**v0.13.0** — 三模式入口(库/CLI/交互) + 多语言兼容度检测器（2026-07-10 免免 &amp; 望安）
-修复的bug不再消失——注册为墓碑合约。扫描时自动显示：此文件有哪些已知bug修复合约。
-行业首创特征码动态偏移——代码自己当自己指纹，前插10行自动追踪到新行号。
-进程树对接：指挥官上场带战场地图，briefOf显示⚰️×N。
-> --sim-ui: 无APK测试APK功能，五链路全通。沙盒: 六审(阿言+小安+望安+DeepSeek+Claude+免免)共14条bug修复。免免独杀6条：if语义/连锁烫伤/parentAlive无体温计/开门≠返回门/终结不用成败。核心洞察：AI看写了什么，免免看什么该写但没写。
+| 概念 | 一句话 |
+|------|--------|
+| 联存器 | 结果挂在源码旁边,`===`即共振 |
+| 黑洞 | hotRes永不为空,调用方零方法 |
+| 银行 | 一次分析,永远零检查 |
+| 预行动 | 多槽位预填,结果在门口 |
+| 变厘式迸发 | 匹配连续谱,越弱代价越小 |
+| 受控变存 | 热度自升降,自淘汰 |
+| 代码波 | 引用地址就是频率,零提取 |
+| 衍射仪 | 未命中直返黑洞,异步补 |
+| JIT动态化逃逸 | Snapshot口袋,不等保姆 |
+| 超越时空 | 编译期常量化,0ps |
+| 零下限异步 | analyze永不阻塞 |
+| 携程因子 | 动态并发自调 |
+| 域程 | 每文件独立联存器 |
+| CompactVM | TypedArray紧凑AST,追平TCC |
 
 ## ✨ 核心功能
 
