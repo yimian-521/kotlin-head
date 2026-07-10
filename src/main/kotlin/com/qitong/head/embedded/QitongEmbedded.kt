@@ -40,6 +40,11 @@ object QitongEmbedded {
 
     // 后台异步线程池 —— PentAGI式并发，analyze永不阻塞
     private val pool: ExecutorService = Executors.newFixedThreadPool(4)
+    private val lock = Any() // 守护hotSrc/hotRes/l1一致性
+
+    init {
+        Runtime.getRuntime().addShutdownHook(Thread { pool.shutdown() })
+    }
 
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
@@ -89,18 +94,18 @@ object QitongEmbedded {
             if (file == null || th != 0) {
                 @Suppress("UNCHECKED_CAST") val p = Parser(tokens as List<com.qitong.head.lexer.Token>, onRecover = { _, _ -> true })
                 file = p.parseFile() ?: return fail("解析失败")
-                if (c2 == 0L || th != 0) l3[th] = file
+                l3[th] = file
             } else c3++
             val diags = mutableListOf<DiagInfo>()
             val p2 = Parser(tokens as List<com.qitong.head.lexer.Token>, onRecover = { _, _ -> true })
             for (d in p2.parserDiags()) diags += DiagInfo(d.msg, d.level.name)
-            try { for (d in TypeChecker().check(file)) diags += DiagInfo(d.msg, d.level.name) } catch (_: Exception) {}
+            try { for (d in TypeChecker().check(file)) diags += DiagInfo(d.msg, d.level.name) } catch (ex: Exception) { diags += DiagInfo("TypeChecker异常: ${ex.message}", "ERROR") }
             val bugs = try { BugScanner.from(file) } catch (_: Exception) { emptyList<BugScanner.Finding>() }
             val res = AnalysisResult(true, VERSION, bugs.map { BugInfo(it.message, it.severity.name, it.span.toString()) }, diags, null, hotLevel = 1, lastAccess = System.nanoTime())
-            l1[src] = res; hotSrc = src; hotRes = res; c4++; return res
+            synchronized(lock) { l1[src] = res; hotSrc = src; hotRes = res }; c4++; return res
         } catch (e: Exception) {
             val res = AnalysisResult(false, VERSION, emptyList(), emptyList(), e.message, hotLevel = 1, lastAccess = System.nanoTime())
-            l1[src] = res; hotSrc = src; hotRes = res; c4++; return res
+            synchronized(lock) { l1[src] = res; hotSrc = src; hotRes = res }; c4++; return res
         }
     }
     private fun fail(m: String) = AnalysisResult(false, VERSION, emptyList(), emptyList(), m)
