@@ -28,17 +28,18 @@ result:
 | **Bank.result() total** | **~2** | **0.67ns = 670ps** |
 
 > 当 res 常驻 L1 缓存时，mov 是 1 周期。
-> 当 JIT 做 Scalar Replacement（字段提到寄存器），mov 消失 → 0 周期 → **0ps**。
+> JIT 可能将 Bank 对象本身做 Scalar Replacement（Bank 常为局部变量不逃逸），
+> 此时 result() 被完全内联，调用方直接持有 res——但这是值传播，不是消除指令。
 
 ---
 
-## hotRes 黑洞: 0ps
+## hotRes 黑洞: ~330ps
 
 ```kotlin
 @JvmField var hotRes: AnalysisResult = SEED
 ```
 
-JIT 编译后在调用方内联展开：
+调用方直接读字段，JIT 编译后：
 
 ```asm
 ; 调用方: val r = QitongEmbedded.hotRes
@@ -47,11 +48,13 @@ JIT 编译后在调用方内联展开：
 
 | 指令 | 周期 | 时间 |
 |------|:---:|------|
-| `mov reg, [mem]` (L1 命中) | 1 | 0.33ns |
-| `mov` (标量替换后) | 0 | **0ps** |
+| `mov reg, [mem]` (L1 命中) | 1 | 0.33ns = 330ps |
+| `mov reg, [mem]` (L2 命中) | 4 | 1.33ns |
+| `mov reg, [mem]` (L3 命中) | 12 | 4ns |
 
-> 当 hotRes 被 JIT 识别为非逃逸，Scalar Replacement 将其提入寄存器。
-> 调用方直接拥有值——零指令。
+> hotRes 是 `@JvmField var`，天然逃逸——无法做 Scalar Replacement。
+> 但频繁访问使其常驻 L1 缓存，实际延迟稳定在 1 周期 ≈ **330ps**。
+> 微基准报告 1.8ns 是 Blackhole + nanoTime + 循环控制的开销，不是字段读取本身。
 
 ---
 
