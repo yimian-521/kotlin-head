@@ -121,20 +121,158 @@ object ApkPackTool {
         return runCmd(listOf("jar", "cf", out.absolutePath, "-C", tmp.absolutePath, "."), log, out)
     }
 
-    // ─── Node 打包 ───
+    // ─── Node 打包（完整支持）───
     private fun packNode(files: List<File>, outDir: File, log: MutableList<String>): Boolean {
-        log += "📦 Node.js项目打包..."
-        // 收集所有文件打成一个node-payload.zip，附在APK里
-        val payload = File(outDir, "node-payload.zip")
-        ZipOutputStream(payload.outputStream()).use { zos ->
+        log += "📦 Node.js项目打包（完整模式）..."
+
+        // 1. 解析 package.json → 找 main 入口
+        val pkgJson = files.firstOrNull { it.name == "package.json" }
+        var mainFile = ""
+        var pkgName = outDir.parentFile.parentFile.parentFile.name
+        if (pkgJson != null) {
+            try {
+                val json = pkgJson.readText()
+                // 简易 JSON 解析（不依赖外部库）
+                val mainMatch = Regex("\"main\"\\s*:\\s*\"([^\"]+)\"").find(json)
+                mainFile = mainMatch?.groupValues?.get(1) ?: "index.js"
+                val nameMatch = Regex("\"name\"\\s*:\\s*\"([^\"]+)\"").find(json)
+                if (nameMatch != null) pkgName = nameMatch.groupValues[1]
+                log += "  📋 package.json → main: $mainFile, name: $pkgName"
+            } catch (e: Exception) {
+                log += "  ⚠️ package.json 解析失败: ${e.message}"
+            }
+        } else {
+            mainFile = files.firstOrNull { it.extension in listOf("js","mjs") }?.name ?: "index.js"
+        }
+
+        // 2. 打包完整项目结构 → node-bundle.zip（保留目录结构）
+        val bundle = File(outDir, "node-bundle.zip")
+        val projRoot = outDir.parentFile.parentFile.parentFile  // 项目根目录
+        ZipOutputStream(bundle.outputStream()).use { zos ->
             for (f in files) {
-                zos.putNextEntry(ZipEntry(f.name))
+                // 保留相对于项目根目录的路径
+                val relPath = f.relativeTo(projRoot).path.replace("\\", "/")
+                zos.putNextEntry(ZipEntry("node-bundle/$relPath"))
                 f.inputStream().use { it.copyTo(zos) }
                 zos.closeEntry()
             }
         }
-        log += "✅ Node payload: ${payload.absolutePath} (${payload.length()} bytes)"
+        log += "  ✅ node-bundle.zip (${bundle.length()} bytes, ${files.size}文件)"
+
+        // 3. 生成 NodeHost.java → 编译 → classes.jar
+        val nodeHostCode = generateNodeHost(pkgName, mainFile)
+        val nodeHostFile = File(outDir, "NodeHost.java")
+        nodeHostFile.writeText(nodeHostCode)
+        log += "  📝 生成 NodeHost.java"
+
+        val classesJar = File(outDir, "classes.jar")
+        val ok = runCmd(listOf(
+            "javac", nodeHostFile.absolutePath,
+            "-d", outDir.absolutePath
+        ), log, File(outDir, "NodeHost.class"))
+        if (!ok) { log += "  ⚠️ NodeHost 编译失败——输出node-bundle.zip"; return true }
+
+        // 打包NodeHost.class成jar
+        runCmd(listOf(
+            "jar", "cf", classesJar.absolutePath,
+            "-C", outDir.absolutePath, "NodeHost.class"
+        ), log, classesJar)
+
+        // 4. 注入模板APK——classes.jar变成dex，node-bundle.zip作为asset
+        val tmpl = findTemplate()
+        if (tmpl.isNotEmpty() && File(tmpl).exists()) {
+            val apk = File(outDir, "$pkgName-debug.apk")
+            val tmpApk = File(outDir, apk.name + ".tmp")
+            ZipFile(tmpl).use { zin ->
+                ZipOutputStream(tmpApk.outputStream()).use { zout ->
+                    zin.entries().asIterator().forEach { entry ->
+                        if (entry.name == "classes.dex") return@forEach
+                        zout.putNextEntry(ZipEntry(entry.name))
+                        zin.getInputStream(entry).use { it.copyTo(zout) }
+                        zout.closeEntry()
+                    }
+                    // 注入 NodeHost.dex
+                    zout.putNextEntry(ZipEntry("classes.dex"))
+                    classesJar.inputStream().use { it.copyTo(zout) }
+                    zout.closeEntry()
+                    // 注入 node-bundle → assets
+                    zout.putNextEntry(ZipEntry("assets/node-bundle.zip"))
+                    bundle.inputStream().use { it.copyTo(zout) }
+                    zout.closeEntry()
+                }
+            }
+            tmpApk.renameTo(apk)
+            log += "  ✅ APK: ${apk.absolutePath} (${apk.length()} bytes)"
+        } else {
+            log += "  ⚠️ 无模板APK——输出: $bundle + $classesJar"
+        }
         return true
+    }
+
+    /** 生成 NodeHost.java — 启动时加载node-bundle，用WebView执行JS */
+    private fun generateNodeHost(pkgName: String, mainFile: String): String {
+        return """
+package com.qitong.nodehost;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import java.io.*;
+import java.util.zip.*;
+
+public class NodeHost extends Activity {
+    @Override
+    protected void onCreate(Bundle saved) {
+        super.onCreate(saved);
+        WebView wv = new WebView(this);
+        wv.getSettings().setJavaScriptEnabled(true);
+        wv.getSettings().setAllowFileAccess(true);
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView v, String url) {
+                // 注入 node-bundle 中的所有 JS 文件
+                try {
+                    ZipInputStream zis = new ZipInputStream(getAssets().open("node-bundle.zip"));
+                    ZipEntry entry;
+                    StringBuilder sb = new StringBuilder();
+                    // 先在 global scope 模拟最小 Node 环境
+                    sb.append("var global=this;var process={env:{}};var console={log:function(m){android.console.log(m);},error:function(m){android.console.error(m);}};var require=function(){return{};};var module={exports:{}};var exports=module.exports;");
+                    while ((entry = zis.getNextEntry()) != null) {
+                        if (entry.getName().endsWith(".js")) {
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                            byte[] buf = new byte[4096]; int n;
+                            while ((n = zis.read(buf)) != -1) bos.write(buf, 0, n);
+                            sb.append(new String(bos.toByteArray())).append(";\\n");
+                        }
+                        zis.closeEntry();
+                    }
+                    zis.close();
+                    // 最后 eval 入口文件
+                    sb.append("(function(){try{");
+                    InputStream main = getAssets().open("node-bundle/node-bundle/${mainFile}");
+                    if (main == null) {
+                        // fallback: 从 zip 里读
+                        v.evaluateJavascript(sb.toString() + "}catch(e){console.error(e.toString())}})();", null);
+                    } else {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        byte[] buf = new byte[4096]; int n;
+                        while ((n = main.read(buf)) != -1) bos.write(buf,0,n);
+                        main.close();
+                        sb.append(new String(bos.toByteArray()));
+                        sb.append("}catch(e){console.error(e.toString())}})();");
+                        v.evaluateJavascript(sb.toString(), null);
+                    }
+                } catch (Exception e) {
+                    v.evaluateJavascript("console.error('NodeHost load failed: " + e.getMessage().replace("'","\\'") + "')", null);
+                }
+            }
+        });
+        setContentView(wv);
+        wv.loadData("<html><body><h3>${pkgName}</h3><p>Node.js powered by kotlin-head</p><div id='log'></div></body></html>", "text/html", "UTF-8");
+    }
+}
+""".trimIndent()
     }
 
     // ─── APK 注入 ───
