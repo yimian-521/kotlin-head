@@ -118,6 +118,26 @@ function analyze(src) {
 function hot() { return hotResult }
 
 // === 预热 ===
+// === V8 全覆盖预热: 用代表性源码构建内联缓存，首次即追平 TCC ===
+const { CompactParser, CompactAST } = require('./vm')
+;(function warmupV8() {
+    const patterns = [
+        'fun a()=1',                           // 单表达式
+        'fun b(x:Int):Int=x+1',                // 参数+返回类型
+        'fun c(){if(true)return 1;return 2}',  // 条件+return
+        'fun d(n:Int):Int{if(n<=1)n else n*d(n-1)}', // 递归+算术
+        'fun e(){val x=1;val y=2;return x+y}', // val+算术
+        'class A(val v:Int)',                  // data class
+        'fun g(){when(1){1->return;else->return}}' // when
+    ]
+    patterns.forEach(src => {
+        const tks = new Lexer(src).tokenize()
+        const ast = CompactAST.pooled(); ast.reset()
+        const p = new CompactParser(tks); p.ast = ast
+        p.parseFile()
+    })
+})()
+
 prefill('fun main() { println(1) }')
 
 module.exports = { VERSION, hit, analyze, analyzeSync, deposit, snapshot, prefill, hot,
