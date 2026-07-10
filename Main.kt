@@ -54,7 +54,7 @@ object Main {
         hPrintln()
 
         if (args.isEmpty()) {
-            hPrintln("用法: kotlin-head <源码.kt> [--sim|--ast|--diag|--cli|analyze]")
+            hPrintln("用法: kotlin-head <源码.kt|项目目录> [--sim|--ast|--diag|--cli|analyze|--pack]")
             return
         }
 
@@ -100,6 +100,17 @@ object Main {
 
         // ── CLI 模式：输出纯 JSON，不进入交互循环 ──
         val cliFlag = args.any { it == "--cli" || it == "analyze" }
+        // ── 打包模式 ──
+        val packFlag = args.any { it == "--pack" }
+        if (packFlag) {
+            val packResult = com.qitong.head.pack.ApkPackTool.pack(path)
+            println(if (packResult.success) {
+                "APK: ${packResult.apkPath}"
+            } else {
+                "打包失败: ${packResult.log.joinToString("\n")}"
+            })
+            return
+        }
         if (cliFlag) {
             val result = QitongEmbedded.analyze(lastSrc, lastSrcPath)
             val json = JsonUtil.encode(mapOf(
