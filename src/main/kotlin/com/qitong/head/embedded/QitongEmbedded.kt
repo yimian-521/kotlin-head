@@ -39,11 +39,11 @@ object QitongEmbedded {
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
     }
-    private val l2 = object : LinkedHashMap<String, List<*>>(64, 0.75f, true) {
-        override fun removeEldestEntry(e: MutableMap.MutableEntry<String, List<*>>) = size > 64
+    private val l2 = object : LinkedHashMap<String, List<*>>(1024, 0.75f, true) {
+        override fun removeEldestEntry(e: MutableMap.MutableEntry<String, List<*>>) = size > 1024
     }
-    private val l3 = object : LinkedHashMap<Int, KtFile>(64, 0.75f, true) {
-        override fun removeEldestEntry(e: MutableMap.MutableEntry<Int, KtFile>) = size > 64
+    private val l3 = object : LinkedHashMap<Int, KtFile>(1024, 0.75f, true) {
+        override fun removeEldestEntry(e: MutableMap.MutableEntry<Int, KtFile>) = size > 1024
     }
 
     init {
