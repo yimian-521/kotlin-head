@@ -27,6 +27,15 @@ object QitongEmbedded {
     }
     fun snapshot(): Snapshot = Snapshot(hotSrc, hotRes)
 
+    /** 银行模式：源码+结果绑定，拿结果零检查。deposit时联动联存器更新hotSrc/hotRes */
+    data class Bank(val src: String, val res: AnalysisResult) {
+        fun result(): AnalysisResult = res  // 零检查
+    }
+    fun deposit(src: String): Bank {
+        val r = analyze(src)
+        return Bank(src, r)
+    }
+
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
     }
