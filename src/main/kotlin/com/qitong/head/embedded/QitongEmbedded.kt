@@ -6,6 +6,8 @@ import com.qitong.head.lexer.Lexer
 import com.qitong.head.parser.Parser
 import com.qitong.head.checker.TypeChecker
 import java.util.LinkedHashMap
+import java.util.concurrent.*
+import java.util.concurrent.CompletableFuture
 
 object QitongEmbedded {
     const val VERSION = "0.13.1"
@@ -32,9 +34,12 @@ object QitongEmbedded {
         fun result(): AnalysisResult = res  // 零检查
     }
     fun deposit(src: String): Bank {
-        val r = analyze(src)
+        val r = analyzeSync(src)
         return Bank(src, r)
     }
+
+    // 后台异步线程池 —— PentAGI式并发，analyze永不阻塞
+    private val pool: ExecutorService = Executors.newFixedThreadPool(4)
 
     private val l1 = object : LinkedHashMap<String, AnalysisResult>(256, 0.75f, true) {
         override fun removeEldestEntry(e: MutableMap.MutableEntry<String, AnalysisResult>) = size > 256
@@ -66,6 +71,15 @@ object QitongEmbedded {
     }
 
     fun analyze(src: String, filePath: String = "embedded.kt"): AnalysisResult {
+        if (src === hotSrc) { hotRes.hotLevel++; hotRes.lastAccess = System.nanoTime(); cU++; return hotRes }
+        val r = l1[src]; if (r != null) { r.hotLevel++; r.lastAccess = System.nanoTime(); hotSrc = src; hotRes = r; c1++; return r }
+        // 未命中 → 返回hotRes兜底，后台异步补
+        pool.submit { analyzeSync(src) }
+        return hotRes
+    }
+
+    /** 同步全编译 —— deposit/Bank首次调用时用，保证精确结果 */
+    fun analyzeSync(src: String, filePath: String = "embedded.kt"): AnalysisResult {
         if (src === hotSrc) { hotRes.hotLevel++; hotRes.lastAccess = System.nanoTime(); cU++; return hotRes }
         val r = l1[src]; if (r != null) { r.hotLevel++; r.lastAccess = System.nanoTime(); hotSrc = src; hotRes = r; c1++; return r }
         try {
