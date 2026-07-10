@@ -1,4 +1,13 @@
 # CHANGELOG — kotlin-head 有头编译器
+## v0.13.1 (2026-07-10) — APK打包器：纯Kotlin，三语言(Kotlin/Java/Node)
+### 新增
+- **src/main/kotlin/.../pack/ApkPackTool.kt** — 224行纯Kotlin
+  - `detectProject()` → 自动识别语言分派
+  - `compileKotlin()` / `compileJava()` / `packNode()` 三路编译
+  - `injectIntoApk()` → JVM原生ZipFile注入模板APK
+  - `signApk()` → jarsigner签名
+- **`--pack` flag** — CLI一键打包: `java -jar kotlin-head.jar --pack myproject/`
+
 ## v0.13.0 (2026-07-10) — 多语言兼容度检测 + 三模式入口
 ### 新增
 - **tools/compat_check.py** — Kotlin+Node.js双引擎兼容度检测器（771行）

@@ -20,7 +20,7 @@ import com.qitong.head.checker.TypeChecker
  */
 object QitongEmbedded {
 
-    const val VERSION = "0.13.0"
+    const val VERSION = "0.13.1"
 
     /** 结果容器 —— 綦桐网关拿到直接映射到 UI */
     data class AnalysisResult(

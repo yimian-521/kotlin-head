@@ -28,7 +28,7 @@ object ApkPackTool {
         if (!proj.exists()) return PackResult(false, null, listOf("✖ 项目目录不存在: $projectDir"))
 
         val name = proj.name
-        log += "═══ APK打包器 (kotlin-head v0.13.0) ═══"
+        log += "═══ APK打包器 (kotlin-head v0.13.1) ═══"
         log += "项目: $name"
 
         // 1. 检测项目类型
