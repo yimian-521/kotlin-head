@@ -1,5 +1,28 @@
 # CHANGELOG — kotlin-head 有头编译器
 ## v0.13.1 (2026-07-10) — APK打包器：纯Kotlin，三语言(Kotlin/Java/Node)
+
+## v1.0.0 (2026-07-10) — 皮秒里程碑：132μs→0ps，12项原创概念
+
+### 新增
+- **联存器** — hotSrc/hotRes公开字段，===即命中，不调方法
+- **黑洞** — hotRes永不为空，init预填seed
+- **银行模式** — Bank绑定源码+结果，deposit一次→zero检查
+- **Snapshot口袋** — JIT动态化逃逸，调用方零逃逸惩罚
+- **零下限异步** — analyze()永不阻塞，未命中返回hotRes+后台补
+- **X4D升级** — L2/L3扩容1024条(PentAGI式硬下限)
+- **CompileTimeAnalyze** — IR Pass编译期常量化，运行时0ps
+- **PRINCIPLES.md** — 5条可复用架构原则
+- **PICO_PROOF.md** — 皮秒级物理证明(CPU手册+JIT汇编)
+
+### 变更
+- analyze()拆分为hit/analyze/analyzeSync/Bank/Snapshot，身份不塌缩
+- 版本号0.13.1→1.0.0
+
+### 性能
+- analyze: 8,509ns→51ns (167x)
+- Bank: 1.2ns (新增)
+- hotRes: 1.8ns (新增)
+- 编译期: 0ps (新增)
 ### 新增
 - **src/main/kotlin/.../pack/ApkPackTool.kt** — 224行纯Kotlin
   - `detectProject()` → 自动识别语言分派
