@@ -20,7 +20,7 @@ import com.qitong.head.checker.TypeChecker
  */
 object QitongEmbedded {
 
-    const val VERSION = "0.12.9-qitong"
+    const val VERSION = "0.13.0"
 
     /** 结果容器 —— 綦桐网关拿到直接映射到 UI */
     data class AnalysisResult(
@@ -47,7 +47,7 @@ object QitongEmbedded {
         try {
             // 编译管线（纯逻辑，无全局状态依赖）
             val tokens = Lexer(sourceCode).tokenize()
-            val parser = Parser(tokens) { _, _ -> true }
+            val parser = Parser(tokens, onRecover = { _, _ -> true })
             val file: KtFile = parser.parseFile() ?: return AnalysisResult(
                 false, VERSION, emptyList(), emptyList(), "解析返回null——源码语法错误？"
             )
@@ -57,12 +57,12 @@ object QitongEmbedded {
             for (d in parser.parserDiags()) {
                 allDiags += DiagInfo(message = d.msg, level = d.level.name)
             }
-            for (d in try { TypeChecker().check(file) } catch (_: Exception) { emptyList() }) {
+            for (d in try { TypeChecker().check(file) } catch (_: Exception) { emptyList<TypeChecker.Diag>() }) {
                 allDiags += DiagInfo(message = d.msg, level = d.level.name)
             }
 
             // Bug 扫描
-            val findings = try { BugScanner.from(file) } catch (_: Exception) { emptyList() }
+            val findings = try { BugScanner.from(file) } catch (_: Exception) { emptyList<BugScanner.Finding>() }
 
             return AnalysisResult(
                 success = true,

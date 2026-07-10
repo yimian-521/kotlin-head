@@ -30,7 +30,7 @@ import com.qitong.head.embedded.QitongEmbedded
  */
 object Main {
 
-    const val VERSION = "0.12.9-qitong"
+    const val VERSION = "0.13.0"
 
     private val dev = DevMode.boot()
 
