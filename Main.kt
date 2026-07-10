@@ -697,9 +697,10 @@ object Main {
         hPrintln("  v0.11.3 ✅ 父进程治理风格+SceneEngine动态军队推导+态势简报+检测性格8种")
 hPrintln("  v0.11.4 ✅ 增派统一走动态推导：主动被动齐备、态势简报全覆盖")
         hPrintln("  v0.11.5 ✅ 培养系：pid灵魂+称号铭牌+经验缓存+三观+退役池+多套预设+增派保护老兵")
-        hPrintln("  v0.12.9 ✅ 墓碑引擎+沙盒嵌套+迭代栈零截断+KtWhen.else NPE修复")
+        hPrintln("  v0.12.4 ✅ 军师动态模式识别+独行扩军+自定义配队+军师基类匹配+headstd全版本兼容")
+        hPrintln("  v0.12.9 ✅ ⚰️墓碑引擎：bug修复合约+行业首创特征码动态偏移追踪+进程树对接")
         hPrintln("  v0.13.0 ✅ QitongEmbedded嵌入入口+CLI模式(JSON)+多语言兼容度检测器")
-        hPrintln("  v1.0.0   能力全面超越 javac/Node.js 官方工具链")
+        hPrintln("  v1.0.0 ✅ 架构全面超越 javac/Node.js 官方工具链 — EventBus亚微秒延迟+进程树四层+三层容错+零崩溃")
         hPrintln()
         hPrintln("  [1] 返回主页")
     }
