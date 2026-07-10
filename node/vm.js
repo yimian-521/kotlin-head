@@ -10,11 +10,17 @@ const T = TokType
 const NODE_SIZE = 6
 
 class CompactAST {
-    constructor(capacity = 4096) {
-        this.buf = new Uint16Array(capacity * NODE_SIZE)
+    constructor(capacity = 4096, reuseBuf = null) {
+        this.buf = reuseBuf || new Uint16Array(capacity * NODE_SIZE)
         this.strPool = []  // 字符串池——名字/字面量存这里
         this.next = 0
+        this._ownBuf = !reuseBuf
     }
+    reset() { this.next = 0; this.strPool.length = 0 }
+
+    // 全局缓冲池——跨请求复用
+    static _pool = new Uint16Array(4096 * NODE_SIZE)
+    static pooled() { return new CompactAST(4096, CompactAST._pool) }
     alloc(type) {
         const i = this.next++ * NODE_SIZE
         this.buf[i] = type; return i
