@@ -178,8 +178,8 @@ function _rankText(src) {
   const twSum = Object.values(TW).reduce((a,b)=>a+b,0)
   for (const k of Object.keys(TW)) TW[k] = Math.round(TW[k] * 100 / twSum)
 
-  // 启用校准时，以标杆特征为满分线
-  const ideal = CAL || null
+  // 启用校准时，以分类标杆为满分线
+  const ideal = _getCAL(fileType) || null
 
   // 注释
   const commentLines = lines.filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
@@ -347,16 +347,19 @@ const TYPE_W = {
   script: { modularity:-5, comment:-5, naming:-3, density:+3 },
   general: {},
 }
-function calibrate(sampleSrc) {
-  const lines = sampleSrc.split('\n').length
-  const chars = sampleSrc.length
-  const commentLines = sampleSrc.split('\n').filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
+// ── 多分类校准：每类独立标杆 ──
+const CAL_MAP = {}
+
+function calibrate(src, type = 'general') {
+  const lines = src.split('\n').length
+  const chars = src.length
+  const commentLines = src.split('\n').filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
   let maxDepth = 0, curDepth = 0
-  for (const ch of sampleSrc) { if (ch === '{') { curDepth++; if (curDepth > maxDepth) maxDepth = curDepth } if (ch === '}') curDepth-- }
-  const varMatches = sampleSrc.match(/\b(const|let|var|val|fun|function|class)\s+([a-zA-Z_$]+)/g) || []
+  for (const ch of src) { if (ch === '{') { curDepth++; if (curDepth > maxDepth) maxDepth = curDepth } if (ch === '}') curDepth-- }
+  const varMatches = src.match(/\b(const|let|var|val|fun|function|class)\s+([a-zA-Z_$]+)/g) || []
   const singleLetter = varMatches.filter(m => { const n = m.split(/\s+/)[1]; return n && n.length === 1 && n !== '_' }).length
 
-  return CAL = {
+  const cal = {
     commentPct: Math.round(commentLines / lines * 100),
     maxDepth,
     singleLetterPct: Math.round(singleLetter / Math.max(1, varMatches.length) * 100),
@@ -364,6 +367,14 @@ function calibrate(sampleSrc) {
     charsPerLine: Math.round(chars / lines),
     idealBugs: 0,
   }
+  CAL_MAP[type] = cal
+  if (type === 'general') CAL = cal
+  return cal
+}
+
+// rank时自动匹配分类的CAL
+function _getCAL(fileType) {
+  return CAL_MAP[fileType] || CAL_MAP['general'] || CAL
 }
 let CAL = null  // calibrate()后生效，_rankText中引用
 
