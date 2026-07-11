@@ -16,15 +16,18 @@ const TIERS = [
   { name:'青铜 Bronze',   min:0,  emoji:'🥉' },
 ]
 
-// 维度权重（免免可调）
+// ── 维度权重（望安标准："一眼看完、抗摔、可删除、不恨自己"）──
 const W = {
-  bugDensity:   25,  // bug 越少分越高
-  typeSafety:   20,  // 类型检查通过率
-  naming:       15,  // 命名质量
-  complexity:   15,  // 结构不过深
-  density:      10,  // 代码密度适中
-  funcLength:   10,  // 函数不过长
-  comment:       5,  // 注释覆盖
+  bugDensity:    20,  // 零惊喜——代码做它看起来做的事
+  robustness:    15,  // 抗摔——错误被处理，异常不裸奔（try/catch/err check）
+  naming:        10,  // 一眼看完——命名准确，单字母滚蛋
+  complexity:    10,  // 一眼看完——嵌套不超5层
+  magicNumbers:  10,  // 不被未来自己恨——没有魔法数字
+  consistency:   10,  // 一眼看完——风格统一，不混驼峰和下划线
+  modularity:    10,  // 可删除——结构清晰，类/函数密度适中
+  density:        5,  // 辅助
+  funcLength:     5,  // 辅助
+  comment:        5,  // 不被未来自己恨——解释"为什么"
 }
 
 function rank(src, opts = {}) {
@@ -224,13 +227,39 @@ function _rankText(src) {
   }
   const fnLenScore = Math.max(0, 100 - Math.max(0, maxFnLen - 30) * 2)
 
-  const typeScore = 100
+  // 新增：鲁棒性——错误处理覆盖率
+  const tryCount = (src.match(/\btry\b/g) || []).length + (src.match(/\bcatch\b/g) || []).length
+    + (src.match(/\bif err != nil\b/g) || []).length + (src.match(/\.catch\(/g) || []).length
+    + (src.match(/\brecover\(\)/g) || []).length
+  const robustRatio = lineCount > 0 ? tryCount / (lineCount / 50) : 0  // 每50行至少1次错误处理
+  const robustScore = Math.min(100, robustRatio * 100)
+
+  // 新增：魔法数字——排除0,1,-1,2 的孤立数字
+  const magicNums = (src.match(/(?<!\w)(?!0\b|1\b|-1\b|2\b)\d+(?!\w)/g) || []).length
+  const magicRatio = lineCount > 0 ? magicNums / lineCount : 0
+  const magicScore = Math.max(0, 100 - magicRatio * 1000)
+
+  // 新增：一致性——驼峰+下划线混合使用
+  const camelOnly = (src.match(/[a-z][A-Z]/g) || []).length
+  const snakeOnly = (src.match(/[a-z]_[a-z]/g) || []).length
+  const mixed = camelOnly > 5 && snakeOnly > 5 ? 1 : 0  // 两者都显著=混合
+  const consistScore = mixed ? 50 : 100
+
+  // 新增：模块化——类/函数/结构体声明密度
+  const structCount = (src.match(/\b(class|struct|interface|object|enum)\s+\w+/g) || []).length
+    + (src.match(/\b(func|fun|function|def)\s+\w+/g) || []).length
+    + (src.match(/\b(const|let|var|val)\s+\w+\s*=\s*(function|\(.*\)\s*=>)/g) || []).length
+  const modRatio = lineCount > 0 ? structCount / (lineCount / 30) : 0  // 每30行一个结构体
+  const modScore = modRatio > 0.5 && modRatio < 3 ? 100 : Math.max(0, 100 - Math.abs(modRatio - 1) * 50)
 
   const total =
     bugScore * W.bugDensity / 100 +
-    typeScore * W.typeSafety / 100 +
+    robustScore * W.robustness / 100 +
     namingScore * W.naming / 100 +
     depthScore * W.complexity / 100 +
+    magicScore * W.magicNumbers / 100 +
+    consistScore * W.consistency / 100 +
+    modScore * W.modularity / 100 +
     densityScore * W.density / 100 +
     fnLenScore * W.funcLength / 100 +
     commentScore * W.comment / 100
@@ -243,13 +272,16 @@ function _rankText(src) {
     emoji: tier.emoji,
     calibrated: !!ideal,
     dimensions: {
-      bug:     { score:Math.round(bugScore),   weight:W.bugDensity,  detail:`${dangerPatterns} 陷阱 / ${lineCount}行${ideal?' (标杆0bug)':''}` },
-      type:    { score:Math.round(typeScore),   weight:W.typeSafety,  detail:`JS模式不适用` },
-      naming:  { score:Math.round(namingScore), weight:W.naming,      detail:`${singleLetter}单字母/${varMatches.length}标识符${ideal?' (标杆'+ideal.singleLetterPct+'%)':''}` },
-      depth:   { score:Math.round(depthScore),  weight:W.complexity,  detail:`嵌套 ${maxDepth}${ideal?' (标杆'+ideal.maxDepth+')':''}` },
-      density: { score:Math.round(densityScore),weight:W.density,     detail:`${charsPerLine.toFixed(1)} 字符/行` },
-      fnLen:   { score:Math.round(fnLenScore),  weight:W.funcLength,  detail:`最长函数 ~${maxFnLen} 行` },
-      comment: { score:Math.round(commentScore),weight:W.comment,     detail:`${Math.round(commentRatio*100)}% 注释${ideal?' (标杆'+ideal.commentPct+'%)':''}` },
+      bug:      { score:Math.round(bugScore),    weight:W.bugDensity,  detail:`${dangerPatterns}陷阱/${lineCount}行` },
+      robust:   { score:Math.round(robustScore),  weight:W.robustness,  detail:`${tryCount}错误处理(@50行)` },
+      naming:   { score:Math.round(namingScore),  weight:W.naming,      detail:`${singleLetter}单字母/${varMatches.length}标识符` },
+      depth:    { score:Math.round(depthScore),   weight:W.complexity,   detail:`嵌套${maxDepth}${ideal?'(标杆'+ideal.maxDepth+')':''}` },
+      magic:    { score:Math.round(magicScore),   weight:W.magicNumbers, detail:`${magicNums}个魔法数字` },
+      consist:  { score:Math.round(consistScore), weight:W.consistency,  detail:mixed?'驼峰+下划线混用':'风格统一' },
+      modular:  { score:Math.round(modScore),     weight:W.modularity,   detail:`${structCount}个结构体(${modRatio.toFixed(1)}/30行)` },
+      density:  { score:Math.round(densityScore), weight:W.density,      detail:`${charsPerLine.toFixed(1)}字符/行` },
+      fnLen:    { score:Math.round(fnLenScore),   weight:W.funcLength,   detail:`最长函数~${maxFnLen}行` },
+      comment:  { score:Math.round(commentScore), weight:W.comment,      detail:`${Math.round(commentRatio*100)}%注释${ideal?'(标杆'+ideal.commentPct+'%)':''}` },
     },
     raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text', calibrated:!!ideal },
   }
