@@ -231,20 +231,24 @@ function _rankText(src) {
 
   // 新增：鲁棒性——错误处理覆盖率
   const tryCount = (src.match(/\btry\b/g) || []).length + (src.match(/\bcatch\b/g) || []).length
-    + (src.match(/\bif err != nil\b/g) || []).length + (src.match(/\.catch\(/g) || []).length
-    + (src.match(/\brecover\(\)/g) || []).length
+    + (src.match(/\bif\s+err\b/g) || []).length + (src.match(/\.catch\(/g) || []).length
+    + (src.match(/\brecover\(\)/g) || []).length + (src.match(/\bdefer\b/g) || []).length
   const robustRatio = lineCount > 0 ? tryCount / (lineCount / 50) : 0  // 每50行至少1次错误处理
   const robustScore = Math.min(100, robustRatio * 100)
 
   // 新增：魔法数字——排除0,1,-1,2 的孤立数字
   const magicNums = (src.match(/(?<!\w)(?!0\b|1\b|-1\b|2\b)\d+(?!\w)/g) || []).length
   const magicRatio = lineCount > 0 ? magicNums / lineCount : 0
-  const magicScore = Math.max(0, 100 - magicRatio * 1000)
+  // 新:大文件允许更多常量数字
+  const magicScore = lineCount > 500
+    ? Math.max(0, 100 - magicRatio * 500)  // 大文件：宽松
+    : Math.max(0, 100 - magicRatio * 1000)
 
-  // 新增：一致性——驼峰+下划线混合使用
+  // 新增：一致性——驼峰+下划线混合使用（主风格>90%不罚）
   const camelOnly = (src.match(/[a-z][A-Z]/g) || []).length
   const snakeOnly = (src.match(/[a-z]_[a-z]/g) || []).length
-  const mixed = camelOnly > 5 && snakeOnly > 5 ? 1 : 0  // 两者都显著=混合
+  const totalStyles = camelOnly + snakeOnly
+  const mixed = totalStyles > 0 && camelOnly / totalStyles < 0.9 && snakeOnly / totalStyles < 0.9 ? 1 : 0
   const consistScore = mixed ? 50 : 100
 
   // 新增：模块化——类/函数/结构体声明密度（小文件宽松）
