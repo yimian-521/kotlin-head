@@ -8,12 +8,12 @@ const { TypeChecker } = require('./checker')
 const { BugScanner } = require('./bugscan')
 
 const TIERS = [
-  { name:'王者 Grandmaster', min:90, emoji:'👑' },
-  { name:'钻石 Diamond',    min:80, emoji:'💎' },
-  { name:'铂金 Platinum',   min:70, emoji:'🔷' },
-  { name:'黄金 Gold',       min:60, emoji:'🥇' },
-  { name:'白银 Silver',     min:45, emoji:'🥈' },
-  { name:'青铜 Bronze',     min:0,  emoji:'🥉' },
+  { name:'免免 MianMian', min:90, emoji:'🌸' },
+  { name:'钻石 Diamond',  min:80, emoji:'💎' },
+  { name:'铂金 Platinum', min:70, emoji:'🔷' },
+  { name:'黄金 Gold',     min:60, emoji:'🥇' },
+  { name:'白银 Silver',   min:45, emoji:'🥈' },
+  { name:'青铜 Bronze',   min:0,  emoji:'🥉' },
 ]
 
 // 维度权重（免免可调）
