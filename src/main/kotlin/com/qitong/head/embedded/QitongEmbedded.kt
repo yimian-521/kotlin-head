@@ -41,6 +41,7 @@ object QitongEmbedded {
     // 后台异步线程池 —— PentAGI式并发，analyze永不阻塞
     private val pool: ExecutorService = Executors.newFixedThreadPool(4)
     private val lock = Any() // 守护hotSrc/hotRes/l1一致性
+    private val inFlight = ConcurrentHashMap.newKeySet<String>() // 去重：已在异步分析中的src
 
     init {
         Runtime.getRuntime().addShutdownHook(Thread { pool.shutdown() })
@@ -78,8 +79,10 @@ object QitongEmbedded {
     fun analyze(src: String, filePath: String = "embedded.kt"): AnalysisResult {
         if (src === hotSrc) { hotRes.hotLevel++; hotRes.lastAccess = System.nanoTime(); cU++; return hotRes }
         val r = l1[src]; if (r != null) { r.hotLevel++; r.lastAccess = System.nanoTime(); hotSrc = src; hotRes = r; c1++; return r }
-        // 未命中 → 返回hotRes兜底，后台异步补
-        pool.submit { analyzeSync(src) }
+        // 未命中 → 返回hotRes兜底，后台异步补（去重：同一src只提交一次）
+        if (inFlight.add(src)) {
+            pool.submit { try { analyzeSync(src) } finally { inFlight.remove(src) } }
+        }
         return hotRes
     }
 
@@ -100,12 +103,13 @@ object QitongEmbedded {
             val p2 = Parser(tokens as List<com.qitong.head.lexer.Token>, onRecover = { _, _ -> true })
             for (d in p2.parserDiags()) diags += DiagInfo(d.msg, d.level.name)
             try { for (d in TypeChecker().check(file)) diags += DiagInfo(d.msg, d.level.name) } catch (ex: Exception) { diags += DiagInfo("TypeChecker异常: ${ex.message}", "ERROR") }
-            val bugs = try { BugScanner.from(file) } catch (_: Exception) { emptyList<BugScanner.Finding>() }
+            val bugs = try { BugScanner.from(file) } catch (ex: Exception) { System.err.println("[QitongEmbedded] BugScanner异常: ${ex.message}"); emptyList<BugScanner.Finding>() }
             val res = AnalysisResult(true, VERSION, bugs.map { BugInfo(it.message, it.severity.name, it.span.toString()) }, diags, null, hotLevel = 1, lastAccess = System.nanoTime())
             synchronized(lock) { l1[src] = res; hotSrc = src; hotRes = res }; c4++; return res
         } catch (e: Exception) {
             val res = AnalysisResult(false, VERSION, emptyList(), emptyList(), e.message, hotLevel = 1, lastAccess = System.nanoTime())
-            synchronized(lock) { l1[src] = res; hotSrc = src; hotRes = res }; c4++; return res
+            synchronized(lock) { l1[src] = res }  // 不污染hotRes——失败结果不做兜底
+            c4++; return res
         }
     }
     private fun fail(m: String) = AnalysisResult(false, VERSION, emptyList(), emptyList(), m)
