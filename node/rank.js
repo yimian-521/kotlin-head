@@ -41,6 +41,9 @@ function rank(src) {
   let ast = null, parseOk = true
   try { ast = parser.parseFile() } catch(e) { parseOk = false }
 
+  // 解析失败 → JS/纯文本模式
+  if (!parseOk || !ast) return _rankText(src)
+
   const checker = new TypeChecker()
   let checkDiags = []
   try { if (ast) checkDiags = checker.check(ast) } catch(e) {}
@@ -108,7 +111,7 @@ function rank(src) {
       fnLen:     { score:Math.round(fnLenScore),  weight:W.funcLength,  detail:`最长函数 ${maxFnLen} 行` },
       comment:   { score:Math.round(commentScore),weight:W.comment,     detail:`${Math.round(commentRatio*100)}% 注释` },
     },
-    raw: { lines, tokens:tokenCount, bugs:bugs.length, diags:checkDiags.length, parseOk, maxDepth, maxFnLen },
+    raw: { lines, tokens:tokenCount, bugs:bugs.length, diags:checkDiags.length, parseOk, maxDepth, maxFnLen, mode: parseOk ? 'kotlin' : 'text' },
   }
 }
 
@@ -145,12 +148,99 @@ function format(r) {
   let out = `\n${r.emoji} 段位: ${r.tier} (${r.total}分)\n`
   out += '─'.repeat(50) + '\n'
   for (const [k, d] of Object.entries(r.dimensions)) {
-    const bar = '█'.repeat(Math.round(d.score / 5)) + '░'.repeat(20 - Math.round(d.score / 5))
+    const bar = '█'.repeat(Math.max(0, Math.round(d.score / 5))) + '░'.repeat(Math.max(0, 20 - Math.round(d.score / 5)))
     out += `${k.padEnd(8)} [${d.weight}%] ${bar} ${d.score}分  ${d.detail}\n`
   }
   out += '─'.repeat(50) + '\n'
   if (!r.raw.parseOk) out += '⚠️  语法解析失败，部分维度不可用\n'
   return out
+}
+
+// ── JS/通用纯文本模式（Kotlin Parser失败时回退）──
+function _rankText(src) {
+  const lines = src.split('\n')
+  const lineCount = lines.length
+  const chars = src.length
+
+  // 注释
+  const commentLines = lines.filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
+  const commentRatio = lineCount > 0 ? commentLines / lineCount : 0
+  const commentScore = Math.min(100, commentRatio * 400)
+
+  // 命名：单字母变量（const/let/var + 单字母标识符）
+  const varMatches = src.match(/\b(const|let|var|function)\s+([a-zA-Z_$]+)/g) || []
+  const singleLetter = varMatches.filter(m => { const n = m.split(/\s+/)[1]; return n && n.length === 1 && n !== '_' }).length
+  const namingRatio = varMatches.length > 0 ? singleLetter / varMatches.length : 0
+  const namingScore = Math.max(0, 100 - namingRatio * 200)
+
+  // JS 陷阱：==（非===）、typeof x ==、var 声明、eval、with、console.log残留
+  const looseEqual = (src.match(/[^=!<>]==[^=]/g) || []).length
+  const varDecl = (src.match(/\bvar\s+/g) || []).length
+  const evilEval = (src.match(/\beval\(/g) || []).length
+  const consoleLog = (src.match(/\bconsole\.log\(/g) || []).length
+  const dangerPatterns = looseEqual + varDecl + evilEval * 5 + consoleLog
+  const dangerRatio = lineCount > 0 ? dangerPatterns / lineCount : 0
+  const bugScore = Math.max(0, 100 - dangerRatio * 300)
+
+  // 复杂度：最大花括号嵌套深度
+  let maxDepth = 0, curDepth = 0
+  for (const ch of src) {
+    if (ch === '{') { curDepth++; if (curDepth > maxDepth) maxDepth = curDepth }
+    if (ch === '}') curDepth--
+  }
+  const depthScore = Math.max(0, 100 - Math.max(0, maxDepth - 4) * 15)
+
+  // 密度：每行字符数
+  const charsPerLine = lineCount > 0 ? chars / lineCount : 0
+  const densityScore = charsPerLine > 20 && charsPerLine < 100 ? 100
+    : charsPerLine <= 20 ? Math.max(0, 100 - (20 - charsPerLine) * 5)
+    : Math.max(0, 100 - (charsPerLine - 100) * 3)
+
+  // 函数长度：匹配 function 到闭合花括号的行跨度
+  let maxFnLen = 0
+  const fnRegex = /(?:function\s+\w+|=>)\s*\{/g
+  let m
+  while ((m = fnRegex.exec(src)) !== null) {
+    let braceCount = 1, i = m.index + m[0].length
+    let endLine = lines.length
+    for (let lineIdx = src.substring(0, i).split('\n').length - 1; i < src.length && braceCount > 0; i++) {
+      if (src[i] === '{') braceCount++
+      if (src[i] === '}') { braceCount--; if (braceCount === 0) endLine = src.substring(0, i).split('\n').length }
+    }
+    const len = endLine - src.substring(0, m.index).split('\n').length + 1
+    if (len > maxFnLen) maxFnLen = len
+  }
+  const fnLenScore = Math.max(0, 100 - Math.max(0, maxFnLen - 30) * 2)
+
+  // 类型安全：JS 不可用，给满分
+  const typeScore = 100
+
+  const total =
+    bugScore * W.bugDensity / 100 +
+    typeScore * W.typeSafety / 100 +
+    namingScore * W.naming / 100 +
+    depthScore * W.complexity / 100 +
+    densityScore * W.density / 100 +
+    fnLenScore * W.funcLength / 100 +
+    commentScore * W.comment / 100
+
+  const tier = TIERS.find(t => total >= t.min) || TIERS[TIERS.length - 1]
+
+  return {
+    total: Math.round(total),
+    tier: tier.name,
+    emoji: tier.emoji,
+    dimensions: {
+      bug:     { score:Math.round(bugScore),   weight:W.bugDensity,  detail:`${dangerPatterns} 个JS陷阱 / ${lineCount}行` },
+      type:    { score:Math.round(typeScore),   weight:W.typeSafety,  detail:`JS模式不适用` },
+      naming:  { score:Math.round(namingScore), weight:W.naming,      detail:`${singleLetter}个单字母/${varMatches.length}标识符` },
+      depth:   { score:Math.round(depthScore),  weight:W.complexity,  detail:`最大花括号嵌套 ${maxDepth}` },
+      density: { score:Math.round(densityScore),weight:W.density,     detail:`${charsPerLine.toFixed(1)} 字符/行` },
+      fnLen:   { score:Math.round(fnLenScore),  weight:W.funcLength,  detail:`最长函数 ~${maxFnLen} 行` },
+      comment: { score:Math.round(commentScore),weight:W.comment,     detail:`${Math.round(commentRatio*100)}% 注释` },
+    },
+    raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text' },
+  }
 }
 
 module.exports = { rank, format, TIERS, W }
