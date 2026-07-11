@@ -3,3 +3,4 @@ mcp/
 test.kt
 *.jar
 .DS_Store
+node/rank.js
