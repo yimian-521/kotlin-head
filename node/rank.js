@@ -158,6 +158,7 @@ function format(r) {
     out += `${k.padEnd(8)} [${d.weight}%] ${bar} ${d.score}分  ${d.detail}\n`
   }
   out += '─'.repeat(50) + '\n'
+  if (r.note) out += `📌 ${r.note}\n`
   if (!r.raw.parseOk) out += '⚠️  语法解析失败，部分维度不可用\n'
   return out
 }
@@ -167,6 +168,15 @@ function _rankText(src) {
   const lines = src.split('\n')
   const lineCount = lines.length
   const chars = src.length
+
+  // 动态分类，计算调整后权重
+  const fileType = _classify(src, lineCount)
+  const TW = { ...W }
+  const offsets = TYPE_W[fileType] || {}
+  for (const k of Object.keys(offsets)) TW[k] = (TW[k] || 0) + offsets[k]
+  // 归一化到100
+  const twSum = Object.values(TW).reduce((a,b)=>a+b,0)
+  for (const k of Object.keys(TW)) TW[k] = Math.round(TW[k] * 100 / twSum)
 
   // 启用校准时，以标杆特征为满分线
   const ideal = CAL || null
@@ -271,17 +281,17 @@ function _rankText(src) {
     : breathRatio > 0.1 && breathRatio < 0.5 ? 100 : Math.max(0, 100 - Math.abs(breathRatio - 0.25) * 200)
 
   const total =
-    bugScore * W.bugDensity / 100 +
-    robustScore * W.robustness / 100 +
-    namingScore * W.naming / 100 +
-    depthScore * W.complexity / 100 +
-    magicScore * W.magicNumbers / 100 +
-    consistScore * W.consistency / 100 +
-    modScore * W.modularity / 100 +
-    readScore * W.readability / 100 +
-    densityScore * W.density / 100 +
-    fnLenScore * W.funcLength / 100 +
-    commentScore * W.comment / 100
+    bugScore * TW.bugDensity / 100 +
+    robustScore * TW.robustness / 100 +
+    namingScore * TW.naming / 100 +
+    depthScore * TW.complexity / 100 +
+    magicScore * TW.magicNumbers / 100 +
+    consistScore * TW.consistency / 100 +
+    modScore * TW.modularity / 100 +
+    readScore * TW.readability / 100 +
+    densityScore * TW.density / 100 +
+    fnLenScore * TW.funcLength / 100 +
+    commentScore * TW.comment / 100
 
   const tier = TIERS.find(t => total >= t.min) || TIERS[TIERS.length - 1]
 
@@ -291,23 +301,52 @@ function _rankText(src) {
     emoji: tier.emoji,
     calibrated: !!ideal,
     dimensions: {
-      bug:      { score:Math.round(bugScore),    weight:W.bugDensity,  detail:`${dangerPatterns}陷阱/${lineCount}行` },
-      robust:   { score:Math.round(robustScore),  weight:W.robustness,  detail:`${tryCount}错误处理(@50行)` },
-      naming:   { score:Math.round(namingScore),  weight:W.naming,      detail:`${singleLetter}单字母/${varMatches.length}标识符` },
-      depth:    { score:Math.round(depthScore),   weight:W.complexity,   detail:`嵌套${maxDepth}${ideal?'(标杆'+ideal.maxDepth+')':''}` },
-      magic:    { score:Math.round(magicScore),   weight:W.magicNumbers, detail:`${magicNums}个魔法数字` },
-      consist:  { score:Math.round(consistScore), weight:W.consistency,  detail:mixed?'驼峰+下划线混用':'风格统一' },
-      modular:  { score:Math.round(modScore),     weight:W.modularity,   detail:`${structCount}个结构体(${modRatio.toFixed(1)}/30行)` },
-      breath:   { score:Math.round(readScore),   weight:W.readability,   detail:`${breathLines}空/注行(${Math.round(breathRatio*100)}%)` },
-      density:  { score:Math.round(densityScore), weight:W.density,      detail:`${charsPerLine.toFixed(1)}字符/行` },
-      fnLen:    { score:Math.round(fnLenScore),   weight:W.funcLength,   detail:`最长函数~${maxFnLen}行` },
-      comment:  { score:Math.round(commentScore), weight:W.comment,      detail:`${Math.round(commentRatio*100)}%注释${ideal?'(标杆'+ideal.commentPct+'%)':''}` },
+      bug:      { score:Math.round(bugScore),    weight:TW.bugDensity,  detail:`${dangerPatterns}陷阱/${lineCount}行` },
+      robust:   { score:Math.round(robustScore),  weight:TW.robustness,  detail:`${tryCount}错误处理(@50行)` },
+      naming:   { score:Math.round(namingScore),  weight:TW.naming,      detail:`${singleLetter}单字母/${varMatches.length}标识符` },
+      depth:    { score:Math.round(depthScore),   weight:TW.complexity,   detail:`嵌套${maxDepth}${ideal?'(标杆'+ideal.maxDepth+')':''}` },
+      magic:    { score:Math.round(magicScore),   weight:TW.magicNumbers, detail:`${magicNums}个魔法数字` },
+      consist:  { score:Math.round(consistScore), weight:TW.consistency,  detail:mixed?'驼峰+下划线混用':'风格统一' },
+      modular:  { score:Math.round(modScore),     weight:TW.modularity,   detail:`${structCount}个结构体(${modRatio.toFixed(1)}/30行)` },
+      breath:   { score:Math.round(readScore),   weight:TW.readability,   detail:`${breathLines}空/注行(${Math.round(breathRatio*100)}%)` },
+      density:  { score:Math.round(densityScore), weight:TW.density,      detail:`${charsPerLine.toFixed(1)}字符/行` },
+      fnLen:    { score:Math.round(fnLenScore),   weight:TW.funcLength,   detail:`最长函数~${maxFnLen}行` },
+      comment:  { score:Math.round(commentScore), weight:TW.comment,      detail:`${Math.round(commentRatio*100)}%注释${ideal?'(标杆'+ideal.commentPct+'%)':''}` },
     },
-    raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text', calibrated:!!ideal },
+    raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text', calibrated:!!ideal, fileType },
+    note: fileType !== 'general' ? `动态标准: ${fileType}` : null,
   }
 }
 
-// ── 免免校准：用最佳代码的特征作满分线，公平测所有人 ──
+// ── 动态分类：根据文件特征自动推断类型，切换评分标准 ──
+function _classify(src, lineCount) {
+  const hasTest = /\b(test|Test|spec|Spec)\b/.test(src) || /\bassert\b/.test(src) || /\bexpect\b/.test(src)
+  const hasUI = /\b(Button|UI|View|Widget|Dialog|Panel|Screen|render|display)\b/.test(src)
+  const hasCore = /\b(lexer|parser|compil|checker|scanner|ast|token|ir|pass|transform|optimize|resolve)\b/i.test(src)
+  const isScript = lineCount < 200 && !/\bclass\s+\w+/.test(src)
+  const isConfig = lineCount < 100 && (src.split('\n').filter(l=>/^\s*\/\//.test(l)).length/lineCount > 0.3)
+  const isLarge = lineCount > 800
+
+  if (hasCore) return 'core'
+  if (isLarge) return 'large'
+  if (hasTest) return 'test'
+  if (hasUI) return 'ui'
+  if (isConfig) return 'config'
+  if (isScript) return 'script'
+  if (isLarge) return 'large'
+  return 'general'
+}
+
+// 各类型权重偏移（叠加到基础W）
+const TYPE_W = {
+  core:   { robustness:+5, complexity:-5, comment:-5, magicNumbers:-5 }, // core在乎抗摔，宽松嵌套/注释/魔法数
+  large:  { complexity:-5, magicNumbers:-5, comment:-3, robustness:+8 }, // 大文件：深度合理，鲁棒性关键
+  test:   { bugDensity:-5, magicNumbers:-5, naming:-5, robustness:+15 },// 测试：重错误覆盖，轻bug/命名
+  ui:     { complexity:-3, magicNumbers:-5, readability:+5, comment:+5 },// UI：重可读性，宽松深度
+  config: { complexity:-5, magicNumbers:-5, modularity:-5, readability:+10 },// 配置：重可读性
+  script: { modularity:-5, comment:-5, naming:-3, density:+3 },
+  general: {},
+}
 function calibrate(sampleSrc) {
   const lines = sampleSrc.split('\n').length
   const chars = sampleSrc.length
