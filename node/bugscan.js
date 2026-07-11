@@ -61,7 +61,8 @@ class BugScanner {
 
     // 规则
     _boolArith(expr) {
-        if (!['+','-','*','/','%'].includes(expr.op)) return
+        // 只检测+运算符(Boolean+Int最常见事故), -*/%几乎不跟Bool混用
+        if (expr.op !== '+') return
         if (expr.left?.type==='LitBool'||expr.right?.type==='LitBool')
             this._add('BS-BOOL-ARITH','HIGH','Boolean参与算术: '+expr.op, expr.span?.start)
     }

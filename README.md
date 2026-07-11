@@ -1,5 +1,5 @@
 # kotlin-head — 有头编译器
-**v1.0.1** · Kotlin＋Node.js 双运行时 · AGPL-3.0 + 商业许可
+**v1.0.2** · Kotlin＋Node.js 双运行时 · AGPL-3.0 + 商业许可
 > 兼容 Kotlin 是底线。比它强才是目标。
 > — 免免 & 望安 2026
 
@@ -137,6 +137,7 @@ diags.bugs  // 11 类 Kotlin 陷阱自动检测
 | v0.13.0 ✅ | QitongEmbedded 嵌入入口 + CLI 模式（JSON）+ 多语言兼容度检测器 |
 | v1.0.0 ✅ | 皮秒里程碑：132μs→0ps，12 项原创概念，联存器/黑洞/Bank/零下限异步 |
 | **v1.0.1 ✅** | **Node 全栈 + CompactVM 追平 TCC 19.8µs + 携程因子 + 域程 + 预编译缓存** |
+| **v1.0.2 ✅** | **绞杀链修复(异常不污染hotRes)+Node v2(压力感知/跨域共享/Atomics)+段位评估器** |
 
 详见 [CHANGELOG](./CHANGELOG.md)
 

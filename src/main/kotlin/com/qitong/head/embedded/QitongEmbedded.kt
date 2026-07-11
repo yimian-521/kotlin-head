@@ -10,7 +10,7 @@ import java.util.concurrent.*
 import java.util.concurrent.CompletableFuture
 
 object QitongEmbedded {
-    const val VERSION = "1.0.1"
+    const val VERSION = "1.0.2"
 
     @JvmField var hotSrc: String? = null
     @JvmField var hotRes: AnalysisResult = AnalysisResult(true, VERSION, emptyList(), emptyList(), null)
