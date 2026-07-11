@@ -164,18 +164,26 @@ function _rankText(src) {
   const lineCount = lines.length
   const chars = src.length
 
+  // 启用校准时，以标杆特征为满分线
+  const ideal = CAL || null
+
   // 注释
   const commentLines = lines.filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
   const commentRatio = lineCount > 0 ? commentLines / lineCount : 0
-  const commentScore = Math.min(100, commentRatio * 400)
+  const commentScore = ideal
+    ? Math.min(100, (commentLines / lineCount) / (ideal.commentPct / 100) * 100)
+    : Math.min(100, commentRatio * 400)
 
-  // 命名：单字母变量（const/let/var + 单字母标识符）
-  const varMatches = src.match(/\b(const|let|var|function)\s+([a-zA-Z_$]+)/g) || []
+  // 命名：单字母变量比例
+  const varMatches = src.match(/\b(const|let|var|val|fun|function|class)\s+([a-zA-Z_$]+)/g) || []
   const singleLetter = varMatches.filter(m => { const n = m.split(/\s+/)[1]; return n && n.length === 1 && n !== '_' }).length
   const namingRatio = varMatches.length > 0 ? singleLetter / varMatches.length : 0
-  const namingScore = Math.max(0, 100 - namingRatio * 200)
+  const namingIdeal = ideal ? ideal.singleLetterPct / 100 : 0
+  const namingScore = ideal
+    ? Math.max(0, 100 - Math.max(0, namingRatio - namingIdeal) * 300)
+    : Math.max(0, 100 - namingRatio * 200)
 
-  // JS 陷阱：==（非===）、typeof x ==、var 声明、eval、with、console.log残留
+  // 陷阱检测
   const looseEqual = (src.match(/[^=!<>]==[^=]/g) || []).length
   const varDecl = (src.match(/\bvar\s+/g) || []).length
   const evilEval = (src.match(/\beval\(/g) || []).length
@@ -190,22 +198,24 @@ function _rankText(src) {
     if (ch === '{') { curDepth++; if (curDepth > maxDepth) maxDepth = curDepth }
     if (ch === '}') curDepth--
   }
-  const depthScore = Math.max(0, 100 - Math.max(0, maxDepth - 4) * 15)
+  const depthScore = ideal
+    ? Math.max(0, 100 - Math.max(0, maxDepth - ideal.maxDepth) * 15)
+    : Math.max(0, 100 - Math.max(0, maxDepth - 4) * 15)
 
-  // 密度：每行字符数
+  // 密度
   const charsPerLine = lineCount > 0 ? chars / lineCount : 0
   const densityScore = charsPerLine > 20 && charsPerLine < 100 ? 100
     : charsPerLine <= 20 ? Math.max(0, 100 - (20 - charsPerLine) * 5)
     : Math.max(0, 100 - (charsPerLine - 100) * 3)
 
-  // 函数长度：匹配 function 到闭合花括号的行跨度
+  // 函数长度
   let maxFnLen = 0
   const fnRegex = /(?:function\s+\w+|=>)\s*\{/g
   let m
   while ((m = fnRegex.exec(src)) !== null) {
     let braceCount = 1, i = m.index + m[0].length
     let endLine = lines.length
-    for (let lineIdx = src.substring(0, i).split('\n').length - 1; i < src.length && braceCount > 0; i++) {
+    for (; i < src.length && braceCount > 0; i++) {
       if (src[i] === '{') braceCount++
       if (src[i] === '}') { braceCount--; if (braceCount === 0) endLine = src.substring(0, i).split('\n').length }
     }
@@ -214,7 +224,6 @@ function _rankText(src) {
   }
   const fnLenScore = Math.max(0, 100 - Math.max(0, maxFnLen - 30) * 2)
 
-  // 类型安全：JS 不可用，给满分
   const typeScore = 100
 
   const total =
@@ -232,17 +241,39 @@ function _rankText(src) {
     total: Math.round(total),
     tier: tier.name,
     emoji: tier.emoji,
+    calibrated: !!ideal,
     dimensions: {
-      bug:     { score:Math.round(bugScore),   weight:W.bugDensity,  detail:`${dangerPatterns} 个JS陷阱 / ${lineCount}行` },
+      bug:     { score:Math.round(bugScore),   weight:W.bugDensity,  detail:`${dangerPatterns} 陷阱 / ${lineCount}行${ideal?' (标杆0bug)':''}` },
       type:    { score:Math.round(typeScore),   weight:W.typeSafety,  detail:`JS模式不适用` },
-      naming:  { score:Math.round(namingScore), weight:W.naming,      detail:`${singleLetter}个单字母/${varMatches.length}标识符` },
-      depth:   { score:Math.round(depthScore),  weight:W.complexity,  detail:`最大花括号嵌套 ${maxDepth}` },
+      naming:  { score:Math.round(namingScore), weight:W.naming,      detail:`${singleLetter}单字母/${varMatches.length}标识符${ideal?' (标杆'+ideal.singleLetterPct+'%)':''}` },
+      depth:   { score:Math.round(depthScore),  weight:W.complexity,  detail:`嵌套 ${maxDepth}${ideal?' (标杆'+ideal.maxDepth+')':''}` },
       density: { score:Math.round(densityScore),weight:W.density,     detail:`${charsPerLine.toFixed(1)} 字符/行` },
       fnLen:   { score:Math.round(fnLenScore),  weight:W.funcLength,  detail:`最长函数 ~${maxFnLen} 行` },
-      comment: { score:Math.round(commentScore),weight:W.comment,     detail:`${Math.round(commentRatio*100)}% 注释` },
+      comment: { score:Math.round(commentScore),weight:W.comment,     detail:`${Math.round(commentRatio*100)}% 注释${ideal?' (标杆'+ideal.commentPct+'%)':''}` },
     },
-    raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text' },
+    raw: { lines:lineCount, tokens:0, bugs:dangerPatterns, diags:0, parseOk:false, maxDepth, maxFnLen, mode:'js/text', calibrated:!!ideal },
   }
 }
 
-module.exports = { rank, format, TIERS, W }
+// ── 免免校准：用最佳代码的特征作满分线，公平测所有人 ──
+function calibrate(sampleSrc) {
+  const lines = sampleSrc.split('\n').length
+  const chars = sampleSrc.length
+  const commentLines = sampleSrc.split('\n').filter(l => /^\s*\/\//.test(l) || /^\s*\/\*/.test(l) || /^\s*\*/.test(l) || /^\s*\*\//.test(l)).length
+  let maxDepth = 0, curDepth = 0
+  for (const ch of sampleSrc) { if (ch === '{') { curDepth++; if (curDepth > maxDepth) maxDepth = curDepth } if (ch === '}') curDepth-- }
+  const varMatches = sampleSrc.match(/\b(const|let|var|val|fun|function|class)\s+([a-zA-Z_$]+)/g) || []
+  const singleLetter = varMatches.filter(m => { const n = m.split(/\s+/)[1]; return n && n.length === 1 && n !== '_' }).length
+
+  return CAL = {
+    commentPct: Math.round(commentLines / lines * 100),
+    maxDepth,
+    singleLetterPct: Math.round(singleLetter / Math.max(1, varMatches.length) * 100),
+    lines,
+    charsPerLine: Math.round(chars / lines),
+    idealBugs: 0,
+  }
+}
+let CAL = null  // calibrate()后生效，_rankText中引用
+
+module.exports = { rank, format, TIERS, W, calibrate, get CAL() { return CAL } }
