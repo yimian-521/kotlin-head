@@ -27,7 +27,9 @@ const W = {
   comment:       5,  // 注释覆盖
 }
 
-function rank(src) {
+function rank(src, opts = {}) {
+  // opts.forceText → 跳过Kotlin全管线，直接纯文本模式
+  if (opts.forceText) return _rankText(src)
   // ── 1. 基础分析 ──
   const lines = src.split('\n').length
   const chars = src.length
