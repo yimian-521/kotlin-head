@@ -70,12 +70,33 @@ function createDomain() {
     return { id, hit, analyze, analyzeSync, analyzeFast, deposit, snapshot, prefill, hot, Bank, Snapshot }
 }
 
+// === domain v2 ===
+// v1→v2: 跨域共享缓存——A域分析过的源码B域直接拿结果，不重复分析
+const _sharedCache = new Map()  // 全局共享缓存: src → {result, domains}
+
 // 全局域管理器——按文件路由
 const domains = new Map()
 function of(file) {
-    if (!domains.has(file)) domains.set(file, createDomain())
+    if (!domains.has(file)) {
+        const d = createDomain()
+        // v2: 注入跨域共享——analyzeSync前先查全局缓存
+        const origSync = d.analyzeSync
+        d.analyzeSync = function(src) {
+            if (_sharedCache.has(src)) {
+                const entry = _sharedCache.get(src)
+                entry.domains.add(file)
+                return entry.result
+            }
+            const r = origSync(src)
+            if (r.success) {
+                _sharedCache.set(src, { result: r, domains: new Set([file]) })
+            }
+            return r
+        }
+        domains.set(file, d)
+    }
     return domains.get(file)
 }
-function stats() { return { domains: domains.size } }
+function stats() { return { domains: domains.size, sharedCache: _sharedCache.size } }
 
 module.exports = { createDomain, of, stats }
