@@ -24,7 +24,8 @@ const W = {
   complexity:    10,  // 一眼看完——嵌套不超5层
   magicNumbers:  10,  // 不被未来自己恨——没有魔法数字
   consistency:   10,  // 一眼看完——风格统一，不混驼峰和下划线
-  modularity:    10,  // 可删除——结构清晰，类/函数密度适中
+  modularity:     5,  // 可删除——结构清晰，类/函数密度适中
+  readability:    5,  // 一眼看完——空行+注释行比例（呼吸感）
   density:        5,  // 辅助
   funcLength:     5,  // 辅助
   comment:        5,  // 不被未来自己恨——解释"为什么"
@@ -203,6 +204,7 @@ function _rankText(src) {
   }
   const depthScore = ideal
     ? Math.max(0, 100 - Math.max(0, maxDepth - ideal.maxDepth) * 15)
+    : lineCount > 500 ? Math.max(0, 100 - Math.max(0, maxDepth - 8) * 10)  // 大文件允许嵌套8层
     : Math.max(0, 100 - Math.max(0, maxDepth - 4) * 15)
 
   // 密度
@@ -245,12 +247,24 @@ function _rankText(src) {
   const mixed = camelOnly > 5 && snakeOnly > 5 ? 1 : 0  // 两者都显著=混合
   const consistScore = mixed ? 50 : 100
 
-  // 新增：模块化——类/函数/结构体声明密度
+  // 新增：模块化——类/函数/结构体声明密度（小文件宽松）
   const structCount = (src.match(/\b(class|struct|interface|object|enum)\s+\w+/g) || []).length
     + (src.match(/\b(func|fun|function|def)\s+\w+/g) || []).length
     + (src.match(/\b(const|let|var|val)\s+\w+\s*=\s*(function|\(.*\)\s*=>)/g) || []).length
   const modRatio = lineCount > 0 ? structCount / (lineCount / 30) : 0  // 每30行一个结构体
-  const modScore = modRatio > 0.5 && modRatio < 3 ? 100 : Math.max(0, 100 - Math.abs(modRatio - 1) * 50)
+  // 小文件(<100行)不罚高密度，大文件不罚低密度
+  const modScore = lineCount < 100 
+    ? Math.min(100, modRatio * 60)  // 小文件：密集就密集
+    : modRatio > 0.5 && modRatio < 3 ? 100 : Math.max(0, 100 - Math.abs(modRatio - 1) * 50)
+
+  // 新增：可读性——空行+注释行呼吸感（小文件宽松）
+  const blankLines = lines.filter(l => /^\s*$/.test(l)).length
+  const breathLines = blankLines + commentLines
+  const breathRatio = lineCount > 0 ? breathLines / lineCount : 0
+  // 小文件(100行)允许高呼吸(常量/配置类天然多注释)
+  const readScore = lineCount < 100
+    ? (breathRatio < 0.7 ? 100 : Math.max(0, 100 - (breathRatio - 0.7) * 300))
+    : breathRatio > 0.1 && breathRatio < 0.5 ? 100 : Math.max(0, 100 - Math.abs(breathRatio - 0.25) * 200)
 
   const total =
     bugScore * W.bugDensity / 100 +
@@ -260,6 +274,7 @@ function _rankText(src) {
     magicScore * W.magicNumbers / 100 +
     consistScore * W.consistency / 100 +
     modScore * W.modularity / 100 +
+    readScore * W.readability / 100 +
     densityScore * W.density / 100 +
     fnLenScore * W.funcLength / 100 +
     commentScore * W.comment / 100
@@ -279,6 +294,7 @@ function _rankText(src) {
       magic:    { score:Math.round(magicScore),   weight:W.magicNumbers, detail:`${magicNums}个魔法数字` },
       consist:  { score:Math.round(consistScore), weight:W.consistency,  detail:mixed?'驼峰+下划线混用':'风格统一' },
       modular:  { score:Math.round(modScore),     weight:W.modularity,   detail:`${structCount}个结构体(${modRatio.toFixed(1)}/30行)` },
+      breath:   { score:Math.round(readScore),   weight:W.readability,   detail:`${breathLines}空/注行(${Math.round(breathRatio*100)}%)` },
       density:  { score:Math.round(densityScore), weight:W.density,      detail:`${charsPerLine.toFixed(1)}字符/行` },
       fnLen:    { score:Math.round(fnLenScore),   weight:W.funcLength,   detail:`最长函数~${maxFnLen}行` },
       comment:  { score:Math.round(commentScore), weight:W.comment,      detail:`${Math.round(commentRatio*100)}%注释${ideal?'(标杆'+ideal.commentPct+'%)':''}` },
