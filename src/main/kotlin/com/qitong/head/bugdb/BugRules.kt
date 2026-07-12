@@ -2,7 +2,7 @@ package com.qitong.head.bugdb
 
 //  kotlin-int LEVEL=BEAST 全真实规则
 //  2937条全真实（零占位）
-//  严重度: SEVERE=839 MODERATE=1528 MILD=570
+//  严重度: SEVERE=825 MODERATE=1540 MILD=572
 
 object BugRules {
     fun register() {
@@ -42,27 +42,27 @@ object BugRules {
         BugDB.load(BugRule(id="KT-0013",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
             title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧",fix="直接用y"))
         BugDB.load(BugRule(id="KT-0014",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中",trigger="val l:List<{t}>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+            title="可空String?在集合操作中",trigger="val l:List<String?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0015",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null",fix="提供实际默认值"))
+            title="String?的?:返回null",trigger="val x:String?=...;val y=String??:null",detection="冗余null",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0016",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中",trigger="val l:List<{t}>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+            title="可空Int?在集合操作中",trigger="val l:List<Int?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0017",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null",fix="提供实际默认值"))
+            title="Int?的?:返回null",trigger="val x:Int?=...;val y=Int??:null",detection="冗余null",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0018",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中",trigger="val l:List<{t}>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+            title="可空Long?在集合操作中",trigger="val l:List<Long?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0019",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null",fix="提供实际默认值"))
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0020",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中",trigger="val l:List<{t}>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+            title="可空Double?在集合操作中",trigger="val l:List<Double?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0021",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null",fix="提供实际默认值"))
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0022",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中",trigger="val l:List<{t}>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+            title="可空Boolean?在集合操作中",trigger="val l:List<Boolean?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0023",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null",fix="提供实际默认值"))
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0024",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获",fix="捕获具体异常类型"))
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获",fix="捕获具体异常类型"))
         BugDB.load(BugRule(id="KT-0025",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="泛型+is检查",trigger="if(x is List<String>){}",detection="擦除后类型丢失",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0026",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
@@ -78,11 +78,11 @@ object BugRules {
         BugDB.load(BugRule(id="KT-0031",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
             title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名",fix="重命名"))
         BugDB.load(BugRule(id="KT-0032",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
+            title="星投影操作List<S>",trigger="val x:List<S>*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0033",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0034",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0035",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期",fix="lifecycleScope或viewModelScope"))
         BugDB.load(BugRule(id="KT-0036",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
@@ -126,11 +126,11 @@ object BugRules {
         BugDB.load(BugRule(id="KT-0055",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
             title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望",fix="用forEach"))
         BugDB.load(BugRule(id="KT-0056",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod",fix="收集后删"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod",fix="收集后删"))
         BugDB.load(BugRule(id="KT-0057",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod",fix="收集后删"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod",fix="收集后删"))
         BugDB.load(BugRule(id="KT-0058",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod",fix="收集后删"))
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod",fix="收集后删"))
         BugDB.load(BugRule(id="KT-0059",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
             title="反射访问私有成员",trigger="cls.getDeclaredField(\"secret\");f.isAccessible=true",detection="破坏封装",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-0060",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
@@ -172,11 +172,11 @@ object BugRules {
         BugDB.load(BugRule(id="KT-0078",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
             title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline",fix="去掉inline"))
         BugDB.load(BugRule(id="KT-0079",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:String):String=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
         BugDB.load(BugRule(id="KT-0080",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:Int):Int=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
         BugDB.load(BugRule(id="KT-0081",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
         BugDB.load(BugRule(id="KT-0082",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null",fix="?:+\"\""))
         BugDB.load(BugRule(id="KT-0083",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -695,2897 +695,2897 @@ object BugRules {
             title="默认参数+扩展函数+泛型=三歧义（Long版）",trigger="fun <T> List<T>.f(n:Long=1){};listOf(1).f()",detection="扩展接收者+泛型+默认参数解析",fix="显式传参"))
         BugDB.load(BugRule(id="KT-0340",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="默认参数+扩展函数+泛型=三歧义（Double版）",trigger="fun <T> List<T>.f(n:Double=1){};listOf(1).f()",detection="扩展接收者+泛型+默认参数解析",fix="显式传参"))
-        BugDB.load(BugRule(id="KT-0341",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Int版）",trigger="inline class N(val s:Int){val len=s.length}",detection="每次计算",fix="内联到val本身"))
-        BugDB.load(BugRule(id="KT-0342",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算",fix="内联到val本身"))
-        BugDB.load(BugRule(id="KT-0343",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算",fix="内联到val本身"))
+        BugDB.load(BugRule(id="KT-0341",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Int版）",trigger="val l:List<Int?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0342",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）",trigger="val l:List<Long?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0343",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double版）",trigger="val l:List<Double?>;l.filterNotNull().size",detection="先filterNotNull",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0344",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类非主构造属性（Int版）",trigger="inline class N(val s:Int){val len=s.length}",detection="每次计算",fix="内联到val本身"))
+        BugDB.load(BugRule(id="KT-0345",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算",fix="内联到val本身"))
+        BugDB.load(BugRule(id="KT-0346",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算",fix="内联到val本身"))
+        BugDB.load(BugRule(id="KT-0347",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
             title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算",fix="内联到val本身"))
-        BugDB.load(BugRule(id="KT-0345",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0348",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Int递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+        BugDB.load(BugRule(id="KT-0349",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
             title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-0346",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0350",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
             title="first()无元素（Long版）",trigger="emptyList<Long>().first()",detection="NoSuchElementException",fix="firstOrNull"))
-        BugDB.load(BugRule(id="KT-0347",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0351",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="明文存储密码（Int版）",trigger="prefs.edit().putInt(\\\"pwd\\\",password).apply()",detection="SharedPreferences明文",fix="EncryptedSharedPreferences"))
-        BugDB.load(BugRule(id="KT-0348",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0352",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\"pwd\\\",password).apply()",detection="SharedPreferences明文",fix="EncryptedSharedPreferences"))
-        BugDB.load(BugRule(id="KT-0349",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0353",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\"pwd\\\",password).apply()",detection="SharedPreferences明文",fix="EncryptedSharedPreferences"))
-        BugDB.load(BugRule(id="KT-0350",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0354",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\"pwd\\\",password).apply()",detection="SharedPreferences明文",fix="EncryptedSharedPreferences"))
-        BugDB.load(BugRule(id="KT-0351",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）",trigger="writeInt(a);writeInt(b);readInt();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
-        BugDB.load(BugRule(id="KT-0352",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）",trigger="writeInt(a);writeLong(b);readLong();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
-        BugDB.load(BugRule(id="KT-0353",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）",trigger="writeInt(a);writeDouble(b);readDouble();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
-        BugDB.load(BugRule(id="KT-0354",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）",trigger="writeInt(a);writeBoolean(b);readBoolean();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-0355",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）",trigger="writeLong(a);writeString(b);readString();readLong()",detection="反序列化时值错位",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）",trigger="writeInt(a);writeInt(b);readInt();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-0356",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）",trigger="writeInt(a);writeLong(b);readLong();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-0357",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Double版）",trigger="writeInt(a);writeDouble(b);readDouble();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-0358",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Boolean版）",trigger="writeInt(a);writeBoolean(b);readBoolean();readInt()",detection="反序列化时值错位",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-0359",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）",trigger="writeLong(a);writeString(b);readString();readLong()",detection="反序列化时值错位",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-0360",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
             title="Parcelable读写顺序故意相反（Double版）",trigger="writeDouble(a);writeString(b);readString();readDouble()",detection="反序列化时值错位",fix="写读顺序严格一致"))
-        BugDB.load(BugRule(id="KT-0357",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）",trigger="expect fun f():Int;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
-        BugDB.load(BugRule(id="KT-0358",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）",trigger="expect fun f():Long;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
-        BugDB.load(BugRule(id="KT-0359",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():Double;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
-        BugDB.load(BugRule(id="KT-0360",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Boolean版）",trigger="expect fun f():Boolean;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-0361",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）",trigger="expect fun f():String;actual fun f():Long",detection="签名不一致",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）",trigger="expect fun f():Int;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-0362",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():String;actual fun f():Double",detection="签名不一致",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）",trigger="expect fun f():Long;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-0363",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
+            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():Double;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
+        BugDB.load(BugRule(id="KT-0364",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
+            title="expect/actual返回类型不匹配（Boolean版）",trigger="expect fun f():Boolean;actual fun f():Int",detection="签名不一致",fix="对齐签名"))
+        BugDB.load(BugRule(id="KT-0365",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
+            title="expect/actual返回类型不匹配（Long版）",trigger="expect fun f():String;actual fun f():Long",detection="签名不一致",fix="对齐签名"))
+        BugDB.load(BugRule(id="KT-0366",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
+            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():String;actual fun f():Double",detection="签名不一致",fix="对齐签名"))
+        BugDB.load(BugRule(id="KT-0367",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
             title="expect/actual返回类型不匹配（Float版）",trigger="expect fun f():String;actual fun f():Float",detection="签名不一致",fix="对齐签名"))
-        BugDB.load(BugRule(id="KT-0364",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0368",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费",fix="BroadcastChannel或SharedFlow"))
-        BugDB.load(BugRule(id="KT-0365",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0369",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="类型推断选了谁都没想到的类型（Long版）",trigger="listOf(1)与emptyList()合并推断List<Long>?",detection="多个候选时选最意外的",fix="显式泛型参数"))
-        BugDB.load(BugRule(id="KT-0366",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0370",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="类型推断选了谁都没想到的类型（Double版）",trigger="listOf(1)与emptyList()合并推断List<Double>?",detection="多个候选时选最意外的",fix="显式泛型参数"))
-        BugDB.load(BugRule(id="KT-0367",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0371",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="类型推断选了谁都没想到的类型（Float版）",trigger="listOf(1)与emptyList()合并推断List<Float>?",detection="多个候选时选最意外的",fix="显式泛型参数"))
-        BugDB.load(BugRule(id="KT-0368",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0372",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
             title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-0369",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0373",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Int版）",trigger="val x:Int?=...;val y=Int??:null",detection="冗余null",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0374",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0375",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0376",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Int版）",trigger="var name:Int在Java:getName()+setName()",detection="命名约定",fix="保持一致"))
-        BugDB.load(BugRule(id="KT-0370",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0377",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定",fix="保持一致"))
-        BugDB.load(BugRule(id="KT-0371",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0378",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定",fix="保持一致"))
-        BugDB.load(BugRule(id="KT-0372",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0379",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定",fix="保持一致"))
-        BugDB.load(BugRule(id="KT-0373",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0380",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
             title="expect声明缺少actual（Int版）",trigger="expect fun format(d:Double):Int",detection="iOS无actual",fix="补actual"))
-        BugDB.load(BugRule(id="KT-0374",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0381",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
             title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual",fix="补actual"))
-        BugDB.load(BugRule(id="KT-0375",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0382",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
             title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual",fix="补actual"))
-        BugDB.load(BugRule(id="KT-0376",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0383",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
             title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual",fix="补actual"))
-        BugDB.load(BugRule(id="KT-0377",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0384",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
             title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-0378",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0385",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
             title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-0379",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0386",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
             title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-0380",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0387",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Int版）",trigger="Int.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异",fix="System.lineSeparator或trimEnd"))
-        BugDB.load(BugRule(id="KT-0381",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0388",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异",fix="System.lineSeparator或trimEnd"))
-        BugDB.load(BugRule(id="KT-0382",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0389",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异",fix="System.lineSeparator或trimEnd"))
-        BugDB.load(BugRule(id="KT-0383",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0390",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异",fix="System.lineSeparator或trimEnd"))
-        BugDB.load(BugRule(id="KT-0384",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0391",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="函数引用+重载（Int版）",trigger="fun f(i:Int){};fun f(s:Int){};val r=::f",detection="歧义",fix="指定类型:(Int)->Unit"))
-        BugDB.load(BugRule(id="KT-0385",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0392",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="函数引用+重载（Long版）",trigger="fun f(i:Int){};fun f(s:Long){};val r=::f",detection="歧义",fix="指定类型:(Int)->Unit"))
-        BugDB.load(BugRule(id="KT-0386",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0393",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="函数引用+重载（Double版）",trigger="fun f(i:Int){};fun f(s:Double){};val r=::f",detection="歧义",fix="指定类型:(Int)->Unit"))
-        BugDB.load(BugRule(id="KT-0387",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0394",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="函数引用+重载（Boolean版）",trigger="fun f(i:Int){};fun f(s:Boolean){};val r=::f",detection="歧义",fix="指定类型:(Int)->Unit"))
-        BugDB.load(BugRule(id="KT-0388",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0395",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="内联类实现接口（Int版）",trigger="value class N(val s:Int):Iface",detection="间接装箱",fix="避免接口"))
-        BugDB.load(BugRule(id="KT-0389",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0396",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱",fix="避免接口"))
-        BugDB.load(BugRule(id="KT-0390",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0397",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱",fix="避免接口"))
-        BugDB.load(BugRule(id="KT-0391",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0398",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱",fix="避免接口"))
-        BugDB.load(BugRule(id="KT-0392",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0399",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="!!后is检查多余（Int版）",trigger="x!!;if(x is Int){x.length}",detection="!!后非空",fix="直接用is检查"))
-        BugDB.load(BugRule(id="KT-0393",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0400",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空",fix="直接用is检查"))
-        BugDB.load(BugRule(id="KT-0394",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0401",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空",fix="直接用is检查"))
-        BugDB.load(BugRule(id="KT-0395",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0402",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空",fix="直接用is检查"))
-        BugDB.load(BugRule(id="KT-0396",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0403",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="@NotNull注解缺失（Int版）",trigger="fun javaMethod():Int=null",detection="Kotlin不认Java注解",fix="显式标注?"))
-        BugDB.load(BugRule(id="KT-0397",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0404",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解",fix="显式标注?"))
-        BugDB.load(BugRule(id="KT-0398",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0405",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解",fix="显式标注?"))
-        BugDB.load(BugRule(id="KT-0399",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0406",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解",fix="显式标注?"))
-        BugDB.load(BugRule(id="KT-0400",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0407",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="Kotlin T!类型让编译器以为非空实则null（Int版）",trigger="val x=javaGet();编译器推断Int;运行时NPE",detection="T!被不当优化",fix="显式标注Int?"))
-        BugDB.load(BugRule(id="KT-0401",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0408",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="Kotlin T!类型让编译器以为非空实则null（Long版）",trigger="val x=javaGet();编译器推断Long;运行时NPE",detection="T!被不当优化",fix="显式标注Long?"))
-        BugDB.load(BugRule(id="KT-0402",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0409",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="Kotlin T!类型让编译器以为非空实则null（Double版）",trigger="val x=javaGet();编译器推断Double;运行时NPE",detection="T!被不当优化",fix="显式标注Double?"))
-        BugDB.load(BugRule(id="KT-0403",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0410",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="Kotlin T!类型让编译器以为非空实则null（Boolean版）",trigger="val x=javaGet();编译器推断Boolean;运行时NPE",detection="T!被不当优化",fix="显式标注Boolean?"))
-        BugDB.load(BugRule(id="KT-0404",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0411",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Int版）",trigger="tailrec fun f(n:Int):Int=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+        BugDB.load(BugRule(id="KT-0412",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+        BugDB.load(BugRule(id="KT-0413",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Double版）",trigger="tailrec fun f(n:Double):Double=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+        BugDB.load(BugRule(id="KT-0414",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Boolean版）",trigger="tailrec fun f(n:Boolean):Boolean=if(n<=1)n else n*f(n-1)",detection="最后非自身",fix="while改写"))
+        BugDB.load(BugRule(id="KT-0415",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\"android\\\")",detection="JS可调用Java",fix="@JavascriptLongerface仅暴露必要方法"))
-        BugDB.load(BugRule(id="KT-0405",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0416",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\"android\\\")",detection="JS可调用Java",fix="@JavascriptDoubleerface仅暴露必要方法"))
-        BugDB.load(BugRule(id="KT-0406",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0417",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\"android\\\")",detection="JS可调用Java",fix="@JavascriptFloaterface仅暴露必要方法"))
-        BugDB.load(BugRule(id="KT-0407",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0418",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="自引用属性（Long版）",trigger="val x:Long=x+1",detection="循环引用",fix="用by lazy或初始化块"))
-        BugDB.load(BugRule(id="KT-0408",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0419",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="Windows/macOS/Linux换行符（Int版）",trigger="Int.split(\\\"\\\\\\\\n\\\")在Windows",detection="\\\\r\\\\n不被匹配",fix="System.lineSeparator()"))
-        BugDB.load(BugRule(id="KT-0409",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0420",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\"\\\\\\\\n\\\")在Windows",detection="\\\\r\\\\n不被匹配",fix="System.lineSeparator()"))
-        BugDB.load(BugRule(id="KT-0410",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0421",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\"\\\\\\\\n\\\")在Windows",detection="\\\\r\\\\n不被匹配",fix="System.lineSeparator()"))
-        BugDB.load(BugRule(id="KT-0411",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0422",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\"\\\\\\\\n\\\")在Windows",detection="\\\\r\\\\n不被匹配",fix="System.lineSeparator()"))
-        BugDB.load(BugRule(id="KT-0412",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0423",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
             title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认",fix="显式标注默认值"))
-        BugDB.load(BugRule(id="KT-0413",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0424",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
             title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认",fix="显式标注默认值"))
-        BugDB.load(BugRule(id="KT-0414",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0425",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-0415",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0426",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-0416",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0427",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-0417",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0428",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
             title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本",fix="直接传递"))
-        BugDB.load(BugRule(id="KT-0418",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int版）",trigger="class C:A<Int>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0419",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）",trigger="class C:A<Long>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0420",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Double版）",trigger="class C:A<Double>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0421",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Boolean版）",trigger="class C:A<Boolean>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0422",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）",trigger="class C:A<String>,A<Long>",detection="JVM擦除冲突",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0423",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-0424",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-0425",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-0426",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性",fix="拆成两个"))
-        BugDB.load(BugRule(id="KT-0427",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性",fix="拆成两个"))
-        BugDB.load(BugRule(id="KT-0428",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-0429",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Int版）",trigger="if(x is List<Int>){}",detection="擦除后类型丢失",fix="reified+inline"))
+            title="泛型接口多继承歧义（Int版）",trigger="class C:A<Int>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0430",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long版）",trigger="if(x is List<Long>){}",detection="擦除后类型丢失",fix="reified+inline"))
+            title="泛型接口多继承歧义（Long版）",trigger="class C:A<Long>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0431",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Double版）",trigger="if(x is List<Double>){}",detection="擦除后类型丢失",fix="reified+inline"))
+            title="泛型接口多继承歧义（Double版）",trigger="class C:A<Double>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0432",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型接口多继承歧义（Boolean版）",trigger="class C:A<Boolean>,A<Int>",detection="JVM擦除冲突",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0433",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型接口多继承歧义（Long版）",trigger="class C:A<String>,A<Long>",detection="JVM擦除冲突",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0434",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-0435",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-0436",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-0437",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性",fix="拆成两个"))
+        BugDB.load(BugRule(id="KT-0438",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性",fix="拆成两个"))
+        BugDB.load(BugRule(id="KT-0439",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
+            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性",fix="拆成两个"))
+        BugDB.load(BugRule(id="KT-0440",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Int版）",trigger="if(x is List<Int>){}",detection="擦除后类型丢失",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0441",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Long版）",trigger="if(x is List<Long>){}",detection="擦除后类型丢失",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0442",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Double版）",trigger="if(x is List<Double>){}",detection="擦除后类型丢失",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0443",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="泛型+is检查（Boolean版）",trigger="if(x is List<Boolean>){}",detection="擦除后类型丢失",fix="reified+inline"))
-        BugDB.load(BugRule(id="KT-0433",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0444",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="内部类属性智能转换失效（Int版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Int){x.length}}}}",detection="内部类访问外部var",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0434",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0445",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0435",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0446",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0436",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0447",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0437",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0448",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="as不安全转换（Int版）",trigger="val x:Any;val y=x as Int",detection="可能ClassCast",fix="as?+?:错误处理"))
-        BugDB.load(BugRule(id="KT-0438",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0449",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast",fix="as?+?:错误处理"))
-        BugDB.load(BugRule(id="KT-0439",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast",fix="as?+?:错误处理"))
-        BugDB.load(BugRule(id="KT-0440",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast",fix="as?+?:错误处理"))
-        BugDB.load(BugRule(id="KT-0441",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Int版）",trigger="val x:Int=\\\"hi\\\";val y=x as Int",detection="已知类型不需要as",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-0442",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Long版）",trigger="val x:Long=\\\"hi\\\";val y=x as Long",detection="已知类型不需要as",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-0443",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Double版）",trigger="val x:Double=\\\"hi\\\";val y=x as Double",detection="已知类型不需要as",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-0444",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\"hi\\\";val y=x as Boolean",detection="已知类型不需要as",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-0445",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Int版）",trigger="fun f(vararg s:Int);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
-        BugDB.load(BugRule(id="KT-0446",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
-        BugDB.load(BugRule(id="KT-0447",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
-        BugDB.load(BugRule(id="KT-0448",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
-        BugDB.load(BugRule(id="KT-0449",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-0450",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Int版）",trigger="val x=y as? Int?:return;x.length",detection="x已非空",fix="直接使用不用?."))
+            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-0451",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空",fix="直接使用不用?."))
-        BugDB.load(BugRule(id="KT-0452",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空",fix="直接使用不用?."))
-        BugDB.load(BugRule(id="KT-0453",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空",fix="直接使用不用?."))
-        BugDB.load(BugRule(id="KT-0454",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-0455",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-0456",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-0457",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
-        BugDB.load(BugRule(id="KT-0458",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
-        BugDB.load(BugRule(id="KT-0459",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
-        BugDB.load(BugRule(id="KT-0460",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Int版）",trigger="var x:Any?=\\\"hi\\\";if(x is Int){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast",fix="as?+?:错误处理"))
+        BugDB.load(BugRule(id="KT-0452",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
+            title="不必要的as（Int版）",trigger="val x:Int=\\\"hi\\\";val y=x as Int",detection="已知类型不需要as",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-0453",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
+            title="不必要的as（Long版）",trigger="val x:Long=\\\"hi\\\";val y=x as Long",detection="已知类型不需要as",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-0454",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
+            title="不必要的as（Double版）",trigger="val x:Double=\\\"hi\\\";val y=x as Double",detection="已知类型不需要as",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-0455",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
+            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\"hi\\\";val y=x as Boolean",detection="已知类型不需要as",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-0456",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
+            title="varargs传递数组（Int版）",trigger="fun f(vararg s:Int);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0457",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
+            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0458",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
+            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0459",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
+            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\"a\\\"))",detection="需要展开操作符",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0460",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-0461",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\"hi\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+            title="类型窄化+?:丢失（Int版）",trigger="val x=y as? Int?:return;x.length",detection="x已非空",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-0462",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\"hi\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-0463",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空",fix="直接使用不用?."))
+        BugDB.load(BugRule(id="KT-0464",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空",fix="直接使用不用?."))
+        BugDB.load(BugRule(id="KT-0465",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-0466",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-0467",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-0468",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
+        BugDB.load(BugRule(id="KT-0469",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
+        BugDB.load(BugRule(id="KT-0470",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
+            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成",fix="可用但注意引用比较"))
+        BugDB.load(BugRule(id="KT-0471",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="is检查+var+lambda=智能转换三次失效（Int版）",trigger="var x:Any?=\\\"hi\\\";if(x is Int){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+        BugDB.load(BugRule(id="KT-0472",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\"hi\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+        BugDB.load(BugRule(id="KT-0473",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\"hi\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
+        BugDB.load(BugRule(id="KT-0474",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\"hi\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获",fix="局部val快照+显式cast"))
-        BugDB.load(BugRule(id="KT-0464",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0475",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-0465",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0476",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="unchecked cast警告（Int版）",trigger="val x=y as List<Int>",detection="擦除后强转不安全",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0466",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0477",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="unchecked cast警告（Long版）",trigger="val x=y as List<Long>",detection="擦除后强转不安全",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0467",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0478",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="unchecked cast警告（Double版）",trigger="val x=y as List<Double>",detection="擦除后强转不安全",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0468",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0479",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="unchecked cast警告（Boolean版）",trigger="val x=y as List<Boolean>",detection="擦除后强转不安全",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0469",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0480",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
             title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变",fix="val"))
-        BugDB.load(BugRule(id="KT-0470",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-0481",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
             title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变",fix="val"))
-        BugDB.load(BugRule(id="KT-0471",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="类型推断在递归函数中选择最窄类型（Long版）",trigger="fun f()=if(cond) f() else 0→Long",detection="递归基推断为Long但期望Long",fix="显式返回类型"))
-        BugDB.load(BugRule(id="KT-0472",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="类型推断在递归函数中选择最窄类型（Double版）",trigger="fun f()=if(cond) f() else 0→Double",detection="递归基推断为Double但期望Long",fix="显式返回类型"))
-        BugDB.load(BugRule(id="KT-0473",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死",fix="withTimeout"))
-        BugDB.load(BugRule(id="KT-0474",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-0475",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理",fix="try-catch-withLock"))
-        BugDB.load(BugRule(id="KT-0476",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大",fix="单例"))
-        BugDB.load(BugRule(id="KT-0477",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费",fix="单例"))
-        BugDB.load(BugRule(id="KT-0478",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
-            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露",fix="禁用"))
-        BugDB.load(BugRule(id="KT-0479",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码",fix="移除或用if-release检查"))
-        BugDB.load(BugRule(id="KT-0480",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据",fix="distinctUntilChanged"))
-        BugDB.load(BugRule(id="KT-0481",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient",trigger="@Transient val x:Int;Gson仍序列化",detection="Kotlin transient≠Java",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-0482",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+            title="类型推断在递归函数中选择最窄类型（Long版）",trigger="fun f()=if(cond) f() else 0→Long",detection="递归基推断为Long但期望Long",fix="显式返回类型"))
+        BugDB.load(BugRule(id="KT-0483",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
+            title="类型推断在递归函数中选择最窄类型（Double版）",trigger="fun f()=if(cond) f() else 0→Double",detection="递归基推断为Double但期望Long",fix="显式返回类型"))
+        BugDB.load(BugRule(id="KT-0484",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-0485",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-0486",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理",fix="try-catch-withLock"))
+        BugDB.load(BugRule(id="KT-0487",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
+            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大",fix="单例"))
+        BugDB.load(BugRule(id="KT-0488",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
+            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费",fix="单例"))
+        BugDB.load(BugRule(id="KT-0489",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
+            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露",fix="禁用"))
+        BugDB.load(BugRule(id="KT-0490",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
+            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码",fix="移除或用if-release检查"))
+        BugDB.load(BugRule(id="KT-0491",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-0492",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient",trigger="@Transient val x:Int;Gson仍序列化",detection="Kotlin transient≠Java",fix="@Expose(false)"))
+        BugDB.load(BugRule(id="KT-0493",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="默认参数与Java重载冲突",trigger="fun f(a:Int,b:Int=0)在Java中",detection="Java看不到默认参数",fix="@JvmOverloads"))
-        BugDB.load(BugRule(id="KT-0483",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0494",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="data class自动equals递归栈溢出",trigger="data class N(val n:N?)",detection="自引用",fix="手动equals"))
-        BugDB.load(BugRule(id="KT-0484",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE",fix="?.let或catch"))
-        BugDB.load(BugRule(id="KT-0485",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾",trigger="init{val x=late};lateinit var late:String",detection="初始化顺序",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0486",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取",fix="直接reified"))
-        BugDB.load(BugRule(id="KT-0487",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="when分支智能转换不稳定",trigger="when(x){is Int->x+1 is Long->x+1L}",detection="编译器推断不一致",fix="显式as+else"))
-        BugDB.load(BugRule(id="KT-0488",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭",trigger="val c=Channel<Int>();produce{",detection="生产者完成后未close",fix="finally{c.close()}"))
-        BugDB.load(BugRule(id="KT-0489",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect",fix="distinctUntilChanged或检查值"))
-        BugDB.load(BugRule(id="KT-0490",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要",fix="直接计算"))
-        BugDB.load(BugRule(id="KT-0491",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行",fix="LaunchedEffect"))
-        BugDB.load(BugRule(id="KT-0492",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
-        BugDB.load(BugRule(id="KT-0493",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0494",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
         BugDB.load(BugRule(id="KT-0495",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0496",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
-        BugDB.load(BugRule(id="KT-0497",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
-        BugDB.load(BugRule(id="KT-0498",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0499",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
-        BugDB.load(BugRule(id="KT-0500",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0496",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾",trigger="init{val x=late};lateinit var late:String",detection="初始化顺序",fix="lateinit放init前面"))
+        BugDB.load(BugRule(id="KT-0497",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取",fix="直接reified"))
+        BugDB.load(BugRule(id="KT-0498",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
+            title="when分支智能转换不稳定",trigger="when(x){is Int->x+1 is Long->x+1L}",detection="编译器推断不一致",fix="显式as+else"))
+        BugDB.load(BugRule(id="KT-0499",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
+            title="Channel未关闭",trigger="val c=Channel<Int>();produce{",detection="生产者完成后未close",fix="finally{c.close()}"))
+        BugDB.load(BugRule(id="KT-0500",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect",fix="distinctUntilChanged或检查值"))
     }
 
     private fun registerChunk2() {
-        BugDB.load(BugRule(id="KT-0501",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0502",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
-        BugDB.load(BugRule(id="KT-0503",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0504",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0505",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Double）",trigger="val l:Double<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0506",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0507",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><{t}>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0508",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0501",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要",fix="直接计算"))
+        BugDB.load(BugRule(id="KT-0502",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行",fix="LaunchedEffect"))
+        BugDB.load(BugRule(id="KT-0503",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
+        BugDB.load(BugRule(id="KT-0504",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0505",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+        BugDB.load(BugRule(id="KT-0506",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
+        BugDB.load(BugRule(id="KT-0507",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
+        BugDB.load(BugRule(id="KT-0508",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
         BugDB.load(BugRule(id="KT-0509",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Any）",trigger="val l:Any<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0510",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0510",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
         BugDB.load(BugRule(id="KT-0511",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Int）",trigger="val l:Int<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0512",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0513",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
+        BugDB.load(BugRule(id="KT-0512",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0513",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
         BugDB.load(BugRule(id="KT-0514",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0515",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0516",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0517",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
+        BugDB.load(BugRule(id="KT-0515",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0516",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0517",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0518",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0519",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0520",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0519",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0520",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0521",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0522",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0523",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0522",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0523",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0524",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0525",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0525",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0526",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
         BugDB.load(BugRule(id="KT-0527",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
-        BugDB.load(BugRule(id="KT-0528",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0484）",fix="?.let或catch"))
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0528",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
         BugDB.load(BugRule(id="KT-0529",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（Set<Int>）",trigger="init{val x=late};lateinit var late:Set<Set<Int>>",detection="初始化顺序 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0485）",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0530",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0001）",fix="用?.或?:默认值"))
-        BugDB.load(BugRule(id="KT-0531",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0532",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0003）",fix="?.链+单点let"))
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
+        BugDB.load(BugRule(id="KT-0530",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0531",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
+        BugDB.load(BugRule(id="KT-0532",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
         BugDB.load(BugRule(id="KT-0533",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0534",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0005）",fix="显式类型+安全调用"))
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0534",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
         BugDB.load(BugRule(id="KT-0535",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0006）",fix="统一用?.或统一用!!"))
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
         BugDB.load(BugRule(id="KT-0536",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0537",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0008）",fix="提取函数或flatMap"))
-        BugDB.load(BugRule(id="KT-0538",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0009）",fix="as?.let或?:return"))
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0537",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0538",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
         BugDB.load(BugRule(id="KT-0539",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0540",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Char类型字符编码边界,正则匹配组越界（参见 KT-0011）",fix="x.method()"))
-        BugDB.load(BugRule(id="KT-0541",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0012）",fix="?:默认值或抛异常"))
+            title="可空String?在集合操作中（Int版）（String?）",trigger="val l:String?<String??>;l.filterNotNull().size",detection="先filterNotNull — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0341）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0540",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）（Set<Int>）",trigger="val l:Set<Int><Long?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0342）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0541",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double版）（Long）",trigger="val l:Long<Double?>;l.filterNotNull().size",detection="先filterNotNull — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0542",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0543",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Float）",trigger="val l:Float<{t}>;l.filterNotNull().size",detection="先filterNotNull — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0014）",fix="直接?.let"))
+            title="String?的?:返回null（Int版）（Any）",trigger="val x:Any?=...;val y=Any??:null",detection="冗余null — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0373）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0543",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0374）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0544",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0545",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（MutableList<Double>）",trigger="val l:MutableList<Double><{t}>;l.filterNotNull().size",detection="先filterNotNull — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0546",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0017）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0547",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Int?）",trigger="val l:Int?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0548",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0549",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Double）",trigger="val l:Double<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0020）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0550",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0551",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Set<Int>）",trigger="val l:Set<Int><{t}>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0552",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0553",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0554",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0143）",fix="统一用?.或!!不混"))
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0375）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0545",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0495）",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0546",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾（Any?）",trigger="init{val x=late};lateinit var late:Any?",detection="初始化顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0496）",fix="lateinit放init前面"))
+        BugDB.load(BugRule(id="KT-0547",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
+        BugDB.load(BugRule(id="KT-0548",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0549",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+        BugDB.load(BugRule(id="KT-0550",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
+        BugDB.load(BugRule(id="KT-0551",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
+        BugDB.load(BugRule(id="KT-0552",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
+        BugDB.load(BugRule(id="KT-0553",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0554",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
         BugDB.load(BugRule(id="KT-0555",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0144）",fix="takeIf?.let"))
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
         BugDB.load(BugRule(id="KT-0556",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0557",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0146）",fix="<T:Any>约束"))
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0557",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
         BugDB.load(BugRule(id="KT-0558",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0147）",fix="x?.prop直接"))
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
         BugDB.load(BugRule(id="KT-0559",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0560",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0561",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0150）",fix="?.let+emit"))
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0560",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0561",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0562",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Char类型字符编码边界,正则匹配组越界（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0563",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0564",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0295）",fix="AtomicReference+?.let"))
-        BugDB.load(BugRule(id="KT-0565",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0306）",fix="只用一种null处理方式"))
-        BugDB.load(BugRule(id="KT-0566",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0484）",fix="?.let或catch"))
-        BugDB.load(BugRule(id="KT-0567",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（MutableList<Double>）",trigger="init{val x=late};lateinit var late:MutableMutableList<Double><Double>",detection="初始化顺序 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0485）",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0568",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0001）",fix="用?.或?:默认值"))
-        BugDB.load(BugRule(id="KT-0569",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0002）",fix="?.let"))
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0563",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0564",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0565",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0566",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0567",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0568",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0569",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0570",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0003）",fix="?.链+单点let"))
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
         BugDB.load(BugRule(id="KT-0571",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0572",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0005）",fix="显式类型+安全调用"))
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0572",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
         BugDB.load(BugRule(id="KT-0573",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0006）",fix="统一用?.或统一用!!"))
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
         BugDB.load(BugRule(id="KT-0574",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0575",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0008）",fix="提取函数或flatMap"))
-        BugDB.load(BugRule(id="KT-0576",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0009）",fix="as?.let或?:return"))
-        BugDB.load(BugRule(id="KT-0577",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0578",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0011）",fix="x.method()"))
-        BugDB.load(BugRule(id="KT-0579",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0580",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0581",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Byte）",trigger="val l:Byte<{t}>;l.filterNotNull().size",detection="先filterNotNull — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0014）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0582",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0015）",fix="提供实际默认值"))
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0575",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
+        BugDB.load(BugRule(id="KT-0576",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
+        BugDB.load(BugRule(id="KT-0577",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0578",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
+        BugDB.load(BugRule(id="KT-0579",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+        BugDB.load(BugRule(id="KT-0580",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0581",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0582",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
         BugDB.load(BugRule(id="KT-0583",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Sequence<Long>）",trigger="val l:Sequence<Long><{t}>;l.filterNotNull().size",detection="先filterNotNull — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0584",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Char类型字符编码边界,正则匹配组越界（参见 KT-0017）",fix="提供实际默认值"))
+            title="可空String?在集合操作中（Int版）（String?）",trigger="val l:String?<String??>;l.filterNotNull().size",detection="先filterNotNull — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0341）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0584",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）（Set<Int>）",trigger="val l:Set<Int><Long?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0342）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0585",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Double?）",trigger="val l:Double?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0018）",fix="直接?.let"))
+            title="可空String?在集合操作中（Double版）（Long）",trigger="val l:Long<Double?>;l.filterNotNull().size",detection="先filterNotNull — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0586",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0587",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Float）",trigger="val l:Float<{t}>;l.filterNotNull().size",detection="先filterNotNull — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0020）",fix="直接?.let"))
+            title="String?的?:返回null（Int版）（Any）",trigger="val x:Any?=...;val y=Any??:null",detection="冗余null — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0373）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0587",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0374）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0588",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0589",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（MutableList<Double>）",trigger="val l:MutableList<Double><{t}>;l.filterNotNull().size",detection="先filterNotNull — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0590",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0023）",fix="提供实际默认值"))
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0375）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0589",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0495）",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0590",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾（Any?）",trigger="init{val x=late};lateinit var late:Any?",detection="初始化顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0496）",fix="lateinit放init前面"))
         BugDB.load(BugRule(id="KT-0591",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
         BugDB.load(BugRule(id="KT-0592",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0593",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0144）",fix="takeIf?.let"))
-        BugDB.load(BugRule(id="KT-0594",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0595",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0596",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0147）",fix="x?.prop直接"))
-        BugDB.load(BugRule(id="KT-0597",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0598",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0149）",fix="getOrDefault"))
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0593",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+        BugDB.load(BugRule(id="KT-0594",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
+        BugDB.load(BugRule(id="KT-0595",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
+        BugDB.load(BugRule(id="KT-0596",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
+        BugDB.load(BugRule(id="KT-0597",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0598",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
         BugDB.load(BugRule(id="KT-0599",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0150）",fix="?.let+emit"))
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
         BugDB.load(BugRule(id="KT-0600",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0601",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0602",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
-        BugDB.load(BugRule(id="KT-0603",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0306）",fix="只用一种null处理方式"))
-        BugDB.load(BugRule(id="KT-0604",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0484）",fix="?.let或catch"))
-        BugDB.load(BugRule(id="KT-0605",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（Sequence<Long>）",trigger="init{val x=late};lateinit var late:Sequence<Long>",detection="初始化顺序 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0485）",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0606",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — Char类型字符编码边界,正则匹配组越界（参见 KT-0001）",fix="用?.或?:默认值"))
-        BugDB.load(BugRule(id="KT-0607",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0608",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
-        BugDB.load(BugRule(id="KT-0609",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0610",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0005）",fix="显式类型+安全调用"))
-        BugDB.load(BugRule(id="KT-0611",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0601",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
+        BugDB.load(BugRule(id="KT-0602",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
+        BugDB.load(BugRule(id="KT-0603",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0604",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0605",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0606",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0607",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0608",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0609",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0610",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0611",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0612",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0613",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0008）",fix="提取函数或flatMap"))
-        BugDB.load(BugRule(id="KT-0614",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0009）",fix="as?.let或?:return"))
-        BugDB.load(BugRule(id="KT-0615",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0616",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0011）",fix="x.method()"))
-        BugDB.load(BugRule(id="KT-0617",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0618",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0619",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Any）",trigger="val l:Any<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0014）",fix="直接?.let"))
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0613",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0614",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
+        BugDB.load(BugRule(id="KT-0615",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0616",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
+        BugDB.load(BugRule(id="KT-0617",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
+        BugDB.load(BugRule(id="KT-0618",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0619",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
         BugDB.load(BugRule(id="KT-0620",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0621",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Int）",trigger="val l:Int<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0622",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0017）",fix="提供实际默认值"))
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
+        BugDB.load(BugRule(id="KT-0621",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0622",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
         BugDB.load(BugRule(id="KT-0623",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Any?）",trigger="val l:Any?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0624",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0625",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Byte）",trigger="val l:Byte<{t}>;l.filterNotNull().size",detection="先filterNotNull — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0020）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0626",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0021）",fix="提供实际默认值"))
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+        BugDB.load(BugRule(id="KT-0624",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0625",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0626",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
         BugDB.load(BugRule(id="KT-0627",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Sequence<Long>）",trigger="val l:Sequence<Long><{t}>;l.filterNotNull().size",detection="先filterNotNull — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0628",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Char类型字符编码边界,正则匹配组越界（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0629",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0630",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0631",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0144）",fix="takeIf?.let"))
-        BugDB.load(BugRule(id="KT-0632",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0633",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0634",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
-        BugDB.load(BugRule(id="KT-0635",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0148）",fix="直接用x"))
+            title="可空String?在集合操作中（Int版）（String?）",trigger="val l:String?<String??>;l.filterNotNull().size",detection="先filterNotNull — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0341）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0628",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）（Set<Int>）",trigger="val l:Set<Int><Long?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0342）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0629",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double版）（Long）",trigger="val l:Long<Double?>;l.filterNotNull().size",detection="先filterNotNull — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0630",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Int版）（Any）",trigger="val x:Any?=...;val y=Any??:null",detection="冗余null — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0373）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0631",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0374）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0632",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0375）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0633",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0495）",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0634",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾（Any?）",trigger="init{val x=late};lateinit var late:Any?",detection="初始化顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0496）",fix="lateinit放init前面"))
+        BugDB.load(BugRule(id="KT-0635",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
         BugDB.load(BugRule(id="KT-0636",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0637",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
-        BugDB.load(BugRule(id="KT-0638",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0639",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0640",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0295）",fix="AtomicReference+?.let"))
-        BugDB.load(BugRule(id="KT-0641",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0306）",fix="只用一种null处理方式"))
-        BugDB.load(BugRule(id="KT-0642",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0484）",fix="?.let或catch"))
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0637",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+        BugDB.load(BugRule(id="KT-0638",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
+        BugDB.load(BugRule(id="KT-0639",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
+        BugDB.load(BugRule(id="KT-0640",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
+        BugDB.load(BugRule(id="KT-0641",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0642",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
         BugDB.load(BugRule(id="KT-0643",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（Int）",trigger="init{val x=late};lateinit var late:Int",detection="初始化顺序 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0485）",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0644",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0001）",fix="用?.或?:默认值"))
-        BugDB.load(BugRule(id="KT-0645",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0646",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0003）",fix="?.链+单点let"))
-        BugDB.load(BugRule(id="KT-0647",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0648",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0005）",fix="显式类型+安全调用"))
-        BugDB.load(BugRule(id="KT-0649",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0006）",fix="统一用?.或统一用!!"))
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
+        BugDB.load(BugRule(id="KT-0644",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0645",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
+        BugDB.load(BugRule(id="KT-0646",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
+        BugDB.load(BugRule(id="KT-0647",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0648",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0649",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0650",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Char类型字符编码边界,正则匹配组越界（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0651",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0008）",fix="提取函数或flatMap"))
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0651",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0652",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0009）",fix="as?.let或?:return"))
-        BugDB.load(BugRule(id="KT-0653",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0654",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0011）",fix="x.method()"))
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0653",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0654",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0655",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0656",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0657",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Int?）",trigger="val l:Int?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0014）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0658",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0659",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Double）",trigger="val l:Double<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0660",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0017）",fix="提供实际默认值"))
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0656",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0657",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0658",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
+        BugDB.load(BugRule(id="KT-0659",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0660",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
         BugDB.load(BugRule(id="KT-0661",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Set<Int>）",trigger="val l:Set<Int><{t}>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0662",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0663",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Any）",trigger="val l:Any<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0020）",fix="直接?.let"))
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
+        BugDB.load(BugRule(id="KT-0662",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0663",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
         BugDB.load(BugRule(id="KT-0664",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0665",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Int）",trigger="val l:Int<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0666",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0667",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0668",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0669",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0144）",fix="takeIf?.let"))
-        BugDB.load(BugRule(id="KT-0670",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0145）",fix="firstOrNull?.prop"))
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
+        BugDB.load(BugRule(id="KT-0665",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0666",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
+        BugDB.load(BugRule(id="KT-0667",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+        BugDB.load(BugRule(id="KT-0668",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0669",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0670",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
         BugDB.load(BugRule(id="KT-0671",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0672",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0147）",fix="x?.prop直接"))
-        BugDB.load(BugRule(id="KT-0673",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0674",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0675",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0150）",fix="?.let+emit"))
-        BugDB.load(BugRule(id="KT-0676",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0677",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0678",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0295）",fix="AtomicReference+?.let"))
+            title="可空String?在集合操作中（Int版）（String?）",trigger="val l:String?<String??>;l.filterNotNull().size",detection="先filterNotNull — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0341）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0672",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）（Set<Int>）",trigger="val l:Set<Int><Long?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0342）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0673",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double版）（Long）",trigger="val l:Long<Double?>;l.filterNotNull().size",detection="先filterNotNull — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0674",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Int版）（Any）",trigger="val x:Any?=...;val y=Any??:null",detection="冗余null — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0373）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0675",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0374）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0676",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0375）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0677",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0495）",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0678",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾（Any?）",trigger="init{val x=late};lateinit var late:Any?",detection="初始化顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0496）",fix="lateinit放init前面"))
         BugDB.load(BugRule(id="KT-0679",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0306）",fix="只用一种null处理方式"))
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
         BugDB.load(BugRule(id="KT-0680",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0484）",fix="?.let或catch"))
-        BugDB.load(BugRule(id="KT-0681",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（Double）",trigger="init{val x=late};lateinit var late:Double",detection="初始化顺序 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0485）",fix="lateinit放init前面"))
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0681",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
         BugDB.load(BugRule(id="KT-0682",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
         BugDB.load(BugRule(id="KT-0683",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0684",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0003）",fix="?.链+单点let"))
-        BugDB.load(BugRule(id="KT-0685",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0004）",fix="::x.isInitialized"))
-        BugDB.load(BugRule(id="KT-0686",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0005）",fix="显式类型+安全调用"))
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
+        BugDB.load(BugRule(id="KT-0684",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
+        BugDB.load(BugRule(id="KT-0685",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0686",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
         BugDB.load(BugRule(id="KT-0687",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0006）",fix="统一用?.或统一用!!"))
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
         BugDB.load(BugRule(id="KT-0688",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0689",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0008）",fix="提取函数或flatMap"))
-        BugDB.load(BugRule(id="KT-0690",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0009）",fix="as?.let或?:return"))
-        BugDB.load(BugRule(id="KT-0691",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0692",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0689",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
+        BugDB.load(BugRule(id="KT-0690",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
+        BugDB.load(BugRule(id="KT-0691",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0692",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
         BugDB.load(BugRule(id="KT-0693",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0694",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Char类型字符编码边界,正则匹配组越界（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0695",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Double?）",trigger="val l:Double?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0696",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0697",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Float）",trigger="val l:Float<{t}>;l.filterNotNull().size",detection="先filterNotNull — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0698",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0699",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（MutableList<Double>）",trigger="val l:MutableList<Double><{t}>;l.filterNotNull().size",detection="先filterNotNull — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0700",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0701",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Int?）",trigger="val l:Int?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0702",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0703",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Double）",trigger="val l:Double<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0704",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0705",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0706",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0707",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0144）",fix="takeIf?.let"))
-        BugDB.load(BugRule(id="KT-0708",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0709",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0710",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0147）",fix="x?.prop直接"))
-        BugDB.load(BugRule(id="KT-0711",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0712",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0713",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0150）",fix="?.let+emit"))
-        BugDB.load(BugRule(id="KT-0714",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0694",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0695",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0696",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0697",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0698",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0699",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0700",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0701",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0702",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
+        BugDB.load(BugRule(id="KT-0703",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0704",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
+        BugDB.load(BugRule(id="KT-0705",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
+        BugDB.load(BugRule(id="KT-0706",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0707",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
+        BugDB.load(BugRule(id="KT-0708",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
+        BugDB.load(BugRule(id="KT-0709",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0710",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
+        BugDB.load(BugRule(id="KT-0711",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+        BugDB.load(BugRule(id="KT-0712",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0713",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0714",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
         BugDB.load(BugRule(id="KT-0715",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0716",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Char类型字符编码边界,正则匹配组越界（参见 KT-0295）",fix="AtomicReference+?.let"))
-        BugDB.load(BugRule(id="KT-0717",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
-        BugDB.load(BugRule(id="KT-0718",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0484）",fix="?.let或catch"))
-        BugDB.load(BugRule(id="KT-0719",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init前后矛盾（Float）",trigger="init{val x=late};lateinit var late:Float",detection="初始化顺序 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0485）",fix="lateinit放init前面"))
-        BugDB.load(BugRule(id="KT-0720",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0001）",fix="用?.或?:默认值"))
+            title="可空String?在集合操作中（Int版）（String?）",trigger="val l:String?<String??>;l.filterNotNull().size",detection="先filterNotNull — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0341）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0716",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Long版）（Set<Int>）",trigger="val l:Set<Int><Long?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0342）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0717",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double版）（Long）",trigger="val l:Long<Double?>;l.filterNotNull().size",detection="先filterNotNull — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0718",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Int版）（Any）",trigger="val x:Any?=...;val y=Any??:null",detection="冗余null — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0373）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0719",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Long版）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0374）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0720",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（Double版）",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0375）",fix="提供实际默认值"))
         BugDB.load(BugRule(id="KT-0721",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0002）",fix="?.let"))
-        BugDB.load(BugRule(id="KT-0722",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+            title="Flow中!!操作符",trigger="flow{val x=risky()!!;emit(x)}",detection="Flow内NPE — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0495）",fix="?.let或catch"))
+        BugDB.load(BugRule(id="KT-0722",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="lateinit在init前后矛盾（Any?）",trigger="init{val x=late};lateinit var late:Any?",detection="初始化顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0496）",fix="lateinit放init前面"))
         BugDB.load(BugRule(id="KT-0723",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0004）",fix="::x.isInitialized"))
+            title="!!在可空类型上",trigger="x!!.length",detection="!!无保护，NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0001）",fix="用?.或?:默认值"))
         BugDB.load(BugRule(id="KT-0724",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0005）",fix="显式类型+安全调用"))
-        BugDB.load(BugRule(id="KT-0725",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
-        BugDB.load(BugRule(id="KT-0726",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0007）",fix="lateinit放init之前"))
-        BugDB.load(BugRule(id="KT-0727",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0008）",fix="提取函数或flatMap"))
+            title="!!未检查直接调用",trigger="!!.method()",detection="!!前无null检查 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0002）",fix="?.let"))
+        BugDB.load(BugRule(id="KT-0725",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="链式!!蔓延",trigger="a!!.b!!.c!!.d",detection="多!!连锁爆炸 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0003）",fix="?.链+单点let"))
+        BugDB.load(BugRule(id="KT-0726",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="lateinit未初始化",trigger="lateinit var x;x.method()",detection="未检查isInitialized — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0004）",fix="::x.isInitialized"))
+        BugDB.load(BugRule(id="KT-0727",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="平台类型T!隐式null",trigger="javaObj.field;x.length",detection="T!可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0005）",fix="显式类型+安全调用"))
         BugDB.load(BugRule(id="KT-0728",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
+            title="?.与!!混用",trigger="a?.b?.c!!.d",detection="混合风格混乱 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0006）",fix="统一用?.或统一用!!"))
         BugDB.load(BugRule(id="KT-0729",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0010）",fix="return@let"))
-        BugDB.load(BugRule(id="KT-0730",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0011）",fix="x.method()"))
-        BugDB.load(BugRule(id="KT-0731",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
-        BugDB.load(BugRule(id="KT-0732",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0013）",fix="直接用y"))
-        BugDB.load(BugRule(id="KT-0733",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空String?在集合操作中（Any?）",trigger="val l:Any?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0014）",fix="直接?.let"))
+            title="lateinit在init块之前访问",trigger="init{x.method()};lateinit var x",detection="初始化顺序 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0007）",fix="lateinit放init之前"))
+        BugDB.load(BugRule(id="KT-0730",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="?.let嵌套过深",trigger="a?.let{b?.let{c?.let{}}}}",detection="箭头地狱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0008）",fix="提取函数或flatMap"))
+        BugDB.load(BugRule(id="KT-0731",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="as?后忘记null检查",trigger="val x=y as? T;x.method()",detection="as?返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0009）",fix="as?.let或?:return"))
+        BugDB.load(BugRule(id="KT-0732",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="return@let遗漏",trigger="a?.let{if(x)return}",detection="return非局部 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0010）",fix="return@let"))
+        BugDB.load(BugRule(id="KT-0733",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="不必要的?.",trigger="val x:T=...;x?.method()",detection="非空类型用?. — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0011）",fix="x.method()"))
         BugDB.load(BugRule(id="KT-0734",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="String?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0735",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Int?在集合操作中（Byte）",trigger="val l:Byte<{t}>;l.filterNotNull().size",detection="先filterNotNull — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0016）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0736",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Int?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0017）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0737",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Long?在集合操作中（Sequence<Long>）",trigger="val l:Sequence<Long><{t}>;l.filterNotNull().size",detection="先filterNotNull — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0018）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0738",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Long?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Char类型字符编码边界,正则匹配组越界（参见 KT-0019）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0739",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Double?在集合操作中（Double?）",trigger="val l:Double?<{t}>;l.filterNotNull().size",detection="先filterNotNull — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0020）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0740",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Double?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0021）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0741",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="可空Boolean?在集合操作中（Float）",trigger="val l:Float<{t}>;l.filterNotNull().size",detection="先filterNotNull — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0022）",fix="直接?.let"))
-        BugDB.load(BugRule(id="KT-0742",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="Boolean?的?:返回null",trigger="val x:{t}=...;val y={t}?:null",detection="冗余null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0023）",fix="提供实际默认值"))
-        BugDB.load(BugRule(id="KT-0743",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
-        BugDB.load(BugRule(id="KT-0744",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
-        BugDB.load(BugRule(id="KT-0745",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0144）",fix="takeIf?.let"))
-        BugDB.load(BugRule(id="KT-0746",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0145）",fix="firstOrNull?.prop"))
-        BugDB.load(BugRule(id="KT-0747",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
-        BugDB.load(BugRule(id="KT-0748",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0147）",fix="x?.prop直接"))
-        BugDB.load(BugRule(id="KT-0749",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
-            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0148）",fix="直接用x"))
-        BugDB.load(BugRule(id="KT-0750",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
-            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
-        BugDB.load(BugRule(id="KT-0751",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0150）",fix="?.let+emit"))
-        BugDB.load(BugRule(id="KT-0752",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0151）",fix="统一方式"))
-        BugDB.load(BugRule(id="KT-0753",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
-            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
-        BugDB.load(BugRule(id="KT-0754",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0024）",fix="捕获具体异常类型"))
-        BugDB.load(BugRule(id="KT-0755",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="?:返回null",trigger="val x=y?:null",detection="?:后面是null无意义 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0012）",fix="?:默认值或抛异常"))
+        BugDB.load(BugRule(id="KT-0735",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="elvis操作符冗余",trigger="val x=y?:y",detection="?:右侧等于左侧 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0013）",fix="直接用y"))
+        BugDB.load(BugRule(id="KT-0736",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空String?在集合操作中（Double）",trigger="val l:Double<Double?>;l.filterNotNull().size",detection="先filterNotNull — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0014）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0737",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="String?的?:返回null（String?）",trigger="val x:String??=...;val y=String???:null",detection="冗余null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0015）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0738",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Int?在集合操作中（Set<Int>）",trigger="val l:Set<Int><Set<Int>?>;l.filterNotNull().size",detection="先filterNotNull — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0016）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0739",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Int?的?:返回null（Long）",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0017）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0740",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Long?在集合操作中（Any）",trigger="val l:Any<Long?>;l.filterNotNull().size",detection="先filterNotNull — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0018）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0741",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Long?的?:返回null",trigger="val x:Long?=...;val y=Long??:null",detection="冗余null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0019）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0742",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Double?在集合操作中（Int）",trigger="val l:Int<Double?>;l.filterNotNull().size",detection="先filterNotNull — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0020）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0743",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Double?的?:返回null",trigger="val x:Double?=...;val y=Double??:null",detection="冗余null — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0021）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0744",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="可空Boolean?在集合操作中（Any?）",trigger="val l:Any?<Boolean?>;l.filterNotNull().size",detection="先filterNotNull — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0022）",fix="直接?.let"))
+        BugDB.load(BugRule(id="KT-0745",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="Boolean?的?:返回null",trigger="val x:Boolean?=...;val y=Boolean??:null",detection="冗余null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0023）",fix="提供实际默认值"))
+        BugDB.load(BugRule(id="KT-0746",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!在map取值上",trigger="val x=map[key]!!;x.method()",detection="map[key]返回可空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0142）",fix="map[key]?.let或getOrDefault"))
+        BugDB.load(BugRule(id="KT-0747",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!与Elvis短路冲突",trigger="val x=risky()!!?:default",detection="语义矛盾 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0143）",fix="统一用?.或!!不混"))
+        BugDB.load(BugRule(id="KT-0748",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="takeIf后!!",trigger="val x=y.takeIf{it>0}!!",detection="takeIf返回可空 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0144）",fix="takeIf?.let"))
+        BugDB.load(BugRule(id="KT-0749",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="集合元素!!",trigger="list.firstOrNull()!!.prop",detection="firstOrNull可空 — Char类型字符编码边界,正则匹配组越界（参见 KT-0145）",fix="firstOrNull?.prop"))
+        BugDB.load(BugRule(id="KT-0750",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="类型参数可空未处理",trigger="fun <T> f(t:T){t!!.hashCode()}",detection="T可能为Any? — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0146）",fix="<T:Any>约束"))
+        BugDB.load(BugRule(id="KT-0751",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="let内!!不如?.",trigger="x?.let{it!!.prop}",detection="let内it非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0147）",fix="x?.prop直接"))
+        BugDB.load(BugRule(id="KT-0752",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MILD,
+            title="notNull断言过度",trigger="requireNotNull(x);x.prop",detection="已知非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0148）",fix="直接用x"))
+        BugDB.load(BugRule(id="KT-0753",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="map中get后用!!",trigger="val v=map.get(key)!!;v.method()",detection="Map.get返回可空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0149）",fix="getOrDefault"))
+        BugDB.load(BugRule(id="KT-0754",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="!!在flow内",trigger="flow{val x=repo.get()!!;emit(x)}",detection="Flow中NPE污染管道 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0150）",fix="?.let+emit"))
+        BugDB.load(BugRule(id="KT-0755",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="notNull与elvis重复",trigger="val x=requireNotNull(y?:z)",detection="重复检查 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0151）",fix="统一方式"))
+        BugDB.load(BugRule(id="KT-0756",category=BugCategory.NULL_SAFETY,severity=BugSeverity.MODERATE,
+            title="非空断言在finally块中失效",trigger="try{x!!;risky()}finally{x.method()}",detection="finally中x可能已被置null — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0293）",fix="局部val快照"))
+        BugDB.load(BugRule(id="KT-0757",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="var+!!+多线程=智能转换完全失效",trigger="var x:Any?=null;thread{x!!;x=null};thread{x.method()}",detection="竞态破坏非空假设 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0295）",fix="AtomicReference+?.let"))
+        BugDB.load(BugRule(id="KT-0758",category=BugCategory.NULL_SAFETY,severity=BugSeverity.SEVERE,
+            title="!!+?:+as?=三null操作符互相矛盾",trigger="val x=y!!?:z as? T",detection="!!先炸，?:永不执行 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0306）",fix="只用一种null处理方式"))
+        BugDB.load(BugRule(id="KT-0759",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0024）",fix="捕获具体异常类型"))
+        BugDB.load(BugRule(id="KT-0760",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="泛型+is检查（Byte）",trigger="if(x is Byte<Byte>){}",detection="擦除后类型丢失 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0025）",fix="reified+inline"))
-        BugDB.load(BugRule(id="KT-0756",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0761",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
             title="unchecked cast警告（Boolean?）",trigger="val x=y as Boolean?<Boolean?>",detection="擦除后强转不安全 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0026）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0757",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影写操作（Sequence<Long>）",trigger="val x:MutableSequence<Long><*>;x.add(1)",detection="*只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0027）",fix="声明具体类型"))
-        BugDB.load(BugRule(id="KT-0758",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Char类型字符编码边界,正则匹配组越界（参见 KT-0028）",fix="in T"))
-        BugDB.load(BugRule(id="KT-0759",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0029）",fix="inline+reified"))
-        BugDB.load(BugRule(id="KT-0760",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0030）",fix="<T:HasMethod>"))
-        BugDB.load(BugRule(id="KT-0761",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0762",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0032）",fix="指定具体类型参数"))
+            title="星投影写操作（Sequence<Long>）",trigger="val x:MutableSequence<Long><*>;x.add(1)",detection="*只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0027）",fix="声明具体类型"))
         BugDB.load(BugRule(id="KT-0763",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0033）",fix="指定具体类型参数"))
+            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Char类型字符编码边界,正则匹配组越界（参见 KT-0028）",fix="in T"))
         BugDB.load(BugRule(id="KT-0764",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0034）",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0765",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0152）",fix="List代替Array"))
-        BugDB.load(BugRule(id="KT-0766",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0153）",fix="reified+inline"))
+            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0029）",fix="inline+reified"))
+        BugDB.load(BugRule(id="KT-0765",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0030）",fix="<T:HasMethod>"))
+        BugDB.load(BugRule(id="KT-0766",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0767",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0154）",fix="显式标注泛型参数"))
+            title="星投影操作List<S>（Long?）",trigger="val x:Long?<S>*=...;x.add(...)",detection="星投影只读 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0032）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0768",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束递归（String?）",trigger="fun <T:Comparable<T>> sort(list:String?<T>)",detection="递归约束 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0155）",fix="保持不变或where"))
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0033）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0769",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0156）",fix="具体化子类型"))
-        BugDB.load(BugRule(id="KT-0770",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数通配符滥用（Long）",trigger="fun <T> f(list:Long<*>)",detection="T未使用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
-        BugDB.load(BugRule(id="KT-0771",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型别名冲突（Any）",trigger="typealias S<T>=Any<T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0158）",fix="重命名"))
-        BugDB.load(BugRule(id="KT-0772",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（List<String>）",trigger="class C:A<List<String><String>>,A<List<String><String>>",detection="JVM擦除冲突 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0159）",fix="不同接口"))
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0034）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0770",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0152）",fix="List代替Array"))
+        BugDB.load(BugRule(id="KT-0771",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0153）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0772",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0154）",fix="显式标注泛型参数"))
         BugDB.load(BugRule(id="KT-0773",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0160）",fix="f(*arrayOf)"))
+            title="泛型约束递归（String?）",trigger="fun <T:Comparable<T>> sort(list:String?<T>)",detection="递归约束 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0155）",fix="保持不变或where"))
         BugDB.load(BugRule(id="KT-0774",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0161）",fix="显式类型"))
-        BugDB.load(BugRule(id="KT-0775",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0269）",fix="加where约束打断"))
-        BugDB.load(BugRule(id="KT-0776",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
+            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0156）",fix="具体化子类型"))
+        BugDB.load(BugRule(id="KT-0775",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数通配符滥用（Long）",trigger="fun <T> f(list:Long<*>)",detection="T未使用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
+        BugDB.load(BugRule(id="KT-0776",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型别名冲突（Any）",trigger="typealias S<T>=Any<T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0158）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0777",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int版）（Byte）",trigger="class C:A<Byte>,A<Byte>",detection="JVM擦除冲突 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0418）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0778",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Boolean?）",trigger="class C:A<Long>,A<Boolean?>",detection="JVM擦除冲突 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0419）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0779",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Double版）（Sequence<Long>）",trigger="class C:A<Double>,A<Sequence<Long>>",detection="JVM擦除冲突 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0420）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0780",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Boolean版）（Char）",trigger="class C:A<Boolean>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0421）",fix="不同接口"))
+            title="泛型接口多继承歧义（List<String>）",trigger="class C:A<List<String><String>>,A<List<String><String>>",detection="JVM擦除冲突 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0159）",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0778",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0160）",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0779",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0161）",fix="显式类型"))
+        BugDB.load(BugRule(id="KT-0780",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0269）",fix="加where约束打断"))
         BugDB.load(BugRule(id="KT-0781",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Double?）",trigger="class C:A<Double?>,A<Long>",detection="JVM擦除冲突 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0422）",fix="不同接口"))
+            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
         BugDB.load(BugRule(id="KT-0782",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Int版）（Array<Boolean>）",trigger="if(x is Array<Boolean><Array<Boolean>>){}",detection="擦除后类型丢失 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0429）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Int版）（Byte）",trigger="class C:A<Byte>,A<Byte>",detection="JVM擦除冲突 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0429）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0783",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long版）（Float）",trigger="if(x is Float<Long>){}",detection="擦除后类型丢失 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0430）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Long版）（Boolean?）",trigger="class C:A<Long>,A<Boolean?>",detection="JVM擦除冲突 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0430）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0784",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Double版）（Long?）",trigger="if(x is Long?<Double>){}",detection="擦除后类型丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0431）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Double版）（Sequence<Long>）",trigger="class C:A<Double>,A<Sequence<Long>>",detection="JVM擦除冲突 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0431）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0785",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Boolean版）（MutableList<Double>）",trigger="if(x is MutableList<Double><Boolean>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0432）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Boolean版）（Char）",trigger="class C:A<Boolean>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0432）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0786",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Int版）（Boolean）",trigger="val x=y as Boolean<Boolean>",detection="擦除后强转不安全 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0465）",fix="显式检查元素类型"))
+            title="泛型接口多继承歧义（Long版）（Double?）",trigger="class C:A<Double?>,A<Long>",detection="JVM擦除冲突 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0433）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0787",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Long版）（Int?）",trigger="val x=y as Int?<Long>",detection="擦除后强转不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0466）",fix="显式检查元素类型"))
+            title="泛型+is检查（Int版）（Array<Boolean>）",trigger="if(x is Array<Boolean><Array<Boolean>>){}",detection="擦除后类型丢失 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0440）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0788",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Double版）（Map<String,Int>）",trigger="val x=y as Map<String,Int><Double>",detection="擦除后强转不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0467）",fix="显式检查元素类型"))
+            title="泛型+is检查（Long版）（Float）",trigger="if(x is Float<Long>){}",detection="擦除后类型丢失 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0441）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0789",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Boolean版）（Double）",trigger="val x=y as Double<Boolean>",detection="擦除后强转不安全 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0468）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0790",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0486）",fix="直接reified"))
+            title="泛型+is检查（Double版）（Long?）",trigger="if(x is Long?<Double>){}",detection="擦除后类型丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0442）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0790",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Boolean版）（MutableList<Double>）",trigger="if(x is MutableList<Double><Boolean>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0443）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0791",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0024）",fix="捕获具体异常类型"))
+            title="unchecked cast警告（Int版）（Boolean）",trigger="val x=y as Boolean<Boolean>",detection="擦除后强转不安全 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0476）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0792",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long）",trigger="if(x is Long<Long>){}",detection="擦除后类型丢失 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0025）",fix="reified+inline"))
+            title="unchecked cast警告（Long版）（Int?）",trigger="val x=y as Int?<Long>",detection="擦除后强转不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0477）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0793",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Any）",trigger="val x=y as Any<Any>",detection="擦除后强转不安全 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0026）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0794",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影写操作（List<String>）",trigger="val x:MutableList<String><*>;x.add(1)",detection="*只读 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0027）",fix="声明具体类型"))
+            title="unchecked cast警告（Double版）（Map<String,Int>）",trigger="val x=y as Map<String,Int><Double>",detection="擦除后强转不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0478）",fix="显式检查元素类型"))
+        BugDB.load(BugRule(id="KT-0794",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Boolean版）（Double）",trigger="val x=y as Double<Boolean>",detection="擦除后强转不安全 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0479）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0795",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0028）",fix="in T"))
-        BugDB.load(BugRule(id="KT-0796",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0029）",fix="inline+reified"))
-        BugDB.load(BugRule(id="KT-0797",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0030）",fix="<T:HasMethod>"))
-        BugDB.load(BugRule(id="KT-0798",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0031）",fix="重命名"))
+            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0497）",fix="直接reified"))
+        BugDB.load(BugRule(id="KT-0796",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0024）",fix="捕获具体异常类型"))
+        BugDB.load(BugRule(id="KT-0797",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Long）",trigger="if(x is Long<Long>){}",detection="擦除后类型丢失 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0025）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0798",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Any）",trigger="val x=y as Any<Any>",detection="擦除后强转不安全 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0026）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0799",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0032）",fix="指定具体类型参数"))
+            title="星投影写操作（List<String>）",trigger="val x:MutableList<String><*>;x.add(1)",detection="*只读 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0027）",fix="声明具体类型"))
         BugDB.load(BugRule(id="KT-0800",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0033）",fix="指定具体类型参数"))
+            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0028）",fix="in T"))
         BugDB.load(BugRule(id="KT-0801",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0034）",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0802",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Char类型字符编码边界,正则匹配组越界（参见 KT-0152）",fix="List代替Array"))
-        BugDB.load(BugRule(id="KT-0803",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0153）",fix="reified+inline"))
+            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0029）",fix="inline+reified"))
+        BugDB.load(BugRule(id="KT-0802",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0030）",fix="<T:HasMethod>"))
+        BugDB.load(BugRule(id="KT-0803",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0804",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0154）",fix="显式标注泛型参数"))
+            title="星投影操作List<S>（Byte）",trigger="val x:Byte<S>*=...;x.add(...)",detection="星投影只读 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0032）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0805",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束递归（Float）",trigger="fun <T:Comparable<T>> sort(list:Float<T>)",detection="递归约束 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0155）",fix="保持不变或where"))
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0033）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0806",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0156）",fix="具体化子类型"))
-        BugDB.load(BugRule(id="KT-0807",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数通配符滥用（MutableList<Double>）",trigger="fun <T> f(list:MutableList<Double><*>)",detection="T未使用 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
-        BugDB.load(BugRule(id="KT-0808",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型别名冲突（Boolean）",trigger="typealias S<T>=Boolean<T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0158）",fix="重命名"))
-        BugDB.load(BugRule(id="KT-0809",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int?）",trigger="class C:A<Int??>,A<Int?>",detection="JVM擦除冲突 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0159）",fix="不同接口"))
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0034）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0807",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Char类型字符编码边界,正则匹配组越界（参见 KT-0152）",fix="List代替Array"))
+        BugDB.load(BugRule(id="KT-0808",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0153）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0809",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0154）",fix="显式标注泛型参数"))
         BugDB.load(BugRule(id="KT-0810",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0160）",fix="f(*arrayOf)"))
+            title="泛型约束递归（Float）",trigger="fun <T:Comparable<T>> sort(list:Float<T>)",detection="递归约束 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0155）",fix="保持不变或where"))
         BugDB.load(BugRule(id="KT-0811",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0161）",fix="显式类型"))
-        BugDB.load(BugRule(id="KT-0812",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0269）",fix="加where约束打断"))
-        BugDB.load(BugRule(id="KT-0813",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
+            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0156）",fix="具体化子类型"))
+        BugDB.load(BugRule(id="KT-0812",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数通配符滥用（MutableList<Double>）",trigger="fun <T> f(list:MutableList<Double><*>)",detection="T未使用 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
+        BugDB.load(BugRule(id="KT-0813",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型别名冲突（Boolean）",trigger="typealias S<T>=Boolean<T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0158）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0814",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int版）（Long）",trigger="class C:A<Long>,A<Long>",detection="JVM擦除冲突 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0418）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0815",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Any）",trigger="class C:A<Long>,A<Any>",detection="JVM擦除冲突 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0419）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0816",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Double版）（List<String>）",trigger="class C:A<Double>,A<List<String><String>>",detection="JVM擦除冲突 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0420）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0817",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Boolean版）",trigger="class C:A<Boolean>,A<Int>",detection="JVM擦除冲突 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0421）",fix="不同接口"))
+            title="泛型接口多继承歧义（Int?）",trigger="class C:A<Int??>,A<Int?>",detection="JVM擦除冲突 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0159）",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0815",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0160）",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0816",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0161）",fix="显式类型"))
+        BugDB.load(BugRule(id="KT-0817",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0269）",fix="加where约束打断"))
         BugDB.load(BugRule(id="KT-0818",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Short）",trigger="class C:A<Short>,A<Long>",detection="JVM擦除冲突 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0422）",fix="不同接口"))
+            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
         BugDB.load(BugRule(id="KT-0819",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Int版）（Any?）",trigger="if(x is Any?<Any?>){}",detection="擦除后类型丢失 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0429）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Int版）（Long）",trigger="class C:A<Long>,A<Long>",detection="JVM擦除冲突 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0429）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0820",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long版）（String）",trigger="if(x is String<Long>){}",detection="擦除后类型丢失 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0430）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Long版）（Any）",trigger="class C:A<Long>,A<Any>",detection="JVM擦除冲突 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0430）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0821",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Double版）（Byte）",trigger="if(x is Byte<Double>){}",detection="擦除后类型丢失 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0431）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Double版）（List<String>）",trigger="class C:A<Double>,A<List<String><String>>",detection="JVM擦除冲突 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0431）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0822",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Boolean版）（Boolean?）",trigger="if(x is Boolean?<Boolean>){}",detection="擦除后类型丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0432）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Boolean版）",trigger="class C:A<Boolean>,A<Int>",detection="JVM擦除冲突 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0432）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0823",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Int版）（Sequence<Long>）",trigger="val x=y as Sequence<Long><Sequence<Long>>",detection="擦除后强转不安全 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0465）",fix="显式检查元素类型"))
+            title="泛型接口多继承歧义（Long版）（Short）",trigger="class C:A<Short>,A<Long>",detection="JVM擦除冲突 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0433）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0824",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Long版）（Char）",trigger="val x=y as Char<Long>",detection="擦除后强转不安全 — Char类型字符编码边界,正则匹配组越界（参见 KT-0466）",fix="显式检查元素类型"))
+            title="泛型+is检查（Int版）（Any?）",trigger="if(x is Any?<Any?>){}",detection="擦除后类型丢失 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0440）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0825",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Double版）（Double?）",trigger="val x=y as Double?<Double>",detection="擦除后强转不安全 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0467）",fix="显式检查元素类型"))
+            title="泛型+is检查（Long版）（String）",trigger="if(x is String<Long>){}",detection="擦除后类型丢失 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0441）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0826",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Boolean版）（Array<Boolean>）",trigger="val x=y as Array<Boolean><Boolean>",detection="擦除后强转不安全 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0468）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0827",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0486）",fix="直接reified"))
+            title="泛型+is检查（Double版）（Byte）",trigger="if(x is Byte<Double>){}",detection="擦除后类型丢失 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0442）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0827",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Boolean版）（Boolean?）",trigger="if(x is Boolean?<Boolean>){}",detection="擦除后类型丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0443）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0828",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0024）",fix="捕获具体异常类型"))
+            title="unchecked cast警告（Int版）（Sequence<Long>）",trigger="val x=y as Sequence<Long><Sequence<Long>>",detection="擦除后强转不安全 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0476）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0829",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（MutableList<Double>）",trigger="if(x is MutableList<Double><MutableMutableList<Double><Double>>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0025）",fix="reified+inline"))
+            title="unchecked cast警告（Long版）（Char）",trigger="val x=y as Char<Long>",detection="擦除后强转不安全 — Char类型字符编码边界,正则匹配组越界（参见 KT-0477）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0830",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Boolean）",trigger="val x=y as Boolean<Boolean>",detection="擦除后强转不安全 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0026）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0831",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影写操作（Int?）",trigger="val x:MutableInt?<*>;x.add(1)",detection="*只读 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0027）",fix="声明具体类型"))
+            title="unchecked cast警告（Double版）（Double?）",trigger="val x=y as Double?<Double>",detection="擦除后强转不安全 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0478）",fix="显式检查元素类型"))
+        BugDB.load(BugRule(id="KT-0831",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Boolean版）（Array<Boolean>）",trigger="val x=y as Array<Boolean><Boolean>",detection="擦除后强转不安全 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0479）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0832",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0028）",fix="in T"))
-        BugDB.load(BugRule(id="KT-0833",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0029）",fix="inline+reified"))
-        BugDB.load(BugRule(id="KT-0834",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0030）",fix="<T:HasMethod>"))
-        BugDB.load(BugRule(id="KT-0835",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0031）",fix="重命名"))
+            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0497）",fix="直接reified"))
+        BugDB.load(BugRule(id="KT-0833",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0024）",fix="捕获具体异常类型"))
+        BugDB.load(BugRule(id="KT-0834",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（MutableList<Double>）",trigger="if(x is MutableList<Double><MutableMutableList<Double><Double>>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0025）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0835",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Boolean）",trigger="val x=y as Boolean<Boolean>",detection="擦除后强转不安全 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0026）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0836",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0032）",fix="指定具体类型参数"))
+            title="星投影写操作（Int?）",trigger="val x:MutableInt?<*>;x.add(1)",detection="*只读 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0027）",fix="声明具体类型"))
         BugDB.load(BugRule(id="KT-0837",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0033）",fix="指定具体类型参数"))
+            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0028）",fix="in T"))
         BugDB.load(BugRule(id="KT-0838",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0034）",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0839",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0152）",fix="List代替Array"))
-        BugDB.load(BugRule(id="KT-0840",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0153）",fix="reified+inline"))
+            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0029）",fix="inline+reified"))
+        BugDB.load(BugRule(id="KT-0839",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0030）",fix="<T:HasMethod>"))
+        BugDB.load(BugRule(id="KT-0840",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0841",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0154）",fix="显式标注泛型参数"))
+            title="星投影操作List<S>（Long）",trigger="val x:Long<S>*=...;x.add(...)",detection="星投影只读 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0032）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0842",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束递归（String）",trigger="fun <T:Comparable<T>> sort(list:String<T>)",detection="递归约束 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0155）",fix="保持不变或where"))
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0033）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0843",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0156）",fix="具体化子类型"))
-        BugDB.load(BugRule(id="KT-0844",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数通配符滥用（Boolean?）",trigger="fun <T> f(list:Boolean?<*>)",detection="T未使用 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
-        BugDB.load(BugRule(id="KT-0845",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型别名冲突（Sequence<Long>）",trigger="typealias S<T>=Sequence<Long><T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0158）",fix="重命名"))
-        BugDB.load(BugRule(id="KT-0846",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Char）",trigger="class C:A<Char>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0159）",fix="不同接口"))
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0034）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0844",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0152）",fix="List代替Array"))
+        BugDB.load(BugRule(id="KT-0845",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0153）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0846",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0154）",fix="显式标注泛型参数"))
         BugDB.load(BugRule(id="KT-0847",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0160）",fix="f(*arrayOf)"))
+            title="泛型约束递归（String）",trigger="fun <T:Comparable<T>> sort(list:String<T>)",detection="递归约束 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0155）",fix="保持不变或where"))
         BugDB.load(BugRule(id="KT-0848",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0161）",fix="显式类型"))
-        BugDB.load(BugRule(id="KT-0849",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0269）",fix="加where约束打断"))
-        BugDB.load(BugRule(id="KT-0850",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
+            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0156）",fix="具体化子类型"))
+        BugDB.load(BugRule(id="KT-0849",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数通配符滥用（Boolean?）",trigger="fun <T> f(list:Boolean?<*>)",detection="T未使用 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
+        BugDB.load(BugRule(id="KT-0850",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型别名冲突（Sequence<Long>）",trigger="typealias S<T>=Sequence<Long><T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0158）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0851",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int版）（MutableList<Double>）",trigger="class C:A<MutableMutableList<Double><Double>>,A<MutableMutableList<Double><Double>>",detection="JVM擦除冲突 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0418）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0852",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Boolean）",trigger="class C:A<Long>,A<Boolean>",detection="JVM擦除冲突 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0419）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0853",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Double版）（Int?）",trigger="class C:A<Double>,A<Int?>",detection="JVM擦除冲突 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0420）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0854",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Boolean版）（Map<String,Int>）",trigger="class C:A<Boolean>,A<Map<String,Int>>",detection="JVM擦除冲突 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0421）",fix="不同接口"))
+            title="泛型接口多继承歧义（Char）",trigger="class C:A<Char>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0159）",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0852",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0160）",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0853",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0161）",fix="显式类型"))
+        BugDB.load(BugRule(id="KT-0854",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0269）",fix="加where约束打断"))
         BugDB.load(BugRule(id="KT-0855",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Double）",trigger="class C:A<Double>,A<Long>",detection="JVM擦除冲突 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0422）",fix="不同接口"))
+            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
         BugDB.load(BugRule(id="KT-0856",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Int版）（String?）",trigger="if(x is String?<String?>){}",detection="擦除后类型丢失 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0429）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Int版）（MutableList<Double>）",trigger="class C:A<MutableMutableList<Double><Double>>,A<MutableMutableList<Double><Double>>",detection="JVM擦除冲突 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0429）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0857",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long版）（Set<Int>）",trigger="if(x is Set<Int><Long>){}",detection="擦除后类型丢失 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0430）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Long版）（Boolean）",trigger="class C:A<Long>,A<Boolean>",detection="JVM擦除冲突 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0430）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0858",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Double版）（Long）",trigger="if(x is Long<Double>){}",detection="擦除后类型丢失 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0431）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Double版）（Int?）",trigger="class C:A<Double>,A<Int?>",detection="JVM擦除冲突 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0431）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0859",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Boolean版）（Any）",trigger="if(x is Any<Boolean>){}",detection="擦除后类型丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0432）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Boolean版）（Map<String,Int>）",trigger="class C:A<Boolean>,A<Map<String,Int>>",detection="JVM擦除冲突 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0432）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0860",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Int版）（List<String>）",trigger="val x=y as List<String><List<String><String>>",detection="擦除后强转不安全 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0465）",fix="显式检查元素类型"))
+            title="泛型接口多继承歧义（Long版）（Double）",trigger="class C:A<Double>,A<Long>",detection="JVM擦除冲突 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0433）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0861",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Long版）（Int）",trigger="val x=y as Int<Long>",detection="擦除后强转不安全 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0466）",fix="显式检查元素类型"))
+            title="泛型+is检查（Int版）（String?）",trigger="if(x is String?<String?>){}",detection="擦除后类型丢失 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0440）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0862",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Double版）（Short）",trigger="val x=y as Short<Double>",detection="擦除后强转不安全 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0467）",fix="显式检查元素类型"))
+            title="泛型+is检查（Long版）（Set<Int>）",trigger="if(x is Set<Int><Long>){}",detection="擦除后类型丢失 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0441）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0863",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Boolean版）（Any?）",trigger="val x=y as Any?<Boolean>",detection="擦除后强转不安全 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0468）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0864",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0486）",fix="直接reified"))
+            title="泛型+is检查（Double版）（Long）",trigger="if(x is Long<Double>){}",detection="擦除后类型丢失 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0442）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0864",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Boolean版）（Any）",trigger="if(x is Any<Boolean>){}",detection="擦除后类型丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0443）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0865",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0024）",fix="捕获具体异常类型"))
+            title="unchecked cast警告（Int版）（List<String>）",trigger="val x=y as List<String><List<String><String>>",detection="擦除后强转不安全 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0476）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0866",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Boolean?）",trigger="if(x is Boolean?<Boolean?>){}",detection="擦除后类型丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0025）",fix="reified+inline"))
+            title="unchecked cast警告（Long版）（Int）",trigger="val x=y as Int<Long>",detection="擦除后强转不安全 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0477）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0867",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Sequence<Long>）",trigger="val x=y as Sequence<Long><Sequence<Long>>",detection="擦除后强转不安全 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0026）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0868",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影写操作（Char）",trigger="val x:MutableChar<*>;x.add(1)",detection="*只读 — Char类型字符编码边界,正则匹配组越界（参见 KT-0027）",fix="声明具体类型"))
+            title="unchecked cast警告（Double版）（Short）",trigger="val x=y as Short<Double>",detection="擦除后强转不安全 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0478）",fix="显式检查元素类型"))
+        BugDB.load(BugRule(id="KT-0868",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Boolean版）（Any?）",trigger="val x=y as Any?<Boolean>",detection="擦除后强转不安全 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0479）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0869",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0028）",fix="in T"))
-        BugDB.load(BugRule(id="KT-0870",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0029）",fix="inline+reified"))
-        BugDB.load(BugRule(id="KT-0871",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0030）",fix="<T:HasMethod>"))
-        BugDB.load(BugRule(id="KT-0872",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0031）",fix="重命名"))
+            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0497）",fix="直接reified"))
+        BugDB.load(BugRule(id="KT-0870",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0024）",fix="捕获具体异常类型"))
+        BugDB.load(BugRule(id="KT-0871",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Boolean?）",trigger="if(x is Boolean?<Boolean?>){}",detection="擦除后类型丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0025）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0872",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Sequence<Long>）",trigger="val x=y as Sequence<Long><Sequence<Long>>",detection="擦除后强转不安全 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0026）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0873",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0032）",fix="指定具体类型参数"))
+            title="星投影写操作（Char）",trigger="val x:MutableChar<*>;x.add(1)",detection="*只读 — Char类型字符编码边界,正则匹配组越界（参见 KT-0027）",fix="声明具体类型"))
         BugDB.load(BugRule(id="KT-0874",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0033）",fix="指定具体类型参数"))
+            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0028）",fix="in T"))
         BugDB.load(BugRule(id="KT-0875",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0034）",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0876",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0152）",fix="List代替Array"))
-        BugDB.load(BugRule(id="KT-0877",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0153）",fix="reified+inline"))
+            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0029）",fix="inline+reified"))
+        BugDB.load(BugRule(id="KT-0876",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0030）",fix="<T:HasMethod>"))
+        BugDB.load(BugRule(id="KT-0877",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0878",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0154）",fix="显式标注泛型参数"))
+            title="星投影操作List<S>（MutableList<Double>）",trigger="val x:MutableList<Double><S>*=...;x.add(...)",detection="星投影只读 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0032）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0879",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束递归（Set<Int>）",trigger="fun <T:Comparable<T>> sort(list:Set<Int><T>)",detection="递归约束 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0155）",fix="保持不变或where"))
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0033）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0880",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0156）",fix="具体化子类型"))
-        BugDB.load(BugRule(id="KT-0881",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数通配符滥用（Any）",trigger="fun <T> f(list:Any<*>)",detection="T未使用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
-        BugDB.load(BugRule(id="KT-0882",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型别名冲突（List<String>）",trigger="typealias S<T>=List<String><T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0158）",fix="重命名"))
-        BugDB.load(BugRule(id="KT-0883",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int）",trigger="class C:A<Int>,A<Int>",detection="JVM擦除冲突 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0159）",fix="不同接口"))
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0034）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0881",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0152）",fix="List代替Array"))
+        BugDB.load(BugRule(id="KT-0882",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0153）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0883",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0154）",fix="显式标注泛型参数"))
         BugDB.load(BugRule(id="KT-0884",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0160）",fix="f(*arrayOf)"))
+            title="泛型约束递归（Set<Int>）",trigger="fun <T:Comparable<T>> sort(list:Set<Int><T>)",detection="递归约束 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0155）",fix="保持不变或where"))
         BugDB.load(BugRule(id="KT-0885",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0161）",fix="显式类型"))
-        BugDB.load(BugRule(id="KT-0886",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0269）",fix="加where约束打断"))
-        BugDB.load(BugRule(id="KT-0887",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
+            title="泛型+密封类when",trigger="when(sealed){is Wrapper<*>->...}",detection="擦除后分支不可达 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0156）",fix="具体化子类型"))
+        BugDB.load(BugRule(id="KT-0886",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数通配符滥用（Any）",trigger="fun <T> f(list:Any<*>)",detection="T未使用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0157）",fix="fun f(list:List<*>)直接"))
+        BugDB.load(BugRule(id="KT-0887",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型别名冲突（List<String>）",trigger="typealias S<T>=List<String><T>;fun <T> f(s:S<T>)",detection="与泛型参数T混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0158）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0888",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Int版）（Boolean?）",trigger="class C:A<Boolean?>,A<Boolean?>",detection="JVM擦除冲突 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0418）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0889",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Sequence<Long>）",trigger="class C:A<Long>,A<Sequence<Long>>",detection="JVM擦除冲突 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0419）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0890",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Double版）（Char）",trigger="class C:A<Double>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0420）",fix="不同接口"))
-        BugDB.load(BugRule(id="KT-0891",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Boolean版）（Double?）",trigger="class C:A<Boolean>,A<Double?>",detection="JVM擦除冲突 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0421）",fix="不同接口"))
+            title="泛型接口多继承歧义（Int）",trigger="class C:A<Int>,A<Int>",detection="JVM擦除冲突 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0159）",fix="不同接口"))
+        BugDB.load(BugRule(id="KT-0889",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型vararg传递",trigger="fun <T> f(vararg t:T);f(arrayOf(1))",detection="vararg+泛型 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0160）",fix="f(*arrayOf)"))
+        BugDB.load(BugRule(id="KT-0890",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型委托属性类型丢失",trigger="val x by Delegates.notNull<T>()",detection="getValue签名擦除 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0161）",fix="显式类型"))
+        BugDB.load(BugRule(id="KT-0891",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型递归约束让编译器无限展开",trigger="fun <T:T> f(){}",detection="自约束无限循环 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0269）",fix="加where约束打断"))
         BugDB.load(BugRule(id="KT-0892",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型接口多继承歧义（Long版）（Array<Boolean>）",trigger="class C:A<Array<Boolean>>,A<Long>",detection="JVM擦除冲突 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0422）",fix="不同接口"))
+            title="reified+suspend=限制叠加",trigger="suspend inline fun <reified T> api():T",detection="reified必须inline但suspend inline有限制 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0297）",fix="拆分为非suspend inline+suspend调用"))
         BugDB.load(BugRule(id="KT-0893",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Int版）（Float）",trigger="if(x is Float<Float>){}",detection="擦除后类型丢失 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0429）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Int版）（Boolean?）",trigger="class C:A<Boolean?>,A<Boolean?>",detection="JVM擦除冲突 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0429）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0894",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Long版）（Long?）",trigger="if(x is Long?<Long>){}",detection="擦除后类型丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0430）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Long版）（Sequence<Long>）",trigger="class C:A<Long>,A<Sequence<Long>>",detection="JVM擦除冲突 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0430）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0895",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Double版）（MutableList<Double>）",trigger="if(x is MutableList<Double><Double>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0431）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Double版）（Char）",trigger="class C:A<Double>,A<Char>",detection="JVM擦除冲突 — Char类型字符编码边界,正则匹配组越界（参见 KT-0431）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0896",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Boolean版）（Boolean）",trigger="if(x is Boolean<Boolean>){}",detection="擦除后类型丢失 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0432）",fix="reified+inline"))
+            title="泛型接口多继承歧义（Boolean版）（Double?）",trigger="class C:A<Boolean>,A<Double?>",detection="JVM擦除冲突 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0432）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0897",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Int版）（Int?）",trigger="val x=y as Int?<Int?>",detection="擦除后强转不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0465）",fix="显式检查元素类型"))
+            title="泛型接口多继承歧义（Long版）（Array<Boolean>）",trigger="class C:A<Array<Boolean>>,A<Long>",detection="JVM擦除冲突 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0433）",fix="不同接口"))
         BugDB.load(BugRule(id="KT-0898",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Long版）（Map<String,Int>）",trigger="val x=y as Map<String,Int><Long>",detection="擦除后强转不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0466）",fix="显式检查元素类型"))
+            title="泛型+is检查（Int版）（Float）",trigger="if(x is Float<Float>){}",detection="擦除后类型丢失 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0440）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0899",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Double版）（Double）",trigger="val x=y as Double<Double>",detection="擦除后强转不安全 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0467）",fix="显式检查元素类型"))
+            title="泛型+is检查（Long版）（Long?）",trigger="if(x is Long?<Long>){}",detection="擦除后类型丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0441）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0900",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（Boolean版）（String?）",trigger="val x=y as String?<Boolean>",detection="擦除后强转不安全 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0468）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0901",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0486）",fix="直接reified"))
+            title="泛型+is检查（Double版）（MutableList<Double>）",trigger="if(x is MutableList<Double><Double>){}",detection="擦除后类型丢失 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0442）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0901",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Boolean版）（Boolean）",trigger="if(x is Boolean<Boolean>){}",detection="擦除后类型丢失 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0443）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-0902",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型异常捕获",trigger="catch(e:",detection="JVM擦除，不可捕获 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0024）",fix="捕获具体异常类型"))
+            title="unchecked cast警告（Int版）（Int?）",trigger="val x=y as Int?<Int?>",detection="擦除后强转不安全 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0476）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0903",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+is检查（Any）",trigger="if(x is Any<Any>){}",detection="擦除后类型丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0025）",fix="reified+inline"))
+            title="unchecked cast警告（Long版）（Map<String,Int>）",trigger="val x=y as Map<String,Int><Long>",detection="擦除后强转不安全 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0477）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0904",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="unchecked cast警告（List<String>）",trigger="val x=y as List<String><List<String><String>>",detection="擦除后强转不安全 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0026）",fix="显式检查元素类型"))
-        BugDB.load(BugRule(id="KT-0905",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影写操作（Int）",trigger="val x:MutableInt<*>;x.add(1)",detection="*只读 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0027）",fix="声明具体类型"))
+            title="unchecked cast警告（Double版）（Double）",trigger="val x=y as Double<Double>",detection="擦除后强转不安全 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0478）",fix="显式检查元素类型"))
+        BugDB.load(BugRule(id="KT-0905",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（Boolean版）（String?）",trigger="val x=y as String?<Boolean>",detection="擦除后强转不安全 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0479）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0906",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0028）",fix="in T"))
-        BugDB.load(BugRule(id="KT-0907",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0029）",fix="inline+reified"))
-        BugDB.load(BugRule(id="KT-0908",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0030）",fix="<T:HasMethod>"))
-        BugDB.load(BugRule(id="KT-0909",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
-            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0031）",fix="重命名"))
+            title="TypeReference匿名类在inline",trigger="inline fun <reified T> t(){object:TypeToken<T>(){}}",detection="内联泛型可获取 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0497）",fix="直接reified"))
+        BugDB.load(BugRule(id="KT-0907",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型异常捕获",trigger="catch(e:Exception){}",detection="JVM擦除，不可捕获 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0024）",fix="捕获具体异常类型"))
+        BugDB.load(BugRule(id="KT-0908",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+is检查（Any）",trigger="if(x is Any<Any>){}",detection="擦除后类型丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0025）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0909",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="unchecked cast警告（List<String>）",trigger="val x=y as List<String><List<String><String>>",detection="擦除后强转不安全 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0026）",fix="显式检查元素类型"))
         BugDB.load(BugRule(id="KT-0910",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作List<S>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0032）",fix="指定具体类型参数"))
+            title="星投影写操作（Int）",trigger="val x:MutableInt<*>;x.add(1)",detection="*只读 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0027）",fix="声明具体类型"))
         BugDB.load(BugRule(id="KT-0911",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Set<I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0033）",fix="指定具体类型参数"))
+            title="型变标记错误",trigger="interface P<out T>{fun f(t:T)}",detection="out位置不能消费 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0028）",fix="in T"))
         BugDB.load(BugRule(id="KT-0912",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="星投影操作Map<S,I>",trigger="val x:{g}*=...;x.add(...)",detection="星投影只读 — Char类型字符编码边界,正则匹配组越界（参见 KT-0034）",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0913",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0152）",fix="List代替Array"))
-        BugDB.load(BugRule(id="KT-0914",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
-            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0153）",fix="reified+inline"))
+            title="reified缺失",trigger="fun <T> f(){T::class}",detection="普通泛型无法获取class — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0029）",fix="inline+reified"))
+        BugDB.load(BugRule(id="KT-0913",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型约束遗漏",trigger="fun <T> f(t:T){t.method()}",detection="T无约束 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0030）",fix="<T:HasMethod>"))
+        BugDB.load(BugRule(id="KT-0914",category=BugCategory.GENERICS,severity=BugSeverity.MILD,
+            title="泛型参数命名冲突",trigger="fun <T> f(T:T){}",detection="类型与变量同名 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0031）",fix="重命名"))
         BugDB.load(BugRule(id="KT-0915",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
-            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0154）",fix="显式标注泛型参数"))
+            title="星投影操作List<S>（Boolean?）",trigger="val x:Boolean?<S>*=...;x.add(...)",detection="星投影只读 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0032）",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0916",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0033）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0917",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读 — Char类型字符编码边界,正则匹配组越界（参见 KT-0034）",fix="指定具体类型参数"))
+        BugDB.load(BugRule(id="KT-0918",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型型变数组",trigger="val arr=Array<T>(10){;val a:Array<Any>=arr",detection="数组协变不安全 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0152）",fix="List代替Array"))
+        BugDB.load(BugRule(id="KT-0919",category=BugCategory.GENERICS,severity=BugSeverity.SEVERE,
+            title="泛型+伴生对象类型",trigger="fun <T> f(){T.Companion}",detection="擦除后无伴生 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0153）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-0920",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型函数引用歧义",trigger="val ref: (T)->R=::genericFun",detection="类型推断失败 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0154）",fix="显式标注泛型参数"))
+        BugDB.load(BugRule(id="KT-0921",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
             title="泛型约束递归（Long?）",trigger="fun <T:Comparable<T>> sort(list:Long?<T>)",detection="递归约束 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0155）",fix="保持不变或where"))
-        BugDB.load(BugRule(id="KT-0917",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0922",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
-        BugDB.load(BugRule(id="KT-0918",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0923",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-0919",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0924",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-0920",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0925",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-0921",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0926",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — Char类型字符编码边界,正则匹配组越界（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-0922",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0927",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-0923",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0928",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-0924",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0929",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-0925",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0930",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-0926",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-0927",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-0928",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-0929",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-0930",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-0931",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-0932",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-0933",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-0934",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-0935",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-0936",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-0932",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0937",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-0933",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-0934",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-0935",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-0936",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-0937",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Short）",trigger="val c=Channel<Short>();launch{c.consumeEach{}}",detection="生产者无close — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0938",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-0939",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-0940",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-0941",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-0940",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-0941",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-0942",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（Short）",trigger="val c=Channel<Short>();launch{c.consumeEach{}}",detection="生产者无close — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0943",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Char类型字符编码边界,正则匹配组越界（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-0944",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-0945",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-0946",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-0947",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long?）",trigger="val c=Channel<Long?>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-0944",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-0945",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-0946",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-0947",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-0948",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Char类型字符编码边界,正则匹配组越界（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-0949",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-0950",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-0950",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-0951",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-0952",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（Long?）",trigger="val c=Channel<Long?>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-0953",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-0954",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-0954",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0955",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0956",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-0957",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-0958",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-0959",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-0960",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-0961",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-0957",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0962",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-0958",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0963",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-0959",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0964",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-0960",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0965",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-0961",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0966",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-0962",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0967",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-0963",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0968",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-0964",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-0965",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Char类型字符编码边界,正则匹配组越界（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-0966",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-0967",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-0968",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-0969",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-0970",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Char类型字符编码边界,正则匹配组越界（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-0971",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-0972",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-0973",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-0974",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-0970",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-0975",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-0971",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-0972",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-0973",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-0974",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-0975",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（String?）",trigger="val c=Channel<String?>();launch{c.consumeEach{}}",detection="生产者无close — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0976",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-0977",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-0978",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-0979",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-0978",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-0979",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-0980",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（String?）",trigger="val c=Channel<String?>();launch{c.consumeEach{}}",detection="生产者无close — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0981",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-0982",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-0983",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-0984",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-0985",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Boolean?）",trigger="val c=Channel<Boolean?>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-0982",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-0983",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-0984",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-0985",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-0986",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-0987",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Char类型字符编码边界,正则匹配组越界（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-0988",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-0988",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-0989",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-0990",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（Boolean?）",trigger="val c=Channel<Boolean?>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-0991",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-0992",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-0992",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Char类型字符编码边界,正则匹配组越界（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0993",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-0994",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-0995",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-0996",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-0997",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-0998",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-0999",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-0995",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1000",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-0996",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-0997",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-0998",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-0999",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-1000",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0042）",fix="确保所有async都被await"))
     }
 
     private fun registerChunk3() {
-        BugDB.load(BugRule(id="KT-1001",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1001",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0038）",fix="delay(1000)"))
+        BugDB.load(BugRule(id="KT-1002",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0039）",fix="while(isActive)"))
+        BugDB.load(BugRule(id="KT-1003",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
+        BugDB.load(BugRule(id="KT-1004",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0041）",fix="用Default或直接执行"))
+        BugDB.load(BugRule(id="KT-1005",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0042）",fix="确保所有async都被await"))
+        BugDB.load(BugRule(id="KT-1006",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-1002",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-1003",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-1004",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-1005",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-1006",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-1007",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-1008",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-1009",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-1010",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-1011",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-1012",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-1008",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1013",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-1009",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Char类型字符编码边界,正则匹配组越界（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-1010",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-1011",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-1012",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-1013",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long?）",trigger="val c=Channel<Long?>();launch{c.consumeEach{}}",detection="生产者无close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1014",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Char类型字符编码边界,正则匹配组越界（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-1015",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-1016",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-1017",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-1016",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-1017",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-1018",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（Long?）",trigger="val c=Channel<Long?>();launch{c.consumeEach{}}",detection="生产者无close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1019",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-1020",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-1021",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-1022",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-1023",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（List<String>）",trigger="val c=Channel<List<String><String>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-1020",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-1021",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-1022",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-1023",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-1024",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-1025",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1026",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-1026",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-1027",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-1028",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（List<String>）",trigger="val c=Channel<List<String><String>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-1029",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-1030",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1030",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1031",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Char类型字符编码边界,正则匹配组越界（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1032",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1033",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-1034",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-1035",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-1036",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Char类型字符编码边界,正则匹配组越界（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-1037",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-1033",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1038",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-1034",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1039",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-1035",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1040",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-1036",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1041",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-1037",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1042",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-1038",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1043",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-1039",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1044",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-1040",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-1041",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-1042",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-1043",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-1044",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-1045",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-1046",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-1047",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-1048",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-1049",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-1050",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-1046",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1051",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-1047",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-1048",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-1049",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-1050",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-1051",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Boolean?）",trigger="val c=Channel<Boolean?>();launch{c.consumeEach{}}",detection="生产者无close — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1052",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-1053",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Char类型字符编码边界,正则匹配组越界（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-1054",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-1055",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-1054",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-1055",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-1056",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（Boolean?）",trigger="val c=Channel<Boolean?>();launch{c.consumeEach{}}",detection="生产者无close — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1057",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-1058",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-1059",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-1060",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-1061",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Map<String,Int>）",trigger="val c=Channel<Map<String,Int>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-1058",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Char类型字符编码边界,正则匹配组越界（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-1059",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-1060",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-1061",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-1062",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-1063",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1064",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-1064",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-1065",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-1066",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（Map<String,Int>）",trigger="val c=Channel<Map<String,Int>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-1067",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-1068",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1068",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1069",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1070",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1071",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-1072",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-1073",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-1074",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-1075",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-1071",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1076",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-1072",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1077",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-1073",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1078",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-1074",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1079",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-1075",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1080",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Char类型字符编码边界,正则匹配组越界（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-1076",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1081",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-1077",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1082",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-1078",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-1079",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-1080",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-1081",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-1082",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-1083",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-1084",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-1085",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-1086",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-1087",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-1088",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-1084",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1089",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-1085",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-1086",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-1087",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-1088",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-1089",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（List<String>）",trigger="val c=Channel<List<String><String>>();launch{c.consumeEach{}}",detection="生产者无close — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1090",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-1091",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-1092",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-1093",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-1092",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-1093",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-1094",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（List<String>）",trigger="val c=Channel<List<String><String>>();launch{c.consumeEach{}}",detection="生产者无close — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1095",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-1096",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-1097",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Char类型字符编码边界,正则匹配组越界（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-1098",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-1099",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Array<Boolean>）",trigger="val c=Channel<Array<Boolean>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-1096",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-1097",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-1098",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-1099",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-1100",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-1101",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1102",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-1102",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Char类型字符编码边界,正则匹配组越界（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-1103",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-1104",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（Array<Boolean>）",trigger="val c=Channel<Array<Boolean>>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-1105",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-1106",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1106",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1107",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1108",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1109",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-1110",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-1111",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-1112",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-1113",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-1109",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1114",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-1110",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1115",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-1111",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1116",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-1112",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1117",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-1113",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1118",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-1114",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1119",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-1115",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1120",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-1116",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-1117",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-1118",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-1119",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Char类型字符编码边界,正则匹配组越界（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-1120",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-1121",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-1122",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-1123",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-1124",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Char类型字符编码边界,正则匹配组越界（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-1125",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-1126",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-1122",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1127",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-1123",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-1124",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-1125",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-1126",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-1127",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Map<String,Int>）",trigger="val c=Channel<Map<String,Int>>();launch{c.consumeEach{}}",detection="生产者无close — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1128",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-1129",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-1130",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-1131",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-1130",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-1131",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-1132",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（Map<String,Int>）",trigger="val c=Channel<Map<String,Int>>();launch{c.consumeEach{}}",detection="生产者无close — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1133",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-1134",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-1135",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-1136",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-1137",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（String）",trigger="val c=Channel<String>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-1134",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-1135",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-1136",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-1137",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-1138",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-1139",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1140",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0455）",fix="c.close或produceIn"))
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-1140",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0307）",fix="在retry外层stateIn"))
         BugDB.load(BugRule(id="KT-1141",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Char类型字符编码边界,正则匹配组越界（参见 KT-0456）",fix="c.close或produceIn"))
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
         BugDB.load(BugRule(id="KT-1142",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0473）",fix="withTimeout"))
+            title="channel被当成广播但只发了一条（String）",trigger="val c=Channel<String>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
         BugDB.load(BugRule(id="KT-1143",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0474）",fix="catch在collect之前"))
-        BugDB.load(BugRule(id="KT-1144",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0489）",fix="distinctUntilChanged或检查值"))
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1144",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0465）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1145",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0466）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1146",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Float版）",trigger="val c=Channel<Float>();launch{c.consumeEach{}}",detection="生产者无close — Char类型字符编码边界,正则匹配组越界（参见 KT-0467）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1147",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="suspend函数无超时",trigger="suspend fun api(){httpClient.get(...)}",detection="无超时挂死 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0484）",fix="withTimeout"))
+        BugDB.load(BugRule(id="KT-1148",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="Flow未捕获异常",trigger="flow{emit(risky())}.catch{e->...}",detection="catch位置错误 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0485）",fix="catch在collect之前"))
+        BugDB.load(BugRule(id="KT-1149",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="StateFlow初始值导致重复emit",trigger="val s=MutableStateFlow(init);s.value=init",detection="同值仍触发collect — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0500）",fix="distinctUntilChanged或检查值"))
+        BugDB.load(BugRule(id="KT-1150",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0035）",fix="lifecycleScope或viewModelScope"))
+        BugDB.load(BugRule(id="KT-1151",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0036）",fix="async+await或CoroutineExceptionHandler"))
-        BugDB.load(BugRule(id="KT-1147",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1152",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="runBlocking在UI线程",trigger="runBlocking{delay(5000)}",detection="阻塞主线程 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0037）",fix="lifecycleScope.launch"))
-        BugDB.load(BugRule(id="KT-1148",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1153",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="suspend中调用阻塞方法",trigger="suspend fun f(){Thread.sleep(1000)}",detection="阻塞协程线程 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0038）",fix="delay(1000)"))
-        BugDB.load(BugRule(id="KT-1149",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1154",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="协程取消不响应",trigger="launch{while(true){work()}}",detection="不检查isActive — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0039）",fix="while(isActive)"))
-        BugDB.load(BugRule(id="KT-1150",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1155",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="缺少CoroutineExceptionHandler",trigger="launch{throw E()}",detection="未处理异常 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0040）",fix="val handler=CoroutineExceptionHandler{"))
-        BugDB.load(BugRule(id="KT-1151",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1156",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="withContext滥用",trigger="withContext(Dispatchers.IO){lightOp()}",detection="轻量操作用IO调度器 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0041）",fix="用Default或直接执行"))
-        BugDB.load(BugRule(id="KT-1152",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1157",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="async忘记await",trigger="val d=async{calc()};d.await()",detection="不await结果丢失 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0042）",fix="确保所有async都被await"))
-        BugDB.load(BugRule(id="KT-1153",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1158",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="coroutineScope与supervisorScope混淆",trigger="coroutineScope{launch{throw E()};launch{}",detection="子失败取消兄弟 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0043）",fix="supervisorScope"))
-        BugDB.load(BugRule(id="KT-1154",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0044）",fix="buffer或conflate"))
-        BugDB.load(BugRule(id="KT-1155",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0045）",fix="直接赋值"))
-        BugDB.load(BugRule(id="KT-1156",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
-        BugDB.load(BugRule(id="KT-1157",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0162）",fix="coroutineScope"))
-        BugDB.load(BugRule(id="KT-1158",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0163）",fix="保留原始context"))
         BugDB.load(BugRule(id="KT-1159",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow收集无背压",trigger="flow{emit(...)}.collect{slow()}",detection="生产快于消费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0044）",fix="buffer或conflate"))
+        BugDB.load(BugRule(id="KT-1160",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的async",trigger="val d=async{val x=y;x}",detection="简单赋值不需要async — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0045）",fix="直接赋值"))
+        BugDB.load(BugRule(id="KT-1161",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="Dispatchers.Main硬编码",trigger="withContext(Dispatchers.Main){",detection="测试环境无Main — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0046）",fix="依赖注入dispatcher"))
+        BugDB.load(BugRule(id="KT-1162",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="子协程取消未传播",trigger="supervisorScope{launch{heavy()}}",detection="scope取消时子不取消 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0162）",fix="coroutineScope"))
+        BugDB.load(BugRule(id="KT-1163",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="coroutineContext丢失",trigger="withContext(empty){delay(1)}",detection="无Job — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0163）",fix="保留原始context"))
+        BugDB.load(BugRule(id="KT-1164",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="select未处理onAwait",trigger="select{ch.onReceive{}",detection="未处理其他case — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0164）",fix="加onAwait"))
-        BugDB.load(BugRule(id="KT-1160",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1165",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
             title="callbackFlow未awaitClose",trigger="callbackFlow{register(cb);awaitClose{unregister()}}",detection="泄漏 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0165）",fix="加awaitClose"))
-        BugDB.load(BugRule(id="KT-1161",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0166）",fix="MutableStateFlow.update{}"))
-        BugDB.load(BugRule(id="KT-1162",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0167）",fix="return@launch"))
-        BugDB.load(BugRule(id="KT-1163",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Char类型字符编码边界,正则匹配组越界（参见 KT-0168）",fix="直接用withContext"))
-        BugDB.load(BugRule(id="KT-1164",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
-            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0169）",fix="只保留最后一个"))
-        BugDB.load(BugRule(id="KT-1165",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Array<Boolean>）",trigger="val c=Channel<Array<Boolean>>();launch{c.consumeEach{}}",detection="生产者无close — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1166",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0171）",fix="显式指定调度器"))
+            title="StateFlow.value直接修改",trigger="state.value=state.value.copy(x=1)",detection="非原子操作 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0166）",fix="MutableStateFlow.update{}"))
         BugDB.load(BugRule(id="KT-1167",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0260）",fix="放宽condition或加保底"))
-        BugDB.load(BugRule(id="KT-1168",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0278）",fix="用yield()"))
-        BugDB.load(BugRule(id="KT-1169",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+            title="launch内return@launch遗漏",trigger="launch{if(x)return}",detection="非局部return — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0167）",fix="return@launch"))
+        BugDB.load(BugRule(id="KT-1168",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="async+await替代withContext",trigger="val x=async(IO){work()}.await()",detection="等效withContext(IO) — Char类型字符编码边界,正则匹配组越界（参见 KT-0168）",fix="直接用withContext"))
+        BugDB.load(BugRule(id="KT-1169",category=BugCategory.COROUTINES,severity=BugSeverity.MILD,
+            title="不必要的flowOn",trigger="flow{emit(1)}.flowOn(IO).flowOn(Default)",detection="多flowOn无效 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0169）",fix="只保留最后一个"))
         BugDB.load(BugRule(id="KT-1170",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0280）",fix="withLock或可重入锁"))
+            title="Channel未关闭导致协程泄漏（Array<Boolean>）",trigger="val c=Channel<Array<Boolean>>();launch{c.consumeEach{}}",detection="生产者无close — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0170）",fix="c.close或produceIn"))
         BugDB.load(BugRule(id="KT-1171",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
-        BugDB.load(BugRule(id="KT-1172",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
-        BugDB.load(BugRule(id="KT-1173",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0307）",fix="在retry外层stateIn"))
-        BugDB.load(BugRule(id="KT-1174",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
-        BugDB.load(BugRule(id="KT-1175",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+            title="Dispatchers.Unconfined误用",trigger="launch(Unconfined){updateUI()}",detection="线程不确定 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0171）",fix="显式指定调度器"))
+        BugDB.load(BugRule(id="KT-1172",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="十一种子进程职业全部失业",trigger="所有@ProcessBody都被Condition拦截",detection="注解条件过严 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0260）",fix="放宽condition或加保底"))
+        BugDB.load(BugRule(id="KT-1173",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="delay(0)比delay(1)更慢",trigger="delay(0);delay(0);delay(0)",detection="连续0延迟重排 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0278）",fix="用yield()"))
+        BugDB.load(BugRule(id="KT-1174",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="所有协程都在等一个永远不会set的CompletableDeferred",trigger="val d=CompletableDeferred<T>();launch{...d.await()};忘记d.complete()",detection="忘记complete — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0279）",fix="加超时withTimeout"))
+        BugDB.load(BugRule(id="KT-1175",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Mutex.lock了两次同一个协程",trigger="mutex.lock();mutex.lock()",detection="不可重入Mutex死锁 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0280）",fix="withLock或可重入锁"))
         BugDB.load(BugRule(id="KT-1176",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
-            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0364）",fix="BroadcastChannel或SharedFlow"))
+            title="flow.collect在collect后又emit了一条",trigger="flow{emit(1);awaitClose{emit(2)}}",detection="awaitClose中的emit可能丢失 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0292）",fix="onCompletion"))
         BugDB.load(BugRule(id="KT-1177",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0454）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1178",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
-            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0455）",fix="c.close或produceIn"))
-        BugDB.load(BugRule(id="KT-1179",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="launch+反射+私有方法=不可预测崩溃",trigger="launch{val m=cls.getDeclaredMethod(\\\"secret\\\");m.isAccessible=true;m.invoke(obj)}",detection="协程内反射破坏封装 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0296）",fix="提供公开suspend接口"))
+        BugDB.load(BugRule(id="KT-1178",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="flow+retry+stateIn=重试时状态丢失",trigger="flow{apiCall()}.retry(3).stateIn(scope)",detection="retry重建flow，stateIn收到新初始值 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0307）",fix="在retry外层stateIn"))
+        BugDB.load(BugRule(id="KT-1179",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Flow默认串行但collect看起来像并行",trigger="flow{emit(a);emit(b)}.collect{}",detection="emit挂起→collect处理→才继续emit — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0314）",fix="要并行用channelFlow或flatMapMerge"))
+        BugDB.load(BugRule(id="KT-1180",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="channel被当成广播但只发了一条（Long）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0315）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1181",category=BugCategory.COROUTINES,severity=BugSeverity.MODERATE,
+            title="channel被当成广播但只发了一条（Long版）",trigger="val c=Channel<Long>();launch{c.send(1)};launch{println(c.receive())};launch{println(c.receive())}",detection="Channel单消费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0368）",fix="BroadcastChannel或SharedFlow"))
+        BugDB.load(BugRule(id="KT-1182",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Long版）",trigger="val c=Channel<Long>();launch{c.consumeEach{}}",detection="生产者无close — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0465）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1183",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+            title="Channel未关闭导致协程泄漏（Double版）",trigger="val c=Channel<Double>();launch{c.consumeEach{}}",detection="生产者无close — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0466）",fix="c.close或produceIn"))
+        BugDB.load(BugRule(id="KT-1184",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
-        BugDB.load(BugRule(id="KT-1180",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1185",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0048）",fix="先收集再操作"))
-        BugDB.load(BugRule(id="KT-1181",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1186",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="MutableList暴露（Boolean?）",trigger="fun getBoolean?()=mutableBoolean?",detection="外部可修改内部状态 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
-        BugDB.load(BugRule(id="KT-1182",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1187",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
             title="first()无元素（Sequence<Long>）",trigger="emptySequence<Long><Sequence<Long>>().first()",detection="NoSuchElementException — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0050）",fix="firstOrNull"))
-        BugDB.load(BugRule(id="KT-1183",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Char类型字符编码边界,正则匹配组越界（参见 KT-0051）",fix="first()或singleOrNull"))
-        BugDB.load(BugRule(id="KT-1184",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1185",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1186",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（Float）",trigger="alreadyFloat.toFloat()",detection="重复包装 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1187",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1188",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Char类型字符编码边界,正则匹配组越界（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1189",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1190",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1191",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1192",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Double）",trigger="val sub=mutableDouble.subDouble(0,5);mutableDouble.clear()",detection="subList视图失效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1191",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（Float）",trigger="alreadyFloat.toFloat()",detection="重复包装 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1192",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1193",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1194",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1195",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Long）",trigger="list.toSet().toLong()",detection="去重后转回 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1196",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Any）",trigger="emptyAny<Any>().reduce{a,b->a+b}",detection="UnsupportedOperation — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1197",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（List<String>）",trigger="val v=Vector<List<String><String>>();v.add(1)",detection="synchronized遗留 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1195",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1196",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1197",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Double）",trigger="val sub=mutableDouble.subDouble(0,5);mutableDouble.clear()",detection="subList视图失效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1198",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1199",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1200",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Any?）",trigger="emptyAny?<Long>().first()",detection="NoSuchElementException — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1200",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Long）",trigger="list.toSet().toLong()",detection="去重后转回 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1201",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Any）",trigger="emptyAny<Any>().reduce{a,b->a+b}",detection="UnsupportedOperation — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1202",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1203",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1204",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1205",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Char类型字符编码边界,正则匹配组越界（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1206",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（List<String>）",trigger="val v=Vector<List<String><String>>();v.add(1)",detection="synchronized遗留 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1203",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1204",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1205",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Any?）",trigger="emptyAny?<Long>().first()",detection="NoSuchElementException — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1206",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1207",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1208",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0048）",fix="先收集再操作"))
-        BugDB.load(BugRule(id="KT-1209",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（MutableList<Double>）",trigger="emptyMutableList<Double><MutableMutableList<Double><Double>>().first()",detection="NoSuchElementException — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0050）",fix="firstOrNull"))
-        BugDB.load(BugRule(id="KT-1210",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0051）",fix="first()或singleOrNull"))
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1209",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1210",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Char类型字符编码边界,正则匹配组越界（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
         BugDB.load(BugRule(id="KT-1211",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1212",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1213",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（Double）",trigger="alreadyDouble.toDouble()",detection="重复包装 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1214",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0055）",fix="用forEach"))
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1212",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1213",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0048）",fix="先收集再操作"))
+        BugDB.load(BugRule(id="KT-1214",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（MutableList<Double>）",trigger="emptyMutableList<Double><MutableMutableList<Double><Double>>().first()",detection="NoSuchElementException — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0050）",fix="firstOrNull"))
         BugDB.load(BugRule(id="KT-1215",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1216",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1217",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1218",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1219",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Int）",trigger="val sub=mutableInt.subInt(0,5);mutableInt.clear()",detection="subList视图失效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1218",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（Double）",trigger="alreadyDouble.toDouble()",detection="重复包装 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1219",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1220",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1221",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1222",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（String）",trigger="list.toSet().toString()",detection="去重后转回 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1223",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Byte）",trigger="emptyByte<Byte>().reduce{a,b->a+b}",detection="UnsupportedOperation — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1224",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Boolean?）",trigger="val v=Vector<Boolean?>();v.add(1)",detection="synchronized遗留 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1222",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1223",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1224",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Int）",trigger="val sub=mutableInt.subInt(0,5);mutableInt.clear()",detection="subList视图失效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1225",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1226",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Char类型字符编码边界,正则匹配组越界（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1227",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Double?）",trigger="emptyDouble?<Long>().first()",detection="NoSuchElementException — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1227",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（String）",trigger="list.toSet().toString()",detection="去重后转回 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1228",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Byte）",trigger="emptyByte<Byte>().reduce{a,b->a+b}",detection="UnsupportedOperation — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1229",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1230",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1231",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1232",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1233",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（Boolean?）",trigger="val v=Vector<Boolean?>();v.add(1)",detection="synchronized遗留 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1230",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1231",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Char类型字符编码边界,正则匹配组越界（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1232",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Double?）",trigger="emptyDouble?<Long>().first()",detection="NoSuchElementException — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1233",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1234",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1235",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0048）",fix="先收集再操作"))
-        BugDB.load(BugRule(id="KT-1236",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Set<Int>）",trigger="emptySet<Int><Set<Int>>().first()",detection="NoSuchElementException — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0050）",fix="firstOrNull"))
-        BugDB.load(BugRule(id="KT-1237",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0051）",fix="first()或singleOrNull"))
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1236",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1237",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
         BugDB.load(BugRule(id="KT-1238",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1239",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1240",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（Int）",trigger="alreadyInt.toInt()",detection="重复包装 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1241",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0055）",fix="用forEach"))
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1239",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1240",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0048）",fix="先收集再操作"))
+        BugDB.load(BugRule(id="KT-1241",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Set<Int>）",trigger="emptySet<Int><Set<Int>>().first()",detection="NoSuchElementException — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0050）",fix="firstOrNull"))
         BugDB.load(BugRule(id="KT-1242",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1243",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1244",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1245",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1246",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Sequence<Long>）",trigger="val sub=mutableSequence<Long>.subSequence<Long>(0,5);mutableSequence<Long>.clear()",detection="subList视图失效 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1245",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（Int）",trigger="alreadyInt.toInt()",detection="重复包装 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1246",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1247",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Char类型字符编码边界,正则匹配组越界（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1248",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1249",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Array<Boolean>）",trigger="list.toSet().toArray<Boolean>()",detection="去重后转回 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1250",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Float）",trigger="emptyFloat<Float>().reduce{a,b->a+b}",detection="UnsupportedOperation — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1251",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long?）",trigger="val v=Vector<Long?>();v.add(1)",detection="synchronized遗留 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1249",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1250",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1251",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Sequence<Long>）",trigger="val sub=mutableSequence<Long>.subSequence<Long>(0,5);mutableSequence<Long>.clear()",detection="subList视图失效 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1252",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Char类型字符编码边界,正则匹配组越界（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1253",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1254",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Int?）",trigger="emptyInt?<Long>().first()",detection="NoSuchElementException — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1254",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Array<Boolean>）",trigger="list.toSet().toArray<Boolean>()",detection="去重后转回 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1255",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Float）",trigger="emptyFloat<Float>().reduce{a,b->a+b}",detection="UnsupportedOperation — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1256",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1257",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1258",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1259",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1260",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（Long?）",trigger="val v=Vector<Long?>();v.add(1)",detection="synchronized遗留 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1257",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1258",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1259",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Int?）",trigger="emptyInt?<Long>().first()",detection="NoSuchElementException — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1260",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1261",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1262",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0048）",fix="先收集再操作"))
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1263",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Short）",trigger="fun getShort()=mutableShort",detection="外部可修改内部状态 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
-        BugDB.load(BugRule(id="KT-1264",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Any?）",trigger="emptyAny?<Any?>().first()",detection="NoSuchElementException — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0050）",fix="firstOrNull"))
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1264",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
         BugDB.load(BugRule(id="KT-1265",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0051）",fix="first()或singleOrNull"))
-        BugDB.load(BugRule(id="KT-1266",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1267",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1268",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（Sequence<Long>）",trigger="alreadySequence<Long>.toSequence<Long>()",detection="重复包装 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1269",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Char类型字符编码边界,正则匹配组越界（参见 KT-0055）",fix="用forEach"))
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1266",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1267",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0048）",fix="先收集再操作"))
+        BugDB.load(BugRule(id="KT-1268",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Short）",trigger="fun getShort()=mutableShort",detection="外部可修改内部状态 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
+        BugDB.load(BugRule(id="KT-1269",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Any?）",trigger="emptyAny?<Any?>().first()",detection="NoSuchElementException — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0050）",fix="firstOrNull"))
         BugDB.load(BugRule(id="KT-1270",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1271",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1272",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1273",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1274",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（MutableList<Double>）",trigger="val sub=mutableMutableList<Double>.subMutableList<Double>(0,5);mutableMutableList<Double>.clear()",detection="subList视图失效 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1273",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（Sequence<Long>）",trigger="alreadySequence<Long>.toSequence<Long>()",detection="重复包装 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1274",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Char类型字符编码边界,正则匹配组越界（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1275",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1276",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1277",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Map<String,Int>）",trigger="list.toSet().toMap<String,Int>()",detection="去重后转回 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1278",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Double）",trigger="emptyDouble<Double>().reduce{a,b->a+b}",detection="UnsupportedOperation — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1279",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（String?）",trigger="val v=Vector<String?>();v.add(1)",detection="synchronized遗留 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1277",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1278",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1279",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（MutableList<Double>）",trigger="val sub=mutableMutableList<Double>.subMutableList<Double>(0,5);mutableMutableList<Double>.clear()",detection="subList视图失效 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1280",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1281",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1282",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Any）",trigger="emptyAny<Long>().first()",detection="NoSuchElementException — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1282",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Map<String,Int>）",trigger="list.toSet().toMap<String,Int>()",detection="去重后转回 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1283",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Double）",trigger="emptyDouble<Double>().reduce{a,b->a+b}",detection="UnsupportedOperation — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1284",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1285",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1286",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1287",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1288",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（String?）",trigger="val v=Vector<String?>();v.add(1)",detection="synchronized遗留 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1285",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1286",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1287",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Any）",trigger="emptyAny<Long>().first()",detection="NoSuchElementException — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1288",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1289",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1290",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0048）",fix="先收集再操作"))
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1291",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Char）",trigger="fun getChar()=mutableChar",detection="外部可修改内部状态 — Char类型字符编码边界,正则匹配组越界（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
-        BugDB.load(BugRule(id="KT-1292",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Double?）",trigger="emptyDouble?<Double?>().first()",detection="NoSuchElementException — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0050）",fix="firstOrNull"))
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1292",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
         BugDB.load(BugRule(id="KT-1293",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0051）",fix="first()或singleOrNull"))
-        BugDB.load(BugRule(id="KT-1294",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1295",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1296",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（MutableList<Double>）",trigger="alreadyMutableList<Double>.toMutableList<Double>()",detection="重复包装 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1297",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0055）",fix="用forEach"))
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1294",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1295",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0048）",fix="先收集再操作"))
+        BugDB.load(BugRule(id="KT-1296",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Char）",trigger="fun getChar()=mutableChar",detection="外部可修改内部状态 — Char类型字符编码边界,正则匹配组越界（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
+        BugDB.load(BugRule(id="KT-1297",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Double?）",trigger="emptyDouble?<Double?>().first()",detection="NoSuchElementException — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0050）",fix="firstOrNull"))
         BugDB.load(BugRule(id="KT-1298",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1299",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1300",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1301",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1302",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set<Int>）",trigger="val sub=mutableSet<Int>.subSet<Int>(0,5);mutableSet<Int>.clear()",detection="subList视图失效 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1301",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（MutableList<Double>）",trigger="alreadyMutableList<Double>.toMutableList<Double>()",detection="重复包装 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1302",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1303",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1304",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1305",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（List<String>）",trigger="list.toSet().toList<String>()",detection="去重后转回 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1306",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Int）",trigger="emptyInt<Int>().reduce{a,b->a+b}",detection="UnsupportedOperation — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1307",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Short）",trigger="val v=Vector<Short>();v.add(1)",detection="synchronized遗留 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1305",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1306",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1307",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set<Int>）",trigger="val sub=mutableSet<Int>.subSet<Int>(0,5);mutableSet<Int>.clear()",detection="subList视图失效 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1308",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1309",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1310",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Byte）",trigger="emptyByte<Long>().first()",detection="NoSuchElementException — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1310",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（List<String>）",trigger="list.toSet().toList<String>()",detection="去重后转回 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1311",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Int）",trigger="emptyInt<Int>().reduce{a,b->a+b}",detection="UnsupportedOperation — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1312",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1313",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Char类型字符编码边界,正则匹配组越界（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1314",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1315",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1316",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（Short）",trigger="val v=Vector<Short>();v.add(1)",detection="synchronized遗留 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1313",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1314",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1315",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Byte）",trigger="emptyByte<Long>().first()",detection="NoSuchElementException — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1316",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1317",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1318",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0048）",fix="先收集再操作"))
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Char类型字符编码边界,正则匹配组越界（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1319",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Boolean）",trigger="fun getBoolean()=mutableBoolean",detection="外部可修改内部状态 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
-        BugDB.load(BugRule(id="KT-1320",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Int?）",trigger="emptyInt?<Int?>().first()",detection="NoSuchElementException — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0050）",fix="firstOrNull"))
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1320",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
         BugDB.load(BugRule(id="KT-1321",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0051）",fix="first()或singleOrNull"))
-        BugDB.load(BugRule(id="KT-1322",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0052）",fix="用不可变键"))
-        BugDB.load(BugRule(id="KT-1323",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
-        BugDB.load(BugRule(id="KT-1324",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toList（Set<Int>）",trigger="alreadySet<Int>.toSet<Int>()",detection="重复包装 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0054）",fix="直接使用"))
-        BugDB.load(BugRule(id="KT-1325",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0055）",fix="用forEach"))
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1322",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1323",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0048）",fix="先收集再操作"))
+        BugDB.load(BugRule(id="KT-1324",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Boolean）",trigger="fun getBoolean()=mutableBoolean",detection="外部可修改内部状态 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0049）",fix="toList()或Collections.unmodifiableList"))
+        BugDB.load(BugRule(id="KT-1325",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Int?）",trigger="emptyInt?<Int?>().first()",detection="NoSuchElementException — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0050）",fix="firstOrNull"))
         BugDB.load(BugRule(id="KT-1326",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历List<String>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0056）",fix="收集后删"))
+            title="single()多元素",trigger="listOf(1,2).single()",detection="IllegalArgumentException — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0051）",fix="first()或singleOrNull"))
         BugDB.load(BugRule(id="KT-1327",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Set<Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+            title="HashMap键可变",trigger="val k=MutableObj();map[k]=v;k.mutate();map[k]",detection="hashCode变了 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0052）",fix="用不可变键"))
         BugDB.load(BugRule(id="KT-1328",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="遍历Map<String,Int>时修改",trigger="for(x in {ct.lower()}){{ {ct.lower()}.remove(x) }}",detection="ConcurrentMod — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0058）",fix="收集后删"))
-        BugDB.load(BugRule(id="KT-1329",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
-        BugDB.load(BugRule(id="KT-1330",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Any?）",trigger="val sub=mutableAny?.subAny?(0,5);mutableAny?.clear()",detection="subList视图失效 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0173）",fix="先copy再操作"))
+            title="filter后仍操作原集合",trigger="list.filter{;list.add(x)",detection="误解filter返回新集合 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0053）",fix="保存filter结果"))
+        BugDB.load(BugRule(id="KT-1329",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toList（Set<Int>）",trigger="alreadySet<Int>.toSet<Int>()",detection="重复包装 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0054）",fix="直接使用"))
+        BugDB.load(BugRule(id="KT-1330",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="map后丢弃",trigger="list.map{it*2}",detection="副作用期望 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0055）",fix="用forEach"))
         BugDB.load(BugRule(id="KT-1331",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0174）",fix="重写equals+hashCode"))
+            title="遍历List<String>时修改",trigger="for(x in list<string>){ list<string>.remove(x) }",detection="ConcurrentMod — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0056）",fix="收集后删"))
         BugDB.load(BugRule(id="KT-1332",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
-        BugDB.load(BugRule(id="KT-1333",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Boolean?）",trigger="list.toSet().toBoolean?()",detection="去重后转回 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0176）",fix="list.distinct()"))
-        BugDB.load(BugRule(id="KT-1334",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="空集合操作（Sequence<Long>）",trigger="emptySequence<Long><Sequence<Long>>().reduce{a,b->a+b}",detection="UnsupportedOperation — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0177）",fix="ifEmpty+fold"))
-        BugDB.load(BugRule(id="KT-1335",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Char）",trigger="val v=Vector<Char>();v.add(1)",detection="synchronized遗留 — Char类型字符编码边界,正则匹配组越界（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+            title="遍历Set<Int>时修改",trigger="for(x in set<int>){ set<int>.remove(x) }",detection="ConcurrentMod — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0057）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1333",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="遍历Map<String,Int>时修改",trigger="for(x in map<string,int>){ map<string,int>.remove(x) }",detection="ConcurrentMod — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0058）",fix="收集后删"))
+        BugDB.load(BugRule(id="KT-1334",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="List.sort后索引错乱",trigger="val idx=list.indexOf(x);list.sort();list[idx]",detection="sort改变位置 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0172）",fix="先记录再排序或使用sorted()"))
+        BugDB.load(BugRule(id="KT-1335",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Any?）",trigger="val sub=mutableAny?.subAny?(0,5);mutableAny?.clear()",detection="subList视图失效 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0173）",fix="先copy再操作"))
         BugDB.load(BugRule(id="KT-1336",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0179）",fix="显式sorted"))
+            title="Set.contains自定义对象无hashCode",trigger="setOf(Obj(1)).contains(Obj(1))",detection="默认hashCode比较 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0174）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1337",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0345）",fix="先copy再操作"))
-        BugDB.load(BugRule(id="KT-1338",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="first()无元素（Long版）（Float）",trigger="emptyFloat<Long>().first()",detection="NoSuchElementException — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0346）",fix="firstOrNull"))
+            title="Map.getOrDefault惰性求值",trigger="map.getOrDefault(k,expensive())",detection="expensive总会执行 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0175）",fix="map.getOrPut(k){expensive()}"))
+        BugDB.load(BugRule(id="KT-1338",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Boolean?）",trigger="list.toSet().toBoolean?()",detection="去重后转回 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0176）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1339",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
-            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0368）",fix="list.distinct()"))
+            title="空集合操作（Sequence<Long>）",trigger="emptySequence<Long><Sequence<Long>>().reduce{a,b->a+b}",detection="UnsupportedOperation — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0177）",fix="ifEmpty+fold"))
         BugDB.load(BugRule(id="KT-1340",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0414）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1341",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0415）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1342",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0416）",fix="ArrayList/CopyOnWriteArrayList"))
-        BugDB.load(BugRule(id="KT-1343",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0464）",fix="toSet()或Collections.unmodifiableSet"))
-        BugDB.load(BugRule(id="KT-1344",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
-            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0480）",fix="distinctUntilChanged"))
+            title="Vector(已弃用)仍使用（Char）",trigger="val v=Vector<Char>();v.add(1)",detection="synchronized遗留 — Char类型字符编码边界,正则匹配组越界（参见 KT-0178）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1341",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="groupBy返回LinkedHashMap依赖顺序",trigger="val g=list.groupBy{it.key};g.forEach{}",detection="依赖插入顺序 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0179）",fix="显式sorted"))
+        BugDB.load(BugRule(id="KT-1342",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="MutableList.subList泄漏（Set版）",trigger="val sub=mutableSet.subSet(0,5);mutableSet.clear()",detection="subSet视图失效 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0349）",fix="先copy再操作"))
+        BugDB.load(BugRule(id="KT-1343",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="first()无元素（Long版）（Float）",trigger="emptyFloat<Long>().first()",detection="NoSuchElementException — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0350）",fix="firstOrNull"))
+        BugDB.load(BugRule(id="KT-1344",category=BugCategory.COLLECTIONS,severity=BugSeverity.MILD,
+            title="不必要的toSet/unique（Set版）",trigger="list.toSet().toSet()",detection="去重后转回 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0372）",fix="list.distinct()"))
         BugDB.load(BugRule(id="KT-1345",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
-            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+            title="Vector(已弃用)仍使用（Long版）",trigger="val v=Vector<Long>();v.add(1)",detection="synchronized遗留 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0425）",fix="ArrayList/CopyOnWriteArrayList"))
         BugDB.load(BugRule(id="KT-1346",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="Vector(已弃用)仍使用（Double版）",trigger="val v=Vector<Double>();v.add(1)",detection="synchronized遗留 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0426）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1347",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="Vector(已弃用)仍使用（Float版）",trigger="val v=Vector<Float>();v.add(1)",detection="synchronized遗留 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0427）",fix="ArrayList/CopyOnWriteArrayList"))
+        BugDB.load(BugRule(id="KT-1348",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="MutableList暴露（Set版）",trigger="fun getSet()=mutableSet",detection="外部可修改内部状态 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0475）",fix="toSet()或Collections.unmodifiableSet"))
+        BugDB.load(BugRule(id="KT-1349",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+            title="Paging3重复加载",trigger="PagingSource.load()返回值未去重",detection="重复数据 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0491）",fix="distinctUntilChanged"))
+        BugDB.load(BugRule(id="KT-1350",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
+            title="遍历时修改",trigger="for(x in list){list.remove(x)}",detection="ConcurrentModificationException — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0047）",fix="收集待删项再删"))
+        BugDB.load(BugRule(id="KT-1351",category=BugCategory.COLLECTIONS,severity=BugSeverity.SEVERE,
             title="迭代器并发修改",trigger="val it=list.iterator();list.add(x);it.next()",detection="迭代器失效 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0048）",fix="先收集再操作"))
-        BugDB.load(BugRule(id="KT-1347",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1352",category=BugCategory.COLLECTIONS,severity=BugSeverity.MODERATE,
             title="first()无元素（Any）",trigger="emptyAny<Any>().first()",detection="NoSuchElementException — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0050）",fix="firstOrNull"))
-        BugDB.load(BugRule(id="KT-1348",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1353",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
             title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0059）",fix="提供公开接口"))
-        BugDB.load(BugRule(id="KT-1349",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0060）",fix="明确Java/Kotlin"))
-        BugDB.load(BugRule(id="KT-1350",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
-        BugDB.load(BugRule(id="KT-1351",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1352",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Char类型字符编码边界,正则匹配组越界（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1353",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1354",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1355",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1356",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1357",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1358",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1357",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Char类型字符编码边界,正则匹配组越界（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1358",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1359",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1360",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1361",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1362",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1363",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1362",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1363",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1364",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1365",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1366",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1367",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1368",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1367",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1368",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1369",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1370",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1371",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1372",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1373",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1372",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1373",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1374",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Char类型字符编码边界,正则匹配组越界（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1375",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1376",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1377",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1378",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1377",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1378",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1379",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Char类型字符编码边界,正则匹配组越界（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1380",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1381",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1382",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1383",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1382",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1383",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1384",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1385",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1386",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1387",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1388",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1387",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1388",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1389",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1390",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1391",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1392",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1393",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1392",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1393",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1394",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1395",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1396",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1397",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1398",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1397",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1398",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1399",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1400",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1401",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1402",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1403",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1402",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1403",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1404",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1405",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1406",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1407",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1408",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1407",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1408",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1409",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1410",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1411",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1412",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1413",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1412",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1413",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1414",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1415",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1416",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1417",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1418",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Char类型字符编码边界,正则匹配组越界（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1417",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1418",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1419",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1420",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1421",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1422",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1423",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1422",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1423",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — Char类型字符编码边界,正则匹配组越界（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1424",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1425",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1426",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1427",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1428",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0059）",fix="提供公开接口"))
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1427",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1428",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0181）",fix="缓存KCallable"))
         BugDB.load(BugRule(id="KT-1429",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0182）",fix="reified+inline"))
         BugDB.load(BugRule(id="KT-1430",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0061）",fix="使用带名参数"))
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0183）",fix="明确区分"))
         BugDB.load(BugRule(id="KT-1431",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
-            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0062）",fix="缓存KCallable"))
-        BugDB.load(BugRule(id="KT-1432",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
-            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
-        BugDB.load(BugRule(id="KT-1433",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
+            title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
+        BugDB.load(BugRule(id="KT-1432",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0185）",fix="cls.createInstance()或工厂"))
+        BugDB.load(BugRule(id="KT-1433",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射访问私有成员",trigger="cls.getDeclaredField(\\\"secret\\\");f.isAccessible=true",detection="破坏封装 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0059）",fix="提供公开接口"))
         BugDB.load(BugRule(id="KT-1434",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0182）",fix="reified+inline"))
+            title="KClass与Java Class混淆",trigger="MyClass::class.java与MyClass::class",detection="类型不匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0060）",fix="明确Java/Kotlin"))
         BugDB.load(BugRule(id="KT-1435",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
-            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0183）",fix="明确区分"))
+            title="callBy参数顺序错误",trigger="func.callBy(mapOf(param to value))",detection="参数名不匹配 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0061）",fix="使用带名参数"))
         BugDB.load(BugRule(id="KT-1436",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+            title="反射性能开销",trigger="cls.members.forEach{",detection="大量反射操作 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0062）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1437",category=BugCategory.REFLECTION,severity=BugSeverity.SEVERE,
+            title="反射修改final字段",trigger="val f=cls.getDeclaredField(\\\"x\\\");f.isAccessible=true;f.set(obj,v)",detection="破坏不变性 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0180）",fix="提供公开setter"))
+        BugDB.load(BugRule(id="KT-1438",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="KFunction反射调用性能",trigger="func.call(1,2)",detection="每次call检查参数 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0181）",fix="缓存KCallable"))
+        BugDB.load(BugRule(id="KT-1439",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="反射获取泛型参数",trigger="cls.typeParameters[0].upperBounds",detection="运行时擦除 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0182）",fix="reified+inline"))
+        BugDB.load(BugRule(id="KT-1440",category=BugCategory.REFLECTION,severity=BugSeverity.MODERATE,
+            title="::class在companion上",trigger="MyClass::class与MyClass.Companion::class",detection="混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0183）",fix="明确区分"))
+        BugDB.load(BugRule(id="KT-1441",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
             title="KClass.simpleName与javaClass.simpleName",trigger="KClass.simpleName可能为null",detection="可能为null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0184）",fix="用qualifiedName"))
-        BugDB.load(BugRule(id="KT-1437",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-1442",category=BugCategory.REFLECTION,severity=BugSeverity.MILD,
             title="不必要的反射实例化",trigger="cls.java.newInstance()",detection="已弃用 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0185）",fix="cls.createInstance()或工厂"))
-        BugDB.load(BugRule(id="KT-1438",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1443",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
             title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
-        BugDB.load(BugRule(id="KT-1439",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1444",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
             title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0064）",fix="this@outer.name"))
-        BugDB.load(BugRule(id="KT-1440",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1441",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1442",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Char类型字符编码边界,正则匹配组越界（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1443",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1444",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
         BugDB.load(BugRule(id="KT-1445",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1446",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1447",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Char类型字符编码边界,正则匹配组越界（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1448",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1449",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1450",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1449",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1450",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1451",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1452",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1453",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1454",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1455",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1456",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1453",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1454",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1455",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1456",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1457",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1458",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1459",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1460",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1461",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1462",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1461",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1462",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1463",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1464",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Char类型字符编码边界,正则匹配组越界（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1465",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1466",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1467",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1468",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1465",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1466",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1467",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1468",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1469",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Char类型字符编码边界,正则匹配组越界（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1470",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1471",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1472",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1473",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1474",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1473",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1474",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1475",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1476",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1477",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1478",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1479",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1480",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1477",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1478",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1479",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1480",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1481",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1482",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1483",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1484",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1485",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1486",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Char类型字符编码边界,正则匹配组越界（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1485",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1486",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1487",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1488",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1489",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1490",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1491",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1492",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1489",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1490",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1491",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Char类型字符编码边界,正则匹配组越界（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1492",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1493",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1494",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1495",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1496",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1497",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1498",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1497",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1498",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1499",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1500",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
     }
 
     private fun registerChunk4() {
-        BugDB.load(BugRule(id="KT-1501",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1502",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1503",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1504",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1501",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1502",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1503",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1504",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1505",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1506",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1507",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1508",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Char类型字符编码边界,正则匹配组越界（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1509",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1510",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1509",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1510",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1511",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1512",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1513",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1514",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1515",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1516",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1513",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Char类型字符编码边界,正则匹配组越界（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1514",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1515",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1516",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1517",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1518",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1519",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1520",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1521",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1522",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1521",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1522",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1523",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1524",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1525",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1526",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1527",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1528",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1525",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1526",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1527",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1528",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1529",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1530",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Char类型字符编码边界,正则匹配组越界（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1531",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1532",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1533",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1534",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1533",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1534",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1535",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Char类型字符编码边界,正则匹配组越界（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1536",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1537",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1538",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1539",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1540",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1537",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1538",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1539",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1540",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1541",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1542",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1543",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1544",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1545",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1546",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1545",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1546",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1547",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1548",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1549",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1550",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1551",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1552",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Char类型字符编码边界,正则匹配组越界（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1549",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1550",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1551",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1552",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1553",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1554",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1555",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1556",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1557",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1558",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1557",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Char类型字符编码边界,正则匹配组越界（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1558",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1559",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1560",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1561",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1562",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1563",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1564",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0186）",fix="加@DslMarker"))
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1561",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1562",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1563",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1564",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0064）",fix="this@outer.name"))
         BugDB.load(BugRule(id="KT-1565",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0187）",fix="apply更适合"))
+            title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0065）",fix="提取命名函数"))
         BugDB.load(BugRule(id="KT-1566",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
+            title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0066）",fix="按需选择"))
         BugDB.load(BugRule(id="KT-1567",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+            title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0067）",fix="不需要返回值用apply"))
         BugDB.load(BugRule(id="KT-1568",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0190）",fix="根据是否需要变换选择"))
-        BugDB.load(BugRule(id="KT-1569",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
-            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0191）",fix="用takeIf+!或直接if"))
-        BugDB.load(BugRule(id="KT-1570",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
-            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+            title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0068）",fix="直接用expr"))
+        BugDB.load(BugRule(id="KT-1569",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="Builder DSL遗漏@DslMarker",trigger="@DslMarker;obj.apply{build{apply{obj}}}",detection="隐式this穿透 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0186）",fix="加@DslMarker"))
+        BugDB.load(BugRule(id="KT-1570",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="also与apply链式错误",trigger="val x=obj.also{it.prop=1}.also{it.prop=2}",detection="also返回原对象 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0187）",fix="apply更适合"))
         BugDB.load(BugRule(id="KT-1571",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
-            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0064）",fix="this@outer.name"))
+            title="with接收者为可空",trigger="with(maybeNull){this.method()}",detection="NPE风险 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0188）",fix="maybeNull?.let{with(it){}}"))
         BugDB.load(BugRule(id="KT-1572",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="run非扩展+扩展混淆",trigger="obj.run{length} vs run{obj.length}",detection="this指向不同 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0189）",fix="统一风格"))
+        BugDB.load(BugRule(id="KT-1573",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="let与run语义混淆",trigger="x?.let{it*2} vs x?.run{this*2}",detection="it与this — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0190）",fix="根据是否需要变换选择"))
+        BugDB.load(BugRule(id="KT-1574",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+            title="takeUnless与takeIf误用",trigger="x.takeUnless{it>0}",detection="逻辑相反 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0191）",fix="用takeIf+!或直接if"))
+        BugDB.load(BugRule(id="KT-1575",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.SEVERE,
+            title="非局部return",trigger="fun f(){list.forEach{if(it)return}}",detection="return跳出外层函数 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0063）",fix="return@forEach"))
+        BugDB.load(BugRule(id="KT-1576",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+            title="隐式this歧义",trigger="apply{name=name}",detection="内外name混淆 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0064）",fix="this@outer.name"))
+        BugDB.load(BugRule(id="KT-1577",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
             title="嵌套apply/also/let混乱",trigger="obj.apply{also{let{run{}}}",detection="作用域函数地狱 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0065）",fix="提取命名函数"))
-        BugDB.load(BugRule(id="KT-1573",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1578",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
             title="run与with混淆",trigger="run{this.method()} vs with(obj){method()}",detection="语义不同 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0066）",fix="按需选择"))
-        BugDB.load(BugRule(id="KT-1574",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
+        BugDB.load(BugRule(id="KT-1579",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MODERATE,
             title="also返回值忽略",trigger="obj.also{it.mutate()}",detection="also返回原对象 — Char类型字符编码边界,正则匹配组越界（参见 KT-0067）",fix="不需要返回值用apply"))
-        BugDB.load(BugRule(id="KT-1575",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
+        BugDB.load(BugRule(id="KT-1580",category=BugCategory.DSL_LAMBDA,severity=BugSeverity.MILD,
             title="多余的run",trigger="run{expr}",detection="单表达式不需要run — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0068）",fix="直接用expr"))
-        BugDB.load(BugRule(id="KT-1576",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0069）",fix="@Transient打破循环"))
-        BugDB.load(BugRule(id="KT-1577",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（Byte）",trigger="data class U(val l:MutableByte<T>);u.copy().l.add(x)",detection="共享可变集合 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0070）",fix="深复制或不可变"))
-        BugDB.load(BugRule(id="KT-1578",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Boolean?）",trigger="data class U(val x:Boolean?=0);json无x字段",detection="反序列化仍用默认 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
-        BugDB.load(BugRule(id="KT-1579",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Sequence<Long>）",trigger="@SerialName(\\\"y\\\") val x:Sequence<Long>",detection="重命名混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1580",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（Char）",trigger="data class Charernal(val x:Char)",detection="内部类型不需要 — Char类型字符编码边界,正则匹配组越界（参见 KT-0073）",fix="按需标注"))
         BugDB.load(BugRule(id="KT-1581",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0069）",fix="@Transient打破循环"))
         BugDB.load(BugRule(id="KT-1582",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class componentN()命名冲突（Array<Boolean>）",trigger="data class C(val component1:Array<Boolean>,val x:Array<Boolean>)",detection="component1不是第一个 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0193）",fix="避开componentN命名"))
+            title="data class copy浅复制（Byte）",trigger="data class U(val l:MutableByte<T>);u.copy().l.add(x)",detection="共享可变集合 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0070）",fix="深复制或不可变"))
         BugDB.load(BugRule(id="KT-1583",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0194）",fix="手动实现toString"))
+            title="默认值在序列化中丢失（Boolean?）",trigger="data class U(val x:Boolean?=0);json无x字段",detection="反序列化仍用默认 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1584",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable序列化顺序不一致（Long?）",trigger="writeLong?(a);readLong?(b)",detection="读写顺序错误 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0195）",fix="对齐write/read顺序"))
+            title="@SerialName与字段名不一致（Sequence<Long>）",trigger="@SerialName(\\\"y\\\") val x:Sequence<Long>",detection="重命名混淆 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0072）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1585",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0196）",fix="重写equals+hashCode"))
-        BugDB.load(BugRule(id="KT-1586",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean）",trigger="writeBoolean(a);writeBoolean(b);readBoolean();readBoolean()",detection="反序列化时值错位 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0275）",fix="写读顺序严格一致"))
+            title="不必要的@Serializable（Char）",trigger="data class Charernal(val x:Char)",detection="内部类型不需要 — Char类型字符编码边界,正则匹配组越界（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1586",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
         BugDB.load(BugRule(id="KT-1587",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@Serializable+by lazy=序列化时触发初始化（Int?）",trigger="@Serializable data class U(val x:Int?){val y by lazy{init()}}",detection="序列化时lazy被触发 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
+            title="data class componentN()命名冲突（Array<Boolean>）",trigger="data class C(val component1:Array<Boolean>,val x:Array<Boolean>)",detection="component1不是第一个 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0193）",fix="避开componentN命名"))
         BugDB.load(BugRule(id="KT-1588",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
+            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0194）",fix="手动实现toString"))
         BugDB.load(BugRule(id="KT-1589",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0337）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1590",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
+            title="Parcelable序列化顺序不一致（Long?）",trigger="writeLong?(a);readLong?(b)",detection="读写顺序错误 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0195）",fix="对齐write/read顺序"))
+        BugDB.load(BugRule(id="KT-1590",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0196）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1591",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）（Set<Int>）",trigger="writeSet<Int>(a);writeSet<Int>(b);readSet<Int>();readSet<Int>()",detection="反序列化时值错位 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0351）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Boolean）",trigger="writeBoolean(a);writeBoolean(b);readBoolean();readBoolean()",detection="反序列化时值错位 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0275）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1592",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Long）",trigger="writeLong(a);writeLong(b);readLong();readLong()",detection="反序列化时值错位 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0352）",fix="写读顺序严格一致"))
+            title="@Serializable+by lazy=序列化时触发初始化（Int?）",trigger="@Serializable data class U(val x:Int?){val y by lazy{init()}}",detection="序列化时lazy被触发 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
         BugDB.load(BugRule(id="KT-1593",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Any）",trigger="writeAny(a);writeDouble(b);readDouble();readAny()",detection="反序列化时值错位 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0353）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1594",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）（List<String>）",trigger="writeList<String><String>(a);writeBoolean(b);readBoolean();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0354）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0337）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1595",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Int）",trigger="writeLong(a);writeInt(b);readInt();readLong()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0355）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1596",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Short）",trigger="writeDouble(a);writeShort(b);readShort();readDouble()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0356）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）（Set<Int>）",trigger="writeSet<Int>(a);writeSet<Int>(b);readSet<Int>();readSet<Int>()",detection="反序列化时值错位 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0355）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1597",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0412）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Long版）（Long）",trigger="writeLong(a);writeLong(b);readLong();readLong()",detection="反序列化时值错位 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0356）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1598",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0413）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Double版）（Any）",trigger="writeAny(a);writeDouble(b);readDouble();readAny()",detection="反序列化时值错位 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0357）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1599",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient（Byte）",trigger="@Transient val x:Byte;Gson仍序列化",detection="Kotlin transient≠Java — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0481）",fix="@Expose(false)"))
-        BugDB.load(BugRule(id="KT-1600",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
+            title="Parcelable读写顺序故意相反（Boolean版）（List<String>）",trigger="writeList<String><String>(a);writeBoolean(b);readBoolean();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0358）",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-1600",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）（Int）",trigger="writeLong(a);writeInt(b);readInt();readLong()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0359）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1601",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（Sequence<Long>）",trigger="data class U(val l:MutableSequence<Long><T>);u.copy().l.add(x)",detection="共享可变集合 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0070）",fix="深复制或不可变"))
+            title="Parcelable读写顺序故意相反（Double版）（Short）",trigger="writeDouble(a);writeShort(b);readShort();readDouble()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0360）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1602",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Char）",trigger="data class U(val x:Char=0);json无x字段",detection="反序列化仍用默认 — Char类型字符编码边界,正则匹配组越界（参见 KT-0071）",fix="显式标注默认值"))
+            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0423）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1603",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double?）",trigger="@SerialName(\\\"y\\\") val x:Double?",detection="重命名混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1604",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（Array<Boolean>）",trigger="data class Array<Boolean>ernal(val x:Array<Boolean>)",detection="内部类型不需要 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0073）",fix="按需标注"))
+            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0424）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1604",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient（Byte）",trigger="@Transient val x:Byte;Gson仍序列化",detection="Kotlin transient≠Java — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0492）",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-1605",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0192）",fix="@Transient打断"))
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
         BugDB.load(BugRule(id="KT-1606",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class componentN()命名冲突（Long?）",trigger="data class C(val component1:Long?,val x:Long?)",detection="component1不是第一个 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0193）",fix="避开componentN命名"))
+            title="data class copy浅复制（Sequence<Long>）",trigger="data class U(val l:MutableSequence<Long><T>);u.copy().l.add(x)",detection="共享可变集合 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0070）",fix="深复制或不可变"))
         BugDB.load(BugRule(id="KT-1607",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0194）",fix="手动实现toString"))
+            title="默认值在序列化中丢失（Char）",trigger="data class U(val x:Char=0);json无x字段",detection="反序列化仍用默认 — Char类型字符编码边界,正则匹配组越界（参见 KT-0071）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1608",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable序列化顺序不一致（Boolean）",trigger="writeBoolean(a);readBoolean(b)",detection="读写顺序错误 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0195）",fix="对齐write/read顺序"))
+            title="@SerialName与字段名不一致（Double?）",trigger="@SerialName(\\\"y\\\") val x:Double?",detection="重命名混淆 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1609",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0196）",fix="重写equals+hashCode"))
-        BugDB.load(BugRule(id="KT-1610",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Map<String,Int>）",trigger="writeMap<String,Int>(a);writeMap<String,Map<String,Int>>(b);readMap<String,Map<String,Int>>();readMap<String,Int>()",detection="反序列化时值错位 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
+            title="不必要的@Serializable（Array<Boolean>）",trigger="data class Array<Boolean>ernal(val x:Array<Boolean>)",detection="内部类型不需要 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1610",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0192）",fix="@Transient打断"))
         BugDB.load(BugRule(id="KT-1611",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@Serializable+by lazy=序列化时触发初始化（Double）",trigger="@Serializable data class U(val x:Double){val y by lazy{init()}}",detection="序列化时lazy被触发 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0299）",fix="@Transient标记非序列化字段"))
+            title="data class componentN()命名冲突（Long?）",trigger="data class C(val component1:Long?,val x:Long?)",detection="component1不是第一个 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0193）",fix="避开componentN命名"))
         BugDB.load(BugRule(id="KT-1612",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
+            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0194）",fix="手动实现toString"))
         BugDB.load(BugRule(id="KT-1613",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0337）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1614",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0338）",fix="统一命名"))
+            title="Parcelable序列化顺序不一致（Boolean）",trigger="writeBoolean(a);readBoolean(b)",detection="读写顺序错误 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0195）",fix="对齐write/read顺序"))
+        BugDB.load(BugRule(id="KT-1614",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0196）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1615",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）（Any）",trigger="writeAny(a);writeAny(b);readAny();readAny()",detection="反序列化时值错位 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0351）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Map<String,Int>）",trigger="writeMap<String,Int>(a);writeMap<String,Map<String,Int>>(b);readMap<String,Map<String,Int>>();readMap<String,Int>()",detection="反序列化时值错位 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1616",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（List<String>）",trigger="writeList<String><String>(a);writeLong(b);readLong();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0352）",fix="写读顺序严格一致"))
+            title="@Serializable+by lazy=序列化时触发初始化（Double）",trigger="@Serializable data class U(val x:Double){val y by lazy{init()}}",detection="序列化时lazy被触发 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0299）",fix="@Transient标记非序列化字段"))
         BugDB.load(BugRule(id="KT-1617",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）",trigger="writeInt(a);writeDouble(b);readDouble();readInt()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0353）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1618",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）（Short）",trigger="writeShort(a);writeBoolean(b);readBoolean();readShort()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0354）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0337）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1619",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Any?）",trigger="writeLong(a);writeAny?(b);readAny?();readLong()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0355）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0338）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1620",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）",trigger="writeDouble(a);writeString(b);readString();readDouble()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0356）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）（Any）",trigger="writeAny(a);writeAny(b);readAny();readAny()",detection="反序列化时值错位 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0355）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1621",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0412）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Long版）（List<String>）",trigger="writeList<String><String>(a);writeLong(b);readLong();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0356）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1622",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0413）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Double版）",trigger="writeInt(a);writeDouble(b);readDouble();readInt()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0357）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1623",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient（Sequence<Long>）",trigger="@Transient val x:Sequence<Long>;Gson仍序列化",detection="Kotlin transient≠Java — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0481）",fix="@Expose(false)"))
-        BugDB.load(BugRule(id="KT-1624",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Char类型字符编码边界,正则匹配组越界（参见 KT-0069）",fix="@Transient打破循环"))
+            title="Parcelable读写顺序故意相反（Boolean版）（Short）",trigger="writeShort(a);writeBoolean(b);readBoolean();readShort()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0358）",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-1624",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）（Any?）",trigger="writeLong(a);writeAny?(b);readAny?();readLong()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0359）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1625",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（Double?）",trigger="data class U(val l:MutableDouble?<T>);u.copy().l.add(x)",detection="共享可变集合 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0070）",fix="深复制或不可变"))
+            title="Parcelable读写顺序故意相反（Double版）",trigger="writeDouble(a);writeString(b);readString();readDouble()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0360）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1626",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Array<Boolean>）",trigger="data class U(val x:Array<Boolean>=0);json无x字段",detection="反序列化仍用默认 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
+            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0423）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1627",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float）",trigger="@SerialName(\\\"y\\\") val x:Float",detection="重命名混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1628",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（Long?）",trigger="data class Long?ernal(val x:Long?)",detection="内部类型不需要 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0073）",fix="按需标注"))
+            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0424）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1628",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient（Sequence<Long>）",trigger="@Transient val x:Sequence<Long>;Gson仍序列化",detection="Kotlin transient≠Java — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0492）",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-1629",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Char类型字符编码边界,正则匹配组越界（参见 KT-0069）",fix="@Transient打破循环"))
         BugDB.load(BugRule(id="KT-1630",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class componentN()命名冲突（Boolean）",trigger="data class C(val component1:Boolean,val x:Boolean)",detection="component1不是第一个 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0193）",fix="避开componentN命名"))
+            title="data class copy浅复制（Double?）",trigger="data class U(val l:MutableDouble?<T>);u.copy().l.add(x)",detection="共享可变集合 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0070）",fix="深复制或不可变"))
         BugDB.load(BugRule(id="KT-1631",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0194）",fix="手动实现toString"))
+            title="默认值在序列化中丢失（Array<Boolean>）",trigger="data class U(val x:Array<Boolean>=0);json无x字段",detection="反序列化仍用默认 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1632",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable序列化顺序不一致（Map<String,Int>）",trigger="writeMap<String,Int>(a);readMap<String,Int>(b)",detection="读写顺序错误 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0195）",fix="对齐write/read顺序"))
+            title="@SerialName与字段名不一致（Float）",trigger="@SerialName(\\\"y\\\") val x:Float",detection="重命名混淆 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0072）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1633",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0196）",fix="重写equals+hashCode"))
-        BugDB.load(BugRule(id="KT-1634",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（String?）",trigger="writeString?(a);writeString?(b);readString?();readString?()",detection="反序列化时值错位 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
+            title="不必要的@Serializable（Long?）",trigger="data class Long?ernal(val x:Long?)",detection="内部类型不需要 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1634",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
         BugDB.load(BugRule(id="KT-1635",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@Serializable+by lazy=序列化时触发初始化（Set<Int>）",trigger="@Serializable data class U(val x:Set<Int>){val y by lazy{init()}}",detection="序列化时lazy被触发 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
+            title="data class componentN()命名冲突（Boolean）",trigger="data class C(val component1:Boolean,val x:Boolean)",detection="component1不是第一个 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0193）",fix="避开componentN命名"))
         BugDB.load(BugRule(id="KT-1636",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0336）",fix="统一命名"))
+            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0194）",fix="手动实现toString"))
         BugDB.load(BugRule(id="KT-1637",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0337）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1638",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
+            title="Parcelable序列化顺序不一致（Map<String,Int>）",trigger="writeMap<String,Int>(a);readMap<String,Int>(b)",detection="读写顺序错误 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0195）",fix="对齐write/read顺序"))
+        BugDB.load(BugRule(id="KT-1638",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0196）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1639",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）",trigger="writeInt(a);writeInt(b);readInt();readInt()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0351）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（String?）",trigger="writeString?(a);writeString?(b);readString?();readString?()",detection="反序列化时值错位 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1640",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Short）",trigger="writeShort(a);writeLong(b);readLong();readShort()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0352）",fix="写读顺序严格一致"))
+            title="@Serializable+by lazy=序列化时触发初始化（Set<Int>）",trigger="@Serializable data class U(val x:Set<Int>){val y by lazy{init()}}",detection="序列化时lazy被触发 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
         BugDB.load(BugRule(id="KT-1641",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Any?）",trigger="writeAny?(a);writeDouble(b);readDouble();readAny?()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0353）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0336）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1642",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）（String）",trigger="writeString(a);writeBoolean(b);readBoolean();readString()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0354）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0337）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1643",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Byte）",trigger="writeLong(a);writeByte(b);readByte();readLong()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0355）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1644",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Boolean?）",trigger="writeDouble(a);writeBoolean?(b);readBoolean?();readDouble()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0356）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）",trigger="writeInt(a);writeInt(b);readInt();readInt()",detection="反序列化时值错位 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0355）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1645",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0412）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Long版）（Short）",trigger="writeShort(a);writeLong(b);readLong();readShort()",detection="反序列化时值错位 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0356）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1646",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Char类型字符编码边界,正则匹配组越界（参见 KT-0413）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Double版）（Any?）",trigger="writeAny?(a);writeDouble(b);readDouble();readAny?()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0357）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1647",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient（Double?）",trigger="@Transient val x:Double?;Gson仍序列化",detection="Kotlin transient≠Java — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0481）",fix="@Expose(false)"))
-        BugDB.load(BugRule(id="KT-1648",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
+            title="Parcelable读写顺序故意相反（Boolean版）（String）",trigger="writeString(a);writeBoolean(b);readBoolean();readString()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0358）",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-1648",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）（Byte）",trigger="writeLong(a);writeByte(b);readByte();readLong()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0359）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1649",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（Float）",trigger="data class U(val l:MutableFloat<T>);u.copy().l.add(x)",detection="共享可变集合 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0070）",fix="深复制或不可变"))
+            title="Parcelable读写顺序故意相反（Double版）（Boolean?）",trigger="writeDouble(a);writeBoolean?(b);readBoolean?();readDouble()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0360）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1650",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long?）",trigger="data class U(val x:Long?=0);json无x字段",detection="反序列化仍用默认 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0071）",fix="显式标注默认值"))
+            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0423）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1651",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（MutableList<Double>）",trigger="@SerialName(\\\"y\\\") val x:MutableMutableList<Double><Double>",detection="重命名混淆 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1652",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（Boolean）",trigger="data class Booleanernal(val x:Boolean)",detection="内部类型不需要 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0073）",fix="按需标注"))
+            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Char类型字符编码边界,正则匹配组越界（参见 KT-0424）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1652",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient（Double?）",trigger="@Transient val x:Double?;Gson仍序列化",detection="Kotlin transient≠Java — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0492）",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-1653",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0192）",fix="@Transient打断"))
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
         BugDB.load(BugRule(id="KT-1654",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class componentN()命名冲突（Map<String,Int>）",trigger="data class C(val component1:Map<String,Map<String,Int>>,val x:Map<String,Int>)",detection="component1不是第一个 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0193）",fix="避开componentN命名"))
+            title="data class copy浅复制（Float）",trigger="data class U(val l:MutableFloat<T>);u.copy().l.add(x)",detection="共享可变集合 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0070）",fix="深复制或不可变"))
         BugDB.load(BugRule(id="KT-1655",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0194）",fix="手动实现toString"))
+            title="默认值在序列化中丢失（Long?）",trigger="data class U(val x:Long?=0);json无x字段",detection="反序列化仍用默认 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0071）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1656",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable序列化顺序不一致（String?）",trigger="writeString?(a);readString?(b)",detection="读写顺序错误 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0195）",fix="对齐write/read顺序"))
+            title="@SerialName与字段名不一致（MutableList<Double>）",trigger="@SerialName(\\\"y\\\") val x:MutableMutableList<Double><Double>",detection="重命名混淆 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1657",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0196）",fix="重写equals+hashCode"))
-        BugDB.load(BugRule(id="KT-1658",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long）",trigger="writeLong(a);writeLong(b);readLong();readLong()",detection="反序列化时值错位 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0275）",fix="写读顺序严格一致"))
+            title="不必要的@Serializable（Boolean）",trigger="data class Booleanernal(val x:Boolean)",detection="内部类型不需要 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1658",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0192）",fix="@Transient打断"))
         BugDB.load(BugRule(id="KT-1659",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@Serializable+by lazy=序列化时触发初始化（Any）",trigger="@Serializable data class U(val x:Any){val y by lazy{init()}}",detection="序列化时lazy被触发 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0299）",fix="@Transient标记非序列化字段"))
+            title="data class componentN()命名冲突（Map<String,Int>）",trigger="data class C(val component1:Map<String,Map<String,Int>>,val x:Map<String,Int>)",detection="component1不是第一个 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0193）",fix="避开componentN命名"))
         BugDB.load(BugRule(id="KT-1660",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
+            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0194）",fix="手动实现toString"))
         BugDB.load(BugRule(id="KT-1661",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0337）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1662",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0338）",fix="统一命名"))
+            title="Parcelable序列化顺序不一致（String?）",trigger="writeString?(a);readString?(b)",detection="读写顺序错误 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0195）",fix="对齐write/read顺序"))
+        BugDB.load(BugRule(id="KT-1662",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0196）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1663",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）（Any?）",trigger="writeAny?(a);writeAny?(b);readAny?();readAny?()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0351）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Long）",trigger="writeLong(a);writeLong(b);readLong();readLong()",detection="反序列化时值错位 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0275）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1664",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（String）",trigger="writeString(a);writeLong(b);readLong();readString()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0352）",fix="写读顺序严格一致"))
+            title="@Serializable+by lazy=序列化时触发初始化（Any）",trigger="@Serializable data class U(val x:Any){val y by lazy{init()}}",detection="序列化时lazy被触发 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0299）",fix="@Transient标记非序列化字段"))
         BugDB.load(BugRule(id="KT-1665",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Byte）",trigger="writeByte(a);writeDouble(b);readDouble();readByte()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0353）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0336）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1666",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）（Boolean?）",trigger="writeBoolean?(a);writeBoolean(b);readBoolean();readBoolean?()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0354）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0337）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1667",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Sequence<Long>）",trigger="writeLong(a);writeSequence<Long>(b);readSequence<Long>();readLong()",detection="反序列化时值错位 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0355）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0338）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1668",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Char）",trigger="writeDouble(a);writeChar(b);readChar();readDouble()",detection="反序列化时值错位 — Char类型字符编码边界,正则匹配组越界（参见 KT-0356）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）（Any?）",trigger="writeAny?(a);writeAny?(b);readAny?();readAny?()",detection="反序列化时值错位 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0355）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1669",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0412）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Long版）（String）",trigger="writeString(a);writeLong(b);readLong();readString()",detection="反序列化时值错位 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0356）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1670",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0413）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Double版）（Byte）",trigger="writeByte(a);writeDouble(b);readDouble();readByte()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0357）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1671",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient（Float）",trigger="@Transient val x:Float;Gson仍序列化",detection="Kotlin transient≠Java — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0481）",fix="@Expose(false)"))
-        BugDB.load(BugRule(id="KT-1672",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0069）",fix="@Transient打破循环"))
+            title="Parcelable读写顺序故意相反（Boolean版）（Boolean?）",trigger="writeBoolean?(a);writeBoolean(b);readBoolean();readBoolean?()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0358）",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-1672",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）（Sequence<Long>）",trigger="writeLong(a);writeSequence<Long>(b);readSequence<Long>();readLong()",detection="反序列化时值错位 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0359）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1673",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（MutableList<Double>）",trigger="data class U(val l:MutableMutableList<Double><T>);u.copy().l.add(x)",detection="共享可变集合 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0070）",fix="深复制或不可变"))
+            title="Parcelable读写顺序故意相反（Double版）（Char）",trigger="writeDouble(a);writeChar(b);readChar();readDouble()",detection="反序列化时值错位 — Char类型字符编码边界,正则匹配组越界（参见 KT-0360）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1674",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Boolean）",trigger="data class U(val x:Boolean=0);json无x字段",detection="反序列化仍用默认 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
+            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0423）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1675",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Int?）",trigger="@SerialName(\\\"y\\\") val x:Int?",detection="重命名混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1676",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（Map<String,Int>）",trigger="data class Map<String,Int>ernal(val x:Map<String,Int>)",detection="内部类型不需要 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0073）",fix="按需标注"))
+            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0424）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1676",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient（Float）",trigger="@Transient val x:Float;Gson仍序列化",detection="Kotlin transient≠Java — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0492）",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-1677",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0069）",fix="@Transient打破循环"))
         BugDB.load(BugRule(id="KT-1678",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class componentN()命名冲突（String?）",trigger="data class C(val component1:String?,val x:String?)",detection="component1不是第一个 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0193）",fix="避开componentN命名"))
+            title="data class copy浅复制（MutableList<Double>）",trigger="data class U(val l:MutableMutableList<Double><T>);u.copy().l.add(x)",detection="共享可变集合 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0070）",fix="深复制或不可变"))
         BugDB.load(BugRule(id="KT-1679",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0194）",fix="手动实现toString"))
+            title="默认值在序列化中丢失（Boolean）",trigger="data class U(val x:Boolean=0);json无x字段",detection="反序列化仍用默认 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0071）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1680",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable序列化顺序不一致（Long）",trigger="writeLong(a);readLong(b)",detection="读写顺序错误 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0195）",fix="对齐write/read顺序"))
+            title="@SerialName与字段名不一致（Int?）",trigger="@SerialName(\\\"y\\\") val x:Int?",detection="重命名混淆 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0072）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1681",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0196）",fix="重写equals+hashCode"))
-        BugDB.load(BugRule(id="KT-1682",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（List<String>）",trigger="writeList<String><String>(a);writeList<String><String>(b);readList<String><String>();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
+            title="不必要的@Serializable（Map<String,Int>）",trigger="data class Map<String,Int>ernal(val x:Map<String,Int>)",detection="内部类型不需要 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1682",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0192）",fix="@Transient打断"))
         BugDB.load(BugRule(id="KT-1683",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@Serializable+by lazy=序列化时触发初始化",trigger="@Serializable data class U(val x:Int){val y by lazy{init()}}",detection="序列化时lazy被触发 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
+            title="data class componentN()命名冲突（String?）",trigger="data class C(val component1:String?,val x:String?)",detection="component1不是第一个 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0193）",fix="避开componentN命名"))
         BugDB.load(BugRule(id="KT-1684",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0336）",fix="统一命名"))
+            title="toString()无限递归",trigger="data class N(val parent:N?);N(N(N(...)))",detection="toString调用parent.toString — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0194）",fix="手动实现toString"))
         BugDB.load(BugRule(id="KT-1685",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0337）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1686",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
+            title="Parcelable序列化顺序不一致（Long）",trigger="writeLong(a);readLong(b)",detection="读写顺序错误 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0195）",fix="对齐write/read顺序"))
+        BugDB.load(BugRule(id="KT-1686",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="data class equals中引用比较",trigger="val a=Obj(1);val b=Obj(1);a==b",detection="值相等但hashCode不匹配 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0196）",fix="重写equals+hashCode"))
         BugDB.load(BugRule(id="KT-1687",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Int版）（Byte）",trigger="writeByte(a);writeByte(b);readByte();readByte()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0351）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（List<String>）",trigger="writeList<String><String>(a);writeList<String><String>(b);readList<String><String>();readList<String><String>()",detection="反序列化时值错位 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0275）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1688",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Boolean?）",trigger="writeBoolean?(a);writeLong(b);readLong();readBoolean?()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0352）",fix="写读顺序严格一致"))
+            title="@Serializable+by lazy=序列化时触发初始化",trigger="@Serializable data class U(val x:Int){val y by lazy{init()}}",detection="序列化时lazy被触发 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0299）",fix="@Transient标记非序列化字段"))
         BugDB.load(BugRule(id="KT-1689",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Sequence<Long>）",trigger="writeSequence<Long>(a);writeDouble(b);readDouble();readSequence<Long>()",detection="反序列化时值错位 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0353）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Long版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Long",detection="重命名混淆 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0336）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1690",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Boolean版）（Char）",trigger="writeChar(a);writeBoolean(b);readBoolean();readChar()",detection="反序列化时值错位 — Char类型字符编码边界,正则匹配组越界（参见 KT-0354）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Double版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Double",detection="重命名混淆 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0337）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1691",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Long版）（Double?）",trigger="writeLong(a);writeDouble?(b);readDouble?();readLong()",detection="反序列化时值错位 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0355）",fix="写读顺序严格一致"))
+            title="@SerialName与字段名不一致（Float版）",trigger="@SerialName(\\\\\\\"y\\\\\\\") val x:Float",detection="重命名混淆 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0338）",fix="统一命名"))
         BugDB.load(BugRule(id="KT-1692",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Parcelable读写顺序故意相反（Double版）（Array<Boolean>）",trigger="writeDouble(a);writeArray<Boolean>(b);readArray<Boolean>();readDouble()",detection="反序列化时值错位 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0356）",fix="写读顺序严格一致"))
+            title="Parcelable读写顺序故意相反（Int版）（Byte）",trigger="writeByte(a);writeByte(b);readByte();readByte()",detection="反序列化时值错位 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0355）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1693",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0412）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Long版）（Boolean?）",trigger="writeBoolean?(a);writeLong(b);readLong();readBoolean?()",detection="反序列化时值错位 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0356）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1694",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0413）",fix="显式标注默认值"))
+            title="Parcelable读写顺序故意相反（Double版）（Sequence<Long>）",trigger="writeSequence<Long>(a);writeDouble(b);readDouble();readSequence<Long>()",detection="反序列化时值错位 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0357）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1695",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="Gson默认忽略transient（MutableList<Double>）",trigger="@Transient val x:MutableMutableList<Double><Double>;Gson仍序列化",detection="Kotlin transient≠Java — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0481）",fix="@Expose(false)"))
-        BugDB.load(BugRule(id="KT-1696",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
-            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
+            title="Parcelable读写顺序故意相反（Boolean版）（Char）",trigger="writeChar(a);writeBoolean(b);readBoolean();readChar()",detection="反序列化时值错位 — Char类型字符编码边界,正则匹配组越界（参见 KT-0358）",fix="写读顺序严格一致"))
+        BugDB.load(BugRule(id="KT-1696",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Parcelable读写顺序故意相反（Long版）（Double?）",trigger="writeLong(a);writeDouble?(b);readDouble?();readLong()",detection="反序列化时值错位 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0359）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1697",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="data class copy浅复制（Int?）",trigger="data class U(val l:MutableInt?<T>);u.copy().l.add(x)",detection="共享可变集合 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0070）",fix="深复制或不可变"))
+            title="Parcelable读写顺序故意相反（Double版）（Array<Boolean>）",trigger="writeDouble(a);writeArray<Boolean>(b);readArray<Boolean>();readDouble()",detection="反序列化时值错位 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0360）",fix="写读顺序严格一致"))
         BugDB.load(BugRule(id="KT-1698",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="默认值在序列化中丢失（Map<String,Int>）",trigger="data class U(val x:Map<String,Int>=0);json无x字段",detection="反序列化仍用默认 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0071）",fix="显式标注默认值"))
+            title="默认值在序列化中丢失（Long版）",trigger="data class U(val x:Long=0);json无x字段",detection="反序列化仍用默认 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0423）",fix="显式标注默认值"))
         BugDB.load(BugRule(id="KT-1699",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
-            title="@SerialName与字段名不一致（Double）",trigger="@SerialName(\\\"y\\\") val x:Double",detection="重命名混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
-        BugDB.load(BugRule(id="KT-1700",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
-            title="不必要的@Serializable（String?）",trigger="data class String?ernal(val x:String?)",detection="内部类型不需要 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0073）",fix="按需标注"))
+            title="默认值在序列化中丢失（Double版）",trigger="data class U(val x:Double=0);json无x字段",detection="反序列化仍用默认 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0424）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1700",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="Gson默认忽略transient（MutableList<Double>）",trigger="@Transient val x:MutableMutableList<Double><Double>;Gson仍序列化",detection="Kotlin transient≠Java — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0492）",fix="@Expose(false)"))
         BugDB.load(BugRule(id="KT-1701",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
+            title="循环引用序列化",trigger="A(val b:B);B(val a:A)",detection="序列化栈溢出 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0069）",fix="@Transient打破循环"))
+        BugDB.load(BugRule(id="KT-1702",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="data class copy浅复制（Int?）",trigger="data class U(val l:MutableInt?<T>);u.copy().l.add(x)",detection="共享可变集合 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0070）",fix="深复制或不可变"))
+        BugDB.load(BugRule(id="KT-1703",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="默认值在序列化中丢失（Map<String,Int>）",trigger="data class U(val x:Map<String,Int>=0);json无x字段",detection="反序列化仍用默认 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0071）",fix="显式标注默认值"))
+        BugDB.load(BugRule(id="KT-1704",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MODERATE,
+            title="@SerialName与字段名不一致（Double）",trigger="@SerialName(\\\"y\\\") val x:Double",detection="重命名混淆 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0072）",fix="统一命名"))
+        BugDB.load(BugRule(id="KT-1705",category=BugCategory.DATA_SERIAL,severity=BugSeverity.MILD,
+            title="不必要的@Serializable（String?）",trigger="data class String?ernal(val x:String?)",detection="内部类型不需要 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0073）",fix="按需标注"))
+        BugDB.load(BugRule(id="KT-1706",category=BugCategory.DATA_SERIAL,severity=BugSeverity.SEVERE,
             title="Kotlinx序列化循环引用",trigger="@Serializable data class A(val b:B);@Serializable data class B(val a:A)",detection="Json序列化栈溢出 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0192）",fix="@Transient打断"))
-        BugDB.load(BugRule(id="KT-1702",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-1707",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
             title="tailrec非尾递归（String）",trigger="tailrec fun f(n:String)=n*f(n-1)",detection="最后一步非自身调用 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0074）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1703",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0075）",fix="去掉inline"))
-        BugDB.load(BugRule(id="KT-1704",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0076）",fix="加crossinline"))
-        BugDB.load(BugRule(id="KT-1705",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0077）",fix="noinline"))
-        BugDB.load(BugRule(id="KT-1706",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Char类型字符编码边界,正则匹配组越界（参见 KT-0078）",fix="去掉inline"))
-        BugDB.load(BugRule(id="KT-1707",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0079）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1708",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0080）",fix="while改写"))
+            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0075）",fix="去掉inline"))
         BugDB.load(BugRule(id="KT-1709",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0081）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1710",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0197）",fix="加inline"))
-        BugDB.load(BugRule(id="KT-1711",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0198）",fix="去掉return或inline"))
+            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0076）",fix="加crossinline"))
+        BugDB.load(BugRule(id="KT-1710",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0077）",fix="noinline"))
+        BugDB.load(BugRule(id="KT-1711",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Char类型字符编码边界,正则匹配组越界（参见 KT-0078）",fix="去掉inline"))
         BugDB.load(BugRule(id="KT-1712",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Double?）",trigger="tailrec fun f(n:Double?):Double?=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0079）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1713",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Int递归非尾（Array<Boolean>）",trigger="tailrec fun f(n:Array<Boolean>):Array<Boolean>=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0080）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1714",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0081）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1715",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0197）",fix="加inline"))
+        BugDB.load(BugRule(id="KT-1716",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0198）",fix="去掉return或inline"))
+        BugDB.load(BugRule(id="KT-1717",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
             title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0199）",fix="简化组合"))
-        BugDB.load(BugRule(id="KT-1713",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Int?）",trigger="inline val x:Int? get()=calc()",detection="每次get都计算 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0200）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1714",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0201）",fix="去掉reified"))
-        BugDB.load(BugRule(id="KT-1715",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0301）",fix="去掉crossinline或suspend"))
-        BugDB.load(BugRule(id="KT-1716",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0377）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1717",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0378）",fix="缓存或用普通val"))
         BugDB.load(BugRule(id="KT-1718",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0379）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1719",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0423）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1720",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0424）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1721",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0425）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1722",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Short）",trigger="tailrec fun f(n:Short)=n*f(n-1)",detection="最后一步非自身调用 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0074）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1723",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0075）",fix="去掉inline"))
-        BugDB.load(BugRule(id="KT-1724",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0076）",fix="加crossinline"))
+            title="内联属性内存开销（Int?）",trigger="inline val x:Int? get()=calc()",detection="每次get都计算 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0200）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1719",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0201）",fix="去掉reified"))
+        BugDB.load(BugRule(id="KT-1720",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0301）",fix="去掉crossinline或suspend"))
+        BugDB.load(BugRule(id="KT-1721",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Int递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0348）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1722",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0384）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1723",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0385）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1724",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0386）",fix="缓存或用普通val"))
         BugDB.load(BugRule(id="KT-1725",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0077）",fix="noinline"))
-        BugDB.load(BugRule(id="KT-1726",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0078）",fix="去掉inline"))
+            title="tailrec返回类型String递归非尾（Int版）（List<String>）",trigger="tailrec fun f(n:List<String><String>):List<String><String>=if(n<=1)n else n*f(n-1)",detection="最后非自身 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0411）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1726",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0412）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1727",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0079）",fix="while改写"))
+            title="tailrec返回类型String递归非尾（Double版）",trigger="tailrec fun f(n:Double):Double=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0413）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1728",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Char类型字符编码边界,正则匹配组越界（参见 KT-0080）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1729",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0081）",fix="while改写"))
+            title="tailrec返回类型String递归非尾（Boolean版）",trigger="tailrec fun f(n:Boolean):Boolean=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0414）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1729",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0434）",fix="while循环改写"))
         BugDB.load(BugRule(id="KT-1730",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0197）",fix="加inline"))
-        BugDB.load(BugRule(id="KT-1731",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0198）",fix="去掉return或inline"))
-        BugDB.load(BugRule(id="KT-1732",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0199）",fix="简化组合"))
-        BugDB.load(BugRule(id="KT-1733",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（MutableList<Double>）",trigger="inline val x:MutableMutableList<Double><Double> get()=calc()",detection="每次get都计算 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0200）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1734",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0201）",fix="去掉reified"))
+            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0435）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1731",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0436）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1732",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Sequence<Long>）",trigger="tailrec fun f(n:Sequence<Long>)=n*f(n-1)",detection="最后一步非自身调用 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0074）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1733",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Char类型字符编码边界,正则匹配组越界（参见 KT-0075）",fix="去掉inline"))
+        BugDB.load(BugRule(id="KT-1734",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0076）",fix="加crossinline"))
         BugDB.load(BugRule(id="KT-1735",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0301）",fix="去掉crossinline或suspend"))
+            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0077）",fix="noinline"))
         BugDB.load(BugRule(id="KT-1736",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0377）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1737",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0378）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1738",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0379）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1739",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0423）",fix="while循环改写"))
+            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0078）",fix="去掉inline"))
+        BugDB.load(BugRule(id="KT-1737",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Long?）",trigger="tailrec fun f(n:Long?):Long?=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0079）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1738",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Int递归非尾（MutableList<Double>）",trigger="tailrec fun f(n:MutableMutableList<Double><Double>):MutableMutableList<Double><Double>=if(n<=1)n else n*f(n-1)",detection="最后非自身 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0080）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1739",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0081）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1740",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0424）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1741",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0425）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1742",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（List<String>）",trigger="tailrec fun f(n:List<String><String>)=n*f(n-1)",detection="最后一步非自身调用 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0074）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1743",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0075）",fix="去掉inline"))
-        BugDB.load(BugRule(id="KT-1744",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0076）",fix="加crossinline"))
+            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0197）",fix="加inline"))
+        BugDB.load(BugRule(id="KT-1741",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0198）",fix="去掉return或inline"))
+        BugDB.load(BugRule(id="KT-1742",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0199）",fix="简化组合"))
+        BugDB.load(BugRule(id="KT-1743",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（String?）",trigger="inline val x:String? get()=calc()",detection="每次get都计算 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0200）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1744",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0201）",fix="去掉reified"))
         BugDB.load(BugRule(id="KT-1745",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0077）",fix="noinline"))
-        BugDB.load(BugRule(id="KT-1746",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0078）",fix="去掉inline"))
-        BugDB.load(BugRule(id="KT-1747",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0079）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1748",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0080）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1749",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0081）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1750",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Char类型字符编码边界,正则匹配组越界（参见 KT-0197）",fix="加inline"))
+            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0301）",fix="去掉crossinline或suspend"))
+        BugDB.load(BugRule(id="KT-1746",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型Int递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0348）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1747",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0384）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1748",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0385）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1749",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0386）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1750",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Int版）（Any?）",trigger="tailrec fun f(n:Any?):Any?=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0411）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1751",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0198）",fix="去掉return或inline"))
+            title="tailrec返回类型String递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0412）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1752",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0199）",fix="简化组合"))
-        BugDB.load(BugRule(id="KT-1753",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Float）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0200）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1754",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0201）",fix="去掉reified"))
-        BugDB.load(BugRule(id="KT-1755",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0301）",fix="去掉crossinline或suspend"))
-        BugDB.load(BugRule(id="KT-1756",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0377）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1757",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0378）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1758",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0379）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1759",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0423）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1760",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0424）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1761",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0425）",fix="while循环改写"))
-        BugDB.load(BugRule(id="KT-1762",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0074）",fix="while循环改写"))
+            title="tailrec返回类型String递归非尾（Double版）",trigger="tailrec fun f(n:Double):Double=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0413）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1753",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Boolean版）",trigger="tailrec fun f(n:Boolean):Boolean=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0414）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1754",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0434）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1755",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — Char类型字符编码边界,正则匹配组越界（参见 KT-0435）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1756",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0436）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1757",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="tailrec非尾递归（Array<Boolean>）",trigger="tailrec fun f(n:Array<Boolean>)=n*f(n-1)",detection="最后一步非自身调用 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0074）",fix="while循环改写"))
+        BugDB.load(BugRule(id="KT-1758",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0075）",fix="去掉inline"))
+        BugDB.load(BugRule(id="KT-1759",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0076）",fix="加crossinline"))
+        BugDB.load(BugRule(id="KT-1760",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0077）",fix="noinline"))
+        BugDB.load(BugRule(id="KT-1761",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0078）",fix="去掉inline"))
+        BugDB.load(BugRule(id="KT-1762",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Int?）",trigger="tailrec fun f(n:Int??):Int??=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0079）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1763",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline函数体过大",trigger="inline fun big(){...200行}",detection="字节码膨胀 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0075）",fix="去掉inline"))
+            title="tailrec返回类型Int递归非尾（Map<String,Int>）",trigger="tailrec fun f(n:Map<String,Int>):Map<String,Int>=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0080）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1764",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline遗漏",trigger="inline fun f(crossinline b:()->Unit){launch{b()}}",detection="非局部return限制 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0076）",fix="加crossinline"))
-        BugDB.load(BugRule(id="KT-1765",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="noinline参数存储",trigger="inline fun f(noinline b:()->Unit){holder=b}",detection="inline参数不能存 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0077）",fix="noinline"))
-        BugDB.load(BugRule(id="KT-1766",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的inline",trigger="inline fun tiny(){simple()}",detection="简单函数不需要inline — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0078）",fix="去掉inline"))
+            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0081）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1765",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
+            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0197）",fix="加inline"))
+        BugDB.load(BugRule(id="KT-1766",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0198）",fix="去掉return或inline"))
         BugDB.load(BugRule(id="KT-1767",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型String递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0079）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1768",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Int递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0080）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1769",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="tailrec返回类型Long递归非尾",trigger="tailrec fun f(n:{t}):{t}=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0081）",fix="while改写"))
-        BugDB.load(BugRule(id="KT-1770",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="reified泛型在非inline函数",trigger="fun <reified T> f(){}",detection="reified必须inline — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0197）",fix="加inline"))
+            title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0199）",fix="简化组合"))
+        BugDB.load(BugRule(id="KT-1768",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Any）",trigger="inline val x:Any get()=calc()",detection="每次get都计算 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0200）",fix="缓存或用普通val"))
+        BugDB.load(BugRule(id="KT-1769",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0201）",fix="去掉reified"))
+        BugDB.load(BugRule(id="KT-1770",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0301）",fix="去掉crossinline或suspend"))
         BugDB.load(BugRule(id="KT-1771",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="内联函数中return禁止",trigger="inline fun f(){return}",detection="无意义 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0198）",fix="去掉return或inline"))
-        BugDB.load(BugRule(id="KT-1772",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="crossinline+suspend",trigger="inline fun f(crossinline b:suspend()->Unit)",detection="限制叠加 — Char类型字符编码边界,正则匹配组越界（参见 KT-0199）",fix="简化组合"))
+            title="tailrec返回类型Int递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0348）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1772",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
+            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0384）",fix="缓存或用普通val"))
         BugDB.load(BugRule(id="KT-1773",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Double?）",trigger="inline val x:Double? get()=calc()",detection="每次get都计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0200）",fix="缓存或用普通val"))
+            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0385）",fix="缓存或用普通val"))
         BugDB.load(BugRule(id="KT-1774",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="不必要的reified",trigger="inline fun <reified T> f(){}未用T",detection="浪费内联 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0201）",fix="去掉reified"))
+            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0386）",fix="缓存或用普通val"))
         BugDB.load(BugRule(id="KT-1775",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
-            title="inline+crossinline+suspend=三层限制互锁",trigger="inline fun f(crossinline b:suspend ()->Unit){launch{b()}}",detection="crossinline+suspend+launch不可组合 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0301）",fix="去掉crossinline或suspend"))
-        BugDB.load(BugRule(id="KT-1776",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Long版）",trigger="inline val x:Long get()=calc()",detection="每次get都计算 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0377）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1777",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Double版）",trigger="inline val x:Double get()=calc()",detection="每次get都计算 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0378）",fix="缓存或用普通val"))
-        BugDB.load(BugRule(id="KT-1778",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MILD,
-            title="内联属性内存开销（Float版）",trigger="inline val x:Float get()=calc()",detection="每次get都计算 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0379）",fix="缓存或用普通val"))
+            title="tailrec返回类型String递归非尾（Int版）（Boolean?）",trigger="tailrec fun f(n:Boolean?):Boolean?=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0411）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1776",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Long版）",trigger="tailrec fun f(n:Long):Long=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0412）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1777",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Double版）",trigger="tailrec fun f(n:Double):Double=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Char类型字符编码边界,正则匹配组越界（参见 KT-0413）",fix="while改写"))
+        BugDB.load(BugRule(id="KT-1778",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.MODERATE,
+            title="tailrec返回类型String递归非尾（Boolean版）",trigger="tailrec fun f(n:Boolean):Boolean=if(n<=1)n else n*f(n-1)",detection="最后非自身 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0414）",fix="while改写"))
         BugDB.load(BugRule(id="KT-1779",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0423）",fix="while循环改写"))
+            title="tailrec非尾递归（Long版）",trigger="tailrec fun f(n:Long)=n*f(n-1)",detection="最后一步非自身调用 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0434）",fix="while循环改写"))
         BugDB.load(BugRule(id="KT-1780",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0424）",fix="while循环改写"))
+            title="tailrec非尾递归（Double版）",trigger="tailrec fun f(n:Double)=n*f(n-1)",detection="最后一步非自身调用 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0435）",fix="while循环改写"))
         BugDB.load(BugRule(id="KT-1781",category=BugCategory.INLINE_TAILREC,severity=BugSeverity.SEVERE,
-            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0425）",fix="while循环改写"))
+            title="tailrec非尾递归（Float版）",trigger="tailrec fun f(n:Float)=n*f(n-1)",detection="最后一步非自身调用 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0436）",fix="while循环改写"))
         BugDB.load(BugRule(id="KT-1782",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1783",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3613,25 +3613,25 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1794",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Map<String,Int>）",trigger="var name:Map<String,Map<String,Int>>在Java:getName()+setName()",detection="命名约定 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0207）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1795",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Int版）（Double）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0369）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Int版）（Double）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0376）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1796",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0370）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0377）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1797",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0371）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0378）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1798",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0372）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0379）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1799",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Int版）（Any）",trigger="fun javaMethod():Any=null",detection="Kotlin不认Java注解 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0396）",fix="显式标注?"))
+            title="@NotNull注解缺失（Int版）（Any）",trigger="fun javaMethod():Any=null",detection="Kotlin不认Java注解 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0403）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1800",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0397）",fix="显式标注?"))
+            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0404）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1801",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0398）",fix="显式标注?"))
+            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0405）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1802",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0399）",fix="显式标注?"))
+            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0406）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1803",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0417）",fix="直接传递"))
+            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0428）",fix="直接传递"))
         BugDB.load(BugRule(id="KT-1804",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0449）",fix="加@JvmOverloads"))
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0460）",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-1805",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1806",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3659,25 +3659,25 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1817",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Double）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0207）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1818",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Int版）（String?）",trigger="var name:String?在Java:getName()+setName()",detection="命名约定 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0369）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Int版）（String?）",trigger="var name:String?在Java:getName()+setName()",detection="命名约定 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0376）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1819",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0370）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0377）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1820",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0371）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0378）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1821",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0372）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0379）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1822",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Int版）（List<String>）",trigger="fun javaMethod():List<String><String>=null",detection="Kotlin不认Java注解 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0396）",fix="显式标注?"))
+            title="@NotNull注解缺失（Int版）（List<String>）",trigger="fun javaMethod():List<String><String>=null",detection="Kotlin不认Java注解 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0403）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1823",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0397）",fix="显式标注?"))
+            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0404）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1824",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0398）",fix="显式标注?"))
+            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0405）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1825",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0399）",fix="显式标注?"))
+            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0406）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1826",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0417）",fix="直接传递"))
+            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0428）",fix="直接传递"))
         BugDB.load(BugRule(id="KT-1827",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0449）",fix="加@JvmOverloads"))
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0460）",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-1828",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1829",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3705,25 +3705,25 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1840",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（String?）",trigger="var name:String?在Java:getName()+setName()",detection="命名约定 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0207）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1841",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Int版）（Set<Int>）",trigger="var name:Set<Int>在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0369）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Int版）（Set<Int>）",trigger="var name:Set<Int>在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0376）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1842",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0370）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0377）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1843",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0371）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0378）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1844",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0372）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0379）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1845",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Int版）",trigger="fun javaMethod():Int=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0396）",fix="显式标注?"))
+            title="@NotNull注解缺失（Int版）",trigger="fun javaMethod():Int=null",detection="Kotlin不认Java注解 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0403）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1846",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0397）",fix="显式标注?"))
+            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0404）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1847",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0398）",fix="显式标注?"))
+            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0405）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1848",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0399）",fix="显式标注?"))
+            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0406）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1849",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0417）",fix="直接传递"))
+            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0428）",fix="直接传递"))
         BugDB.load(BugRule(id="KT-1850",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0449）",fix="加@JvmOverloads"))
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0460）",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-1851",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1852",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3751,25 +3751,25 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1863",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Set<Int>）",trigger="var name:Set<Set<Int>>在Java:getName()+setName()",detection="命名约定 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0207）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1864",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Int版）（Long）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0369）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Int版）（Long）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0376）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1865",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0370）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0377）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1866",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0371）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0378）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1867",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0372）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0379）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1868",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Int版）（Short）",trigger="fun javaMethod():Short=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0396）",fix="显式标注?"))
+            title="@NotNull注解缺失（Int版）（Short）",trigger="fun javaMethod():Short=null",detection="Kotlin不认Java注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0403）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1869",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0397）",fix="显式标注?"))
+            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0404）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1870",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0398）",fix="显式标注?"))
+            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0405）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1871",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0399）",fix="显式标注?"))
+            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0406）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1872",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0417）",fix="直接传递"))
+            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0428）",fix="直接传递"))
         BugDB.load(BugRule(id="KT-1873",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0449）",fix="加@JvmOverloads"))
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0460）",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-1874",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — Char类型字符编码边界,正则匹配组越界（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1875",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3797,25 +3797,25 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1886",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
             title="Kotlin属性在Java中get/set（Long）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0207）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1887",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Int版）（Any）",trigger="var name:Any在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0369）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Int版）（Any）",trigger="var name:Any在Java:getName()+setName()",detection="命名约定 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0376）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1888",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0370）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Long版）",trigger="var name:Long在Java:getName()+setName()",detection="命名约定 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0377）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1889",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0371）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Double版）",trigger="var name:Double在Java:getName()+setName()",detection="命名约定 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0378）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1890",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MILD,
-            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0372）",fix="保持一致"))
+            title="Kotlin属性在Java中get/set（Boolean版）",trigger="var name:Boolean在Java:getName()+setName()",detection="命名约定 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0379）",fix="保持一致"))
         BugDB.load(BugRule(id="KT-1891",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Int版）（Any?）",trigger="fun javaMethod():Any?=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0396）",fix="显式标注?"))
+            title="@NotNull注解缺失（Int版）（Any?）",trigger="fun javaMethod():Any?=null",detection="Kotlin不认Java注解 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0403）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1892",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0397）",fix="显式标注?"))
+            title="@NotNull注解缺失（Long版）",trigger="fun javaMethod():Long=null",detection="Kotlin不认Java注解 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0404）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1893",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0398）",fix="显式标注?"))
+            title="@NotNull注解缺失（Double版）",trigger="fun javaMethod():Double=null",detection="Kotlin不认Java注解 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0405）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1894",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
-            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0399）",fix="显式标注?"))
+            title="@NotNull注解缺失（Boolean版）",trigger="fun javaMethod():Boolean=null",detection="Kotlin不认Java注解 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0406）",fix="显式标注?"))
         BugDB.load(BugRule(id="KT-1895",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0417）",fix="直接传递"))
+            title="Kotlin集合与Java互转（Set版）",trigger="kotlinSet.toSet()在Java侧",detection="创建新副本 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0428）",fix="直接传递"))
         BugDB.load(BugRule(id="KT-1896",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.MODERATE,
-            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Char类型字符编码边界,正则匹配组越界（参见 KT-0449）",fix="加@JvmOverloads"))
+            title="@JvmOverloads缺失（Long版）",trigger="fun f(a:Long,b:Long=0)",detection="Java调用不提供重载 — Char类型字符编码边界,正则匹配组越界（参见 KT-0460）",fix="加@JvmOverloads"))
         BugDB.load(BugRule(id="KT-1897",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
             title="Java返回null未标注",trigger="val s=javaObj.getName();s.length",detection="T!可为null — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0082）",fix="?:+\\\"\\\""))
         BugDB.load(BugRule(id="KT-1898",category=BugCategory.JAVA_INTEROP,severity=BugSeverity.SEVERE,
@@ -3865,55 +3865,55 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1920",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="is检查+var+lambda=智能转换三次失效（Int?）",trigger="var x:Any?=\\\"hi\\\";if(x is Int??){launch{x.length}}",detection="var可能被改+lambda捕获 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0305）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1921",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Int版）（Map<String,Int>）",trigger="x!!;if(x is Map<String,Int>){x.length}",detection="!!后非空 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0392）",fix="直接用is检查"))
+            title="!!后is检查多余（Int版）（Map<String,Int>）",trigger="x!!;if(x is Map<String,Int>){x.length}",detection="!!后非空 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0399）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1922",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0393）",fix="直接用is检查"))
+            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0400）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1923",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0394）",fix="直接用is检查"))
+            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0401）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1924",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0395）",fix="直接用is检查"))
+            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0402）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1925",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Int版）（Long）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0433）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Int版）（Long）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0444）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1926",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0434）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0445）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1927",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0435）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0446）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1928",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0436）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0447）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1929",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Int版）（Short）",trigger="val x:Any;val y=x as Short",detection="可能ClassCast — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0437）",fix="as?+?:错误处理"))
+            title="as不安全转换（Int版）（Short）",trigger="val x:Any;val y=x as Short",detection="可能ClassCast — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0448）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1930",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0438）",fix="as?+?:错误处理"))
+            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0449）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1931",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0439）",fix="as?+?:错误处理"))
+            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0450）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1932",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0440）",fix="as?+?:错误处理"))
+            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0451）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1933",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Int版）（Boolean?）",trigger="val x:Boolean?=\\\\\\\"hi\\\\\\\";val y=x as Boolean?",detection="已知类型不需要as — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0441）",fix="直接使用"))
+            title="不必要的as（Int版）（Boolean?）",trigger="val x:Boolean?=\\\\\\\"hi\\\\\\\";val y=x as Boolean?",detection="已知类型不需要as — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0452）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1934",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0442）",fix="直接使用"))
+            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0453）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1935",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Char类型字符编码边界,正则匹配组越界（参见 KT-0443）",fix="直接使用"))
+            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Char类型字符编码边界,正则匹配组越界（参见 KT-0454）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1936",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0444）",fix="直接使用"))
+            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0455）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1937",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Int版）（Array<Boolean>）",trigger="val x=y as? Array<Boolean>?:return;x.length",detection="x已非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0450）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Int版）（Array<Boolean>）",trigger="val x=y as? Array<Boolean>?:return;x.length",detection="x已非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0461）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1938",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0451）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0462）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1939",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0452）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0463）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1940",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0453）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0464）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1941",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Int版）（Boolean）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0460）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Int版）（Boolean）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0471）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1942",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0461）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0472）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1943",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0462）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0473）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1944",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0463）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0474）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1945",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="when分支智能转换不稳定（String?）",trigger="when(x){is String?->x+1 is Long->x+1L}",detection="编译器推断不一致 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0487）",fix="显式as+else"))
+            title="when分支智能转换不稳定（String?）",trigger="when(x){is String?->x+1 is Long->x+1L}",detection="编译器推断不一致 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0498）",fix="显式as+else"))
         BugDB.load(BugRule(id="KT-1946",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="var智能转换失效（Set<Int>）",trigger="if(x is Set<Set<Int>>){x.length}",detection="var可被外部修改 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0089）",fix="val y=x"))
         BugDB.load(BugRule(id="KT-1947",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
@@ -3939,55 +3939,55 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1957",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="is检查+var+lambda=智能转换三次失效（Char）",trigger="var x:Any?=\\\"hi\\\";if(x is Char){launch{x.length}}",detection="var可能被改+lambda捕获 — Char类型字符编码边界,正则匹配组越界（参见 KT-0305）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1958",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Int版）（Double?）",trigger="x!!;if(x is Double?){x.length}",detection="!!后非空 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0392）",fix="直接用is检查"))
+            title="!!后is检查多余（Int版）（Double?）",trigger="x!!;if(x is Double?){x.length}",detection="!!后非空 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0399）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1959",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0393）",fix="直接用is检查"))
+            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0400）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1960",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0394）",fix="直接用is检查"))
+            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0401）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1961",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0395）",fix="直接用is检查"))
+            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0402）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1962",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Int版）（MutableList<Double>）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is MutableMutableList<Double><Double>){x.length}}}}",detection="内部类访问外部var — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0433）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Int版）（MutableList<Double>）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is MutableMutableList<Double><Double>){x.length}}}}",detection="内部类访问外部var — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0444）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1963",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0434）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0445）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1964",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0435）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0446）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1965",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0436）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0447）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-1966",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Int版）（Double）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0437）",fix="as?+?:错误处理"))
+            title="as不安全转换（Int版）（Double）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0448）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1967",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0438）",fix="as?+?:错误处理"))
+            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0449）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1968",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0439）",fix="as?+?:错误处理"))
+            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0450）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1969",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0440）",fix="as?+?:错误处理"))
+            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0451）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-1970",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Int版）（Any）",trigger="val x:Any=\\\\\\\"hi\\\\\\\";val y=x as Any",detection="已知类型不需要as — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0441）",fix="直接使用"))
+            title="不必要的as（Int版）（Any）",trigger="val x:Any=\\\\\\\"hi\\\\\\\";val y=x as Any",detection="已知类型不需要as — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0452）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1971",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0442）",fix="直接使用"))
+            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0453）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1972",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0443）",fix="直接使用"))
+            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0454）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1973",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0444）",fix="直接使用"))
+            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0455）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-1974",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Int版）（Any?）",trigger="val x=y as? Any??:return;x.length",detection="x已非空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0450）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Int版）（Any?）",trigger="val x=y as? Any??:return;x.length",detection="x已非空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0461）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1975",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0451）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0462）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1976",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0452）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0463）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1977",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0453）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0464）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-1978",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Int版）（Sequence<Long>）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Sequence<Long>){launch{x.length}}",detection="var可能被改+lambda捕获 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0460）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Int版）（Sequence<Long>）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Sequence<Long>){launch{x.length}}",detection="var可能被改+lambda捕获 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0471）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1979",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Char类型字符编码边界,正则匹配组越界（参见 KT-0461）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Char类型字符编码边界,正则匹配组越界（参见 KT-0472）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1980",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0462）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0473）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1981",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0463）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0474）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1982",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="when分支智能转换不稳定（Float）",trigger="when(x){is Float->x+1 is Long->x+1L}",detection="编译器推断不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0487）",fix="显式as+else"))
+            title="when分支智能转换不稳定（Float）",trigger="when(x){is Float->x+1 is Long->x+1L}",detection="编译器推断不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0498）",fix="显式as+else"))
         BugDB.load(BugRule(id="KT-1983",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="var智能转换失效（Long?）",trigger="if(x is Long?){x.length}",detection="var可被外部修改 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0089）",fix="val y=x"))
         BugDB.load(BugRule(id="KT-1984",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
@@ -4013,58 +4013,58 @@ object BugRules {
         BugDB.load(BugRule(id="KT-1994",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
             title="is检查+var+lambda=智能转换三次失效（Int）",trigger="var x:Any?=\\\"hi\\\";if(x is Int){launch{x.length}}",detection="var可能被改+lambda捕获 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0305）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-1995",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Int版）（Short）",trigger="x!!;if(x is Short){x.length}",detection="!!后非空 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0392）",fix="直接用is检查"))
+            title="!!后is检查多余（Int版）（Short）",trigger="x!!;if(x is Short){x.length}",detection="!!后非空 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0399）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1996",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0393）",fix="直接用is检查"))
+            title="!!后is检查多余（Long版）",trigger="x!!;if(x is Long){x.length}",detection="!!后非空 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0400）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1997",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0394）",fix="直接用is检查"))
+            title="!!后is检查多余（Double版）",trigger="x!!;if(x is Double){x.length}",detection="!!后非空 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0401）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1998",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0395）",fix="直接用is检查"))
+            title="!!后is检查多余（Boolean版）",trigger="x!!;if(x is Boolean){x.length}",detection="!!后非空 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0402）",fix="直接用is检查"))
         BugDB.load(BugRule(id="KT-1999",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Int版）（Boolean?）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean?){x.length}}}}",detection="内部类访问外部var — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0433）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Int版）（Boolean?）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean?){x.length}}}}",detection="内部类访问外部var — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0444）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-2000",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0434）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Long版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Long){x.length}}}}",detection="内部类访问外部var — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0445）",fix="局部val快照"))
     }
 
     private fun registerChunk5() {
         BugDB.load(BugRule(id="KT-2001",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — Char类型字符编码边界,正则匹配组越界（参见 KT-0435）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Double版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Double){x.length}}}}",detection="内部类访问外部var — Char类型字符编码边界,正则匹配组越界（参见 KT-0446）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-2002",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
-            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0436）",fix="局部val快照"))
+            title="内部类属性智能转换失效（Boolean版）",trigger="class Outer{var x:Any?;inner class Inner{fun f(){if(x is Boolean){x.length}}}}",detection="内部类访问外部var — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0447）",fix="局部val快照"))
         BugDB.load(BugRule(id="KT-2003",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Int版）（Array<Boolean>）",trigger="val x:Any;val y=x as Array<Boolean>",detection="可能ClassCast — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0437）",fix="as?+?:错误处理"))
+            title="as不安全转换（Int版）（Array<Boolean>）",trigger="val x:Any;val y=x as Array<Boolean>",detection="可能ClassCast — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0448）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-2004",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0438）",fix="as?+?:错误处理"))
+            title="as不安全转换（Long版）",trigger="val x:Any;val y=x as Long",detection="可能ClassCast — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0449）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-2005",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0439）",fix="as?+?:错误处理"))
+            title="as不安全转换（Double版）",trigger="val x:Any;val y=x as Double",detection="可能ClassCast — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0450）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-2006",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0440）",fix="as?+?:错误处理"))
+            title="as不安全转换（Boolean版）",trigger="val x:Any;val y=x as Boolean",detection="可能ClassCast — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0451）",fix="as?+?:错误处理"))
         BugDB.load(BugRule(id="KT-2007",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Int版）（Boolean）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0441）",fix="直接使用"))
+            title="不必要的as（Int版）（Boolean）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0452）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-2008",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0442）",fix="直接使用"))
+            title="不必要的as（Long版）",trigger="val x:Long=\\\\\\\"hi\\\\\\\";val y=x as Long",detection="已知类型不需要as — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0453）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-2009",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0443）",fix="直接使用"))
+            title="不必要的as（Double版）",trigger="val x:Double=\\\\\\\"hi\\\\\\\";val y=x as Double",detection="已知类型不需要as — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0454）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-2010",category=BugCategory.SMART_CAST,severity=BugSeverity.MILD,
-            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0444）",fix="直接使用"))
+            title="不必要的as（Boolean版）",trigger="val x:Boolean=\\\\\\\"hi\\\\\\\";val y=x as Boolean",detection="已知类型不需要as — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0455）",fix="直接使用"))
         BugDB.load(BugRule(id="KT-2011",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Int版）（String?）",trigger="val x=y as? String??:return;x.length",detection="x已非空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0450）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Int版）（String?）",trigger="val x=y as? String??:return;x.length",detection="x已非空 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0461）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-2012",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0451）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Long版）",trigger="val x=y as? Long?:return;x.length",detection="x已非空 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0462）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-2013",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0452）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Double版）",trigger="val x=y as? Double?:return;x.length",detection="x已非空 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0463）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-2014",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0453）",fix="直接使用不用?."))
+            title="类型窄化+?:丢失（Boolean版）",trigger="val x=y as? Boolean?:return;x.length",detection="x已非空 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0464）",fix="直接使用不用?."))
         BugDB.load(BugRule(id="KT-2015",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Int版）（List<String>）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is List<String><String>){launch{x.length}}",detection="var可能被改+lambda捕获 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0460）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Int版）（List<String>）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is List<String><String>){launch{x.length}}",detection="var可能被改+lambda捕获 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0471）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-2016",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0461）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Long版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Long){launch{x.length}}",detection="var可能被改+lambda捕获 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0472）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-2017",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0462）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Double版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Double){launch{x.length}}",detection="var可能被改+lambda捕获 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0473）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-2018",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0463）",fix="局部val快照+显式cast"))
+            title="is检查+var+lambda=智能转换三次失效（Boolean版）",trigger="var x:Any?=\\\\\\\"hi\\\\\\\";if(x is Boolean){launch{x.length}}",detection="var可能被改+lambda捕获 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0474）",fix="局部val快照+显式cast"))
         BugDB.load(BugRule(id="KT-2019",category=BugCategory.SMART_CAST,severity=BugSeverity.MODERATE,
-            title="when分支智能转换不稳定（String）",trigger="when(x){is String->x+1 is Long->x+1L}",detection="编译器推断不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0487）",fix="显式as+else"))
+            title="when分支智能转换不稳定（String）",trigger="when(x){is String->x+1 is Long->x+1L}",detection="编译器推断不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0498）",fix="显式as+else"))
         BugDB.load(BugRule(id="KT-2020",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
             title="var智能转换失效（Byte）",trigger="if(x is Byte){x.length}",detection="var可被外部修改 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0089）",fix="val y=x"))
         BugDB.load(BugRule(id="KT-2021",category=BugCategory.SMART_CAST,severity=BugSeverity.SEVERE,
@@ -4082,33 +4082,33 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2027",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
             title="内联类非主构造属性（Double?）",trigger="inline class N(val s:Double?){val len=s.length}",detection="每次计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0215）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2028",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Int版）（Array<Boolean>）",trigger="inline class N(val s:Array<Boolean>){val len=s.length}",detection="每次计算 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0341）",fix="内联到val本身"))
+            title="内联类非主构造属性（Int版）（Array<Boolean>）",trigger="inline class N(val s:Array<Boolean>){val len=s.length}",detection="每次计算 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0344）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2029",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0342）",fix="内联到val本身"))
+            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0345）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2030",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0343）",fix="内联到val本身"))
+            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0346）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2031",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0344）",fix="内联到val本身"))
+            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0347）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2032",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Int版）（Boolean）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0388）",fix="避免接口"))
+            title="内联类实现接口（Int版）（Boolean）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0395）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2033",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0389）",fix="避免接口"))
+            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0396）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2034",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0390）",fix="避免接口"))
+            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0397）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2035",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0391）",fix="避免接口"))
+            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0398）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2036",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0426）",fix="拆成两个"))
+            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0437）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2037",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0427）",fix="拆成两个"))
+            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0438）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2038",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0428）",fix="拆成两个"))
+            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0439）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2039",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0457）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0468）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2040",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0458）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2041",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0459）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0470）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2042",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="@JvmInline缺失（Short）",trigger="inline class Name(val s:Short)",detection="JVM需要注解 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0095）",fix="加@JvmInline"))
         BugDB.load(BugRule(id="KT-2043",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
@@ -4122,33 +4122,33 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2047",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
             title="内联类非主构造属性（Sequence<Long>）",trigger="inline class N(val s:Sequence<Long>){val len=s.length}",detection="每次计算 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0215）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2048",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Int版）（Char）",trigger="inline class N(val s:Char){val len=s.length}",detection="每次计算 — Char类型字符编码边界,正则匹配组越界（参见 KT-0341）",fix="内联到val本身"))
+            title="内联类非主构造属性（Int版）（Char）",trigger="inline class N(val s:Char){val len=s.length}",detection="每次计算 — Char类型字符编码边界,正则匹配组越界（参见 KT-0344）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2049",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0342）",fix="内联到val本身"))
+            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0345）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2050",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0343）",fix="内联到val本身"))
+            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0346）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2051",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0344）",fix="内联到val本身"))
+            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0347）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2052",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Int版）（Long?）",trigger="value class N(val s:Long?):Iface",detection="间接装箱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0388）",fix="避免接口"))
+            title="内联类实现接口（Int版）（Long?）",trigger="value class N(val s:Long?):Iface",detection="间接装箱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0395）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2053",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0389）",fix="避免接口"))
+            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0396）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2054",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0390）",fix="避免接口"))
+            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0397）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2055",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0391）",fix="避免接口"))
+            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0398）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2056",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0426）",fix="拆成两个"))
+            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0437）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2057",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0427）",fix="拆成两个"))
+            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0438）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2058",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0428）",fix="拆成两个"))
+            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0439）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2059",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0457）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0468）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2060",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0458）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0469）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2061",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0459）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0470）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2062",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
             title="@JvmInline缺失（List<String>）",trigger="inline class Name(val s:List<String><String>)",detection="JVM需要注解 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0095）",fix="加@JvmInline"))
         BugDB.load(BugRule(id="KT-2063",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
@@ -4162,33 +4162,33 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2067",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
             title="内联类非主构造属性（Byte）",trigger="inline class N(val s:Byte){val len=s.length}",detection="每次计算 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0215）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2068",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Int版）（Boolean?）",trigger="inline class N(val s:Boolean?){val len=s.length}",detection="每次计算 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0341）",fix="内联到val本身"))
+            title="内联类非主构造属性（Int版）（Boolean?）",trigger="inline class N(val s:Boolean?){val len=s.length}",detection="每次计算 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0344）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2069",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0342）",fix="内联到val本身"))
+            title="内联类非主构造属性（Long版）",trigger="inline class N(val s:Long){val len=s.length}",detection="每次计算 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0345）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2070",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Char类型字符编码边界,正则匹配组越界（参见 KT-0343）",fix="内联到val本身"))
+            title="内联类非主构造属性（Double版）",trigger="inline class N(val s:Double){val len=s.length}",detection="每次计算 — Char类型字符编码边界,正则匹配组越界（参见 KT-0346）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2071",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0344）",fix="内联到val本身"))
+            title="内联类非主构造属性（Boolean版）",trigger="inline class N(val s:Boolean){val len=s.length}",detection="每次计算 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0347）",fix="内联到val本身"))
         BugDB.load(BugRule(id="KT-2072",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Int版）（Array<Boolean>）",trigger="value class N(val s:Array<Boolean>):Iface",detection="间接装箱 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0388）",fix="避免接口"))
+            title="内联类实现接口（Int版）（Array<Boolean>）",trigger="value class N(val s:Array<Boolean>):Iface",detection="间接装箱 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0395）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2073",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0389）",fix="避免接口"))
+            title="内联类实现接口（Long版）",trigger="value class N(val s:Long):Iface",detection="间接装箱 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0396）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2074",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0390）",fix="避免接口"))
+            title="内联类实现接口（Double版）",trigger="value class N(val s:Double):Iface",detection="间接装箱 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0397）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2075",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0391）",fix="避免接口"))
+            title="内联类实现接口（Boolean版）",trigger="value class N(val s:Boolean):Iface",detection="间接装箱 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0398）",fix="避免接口"))
         BugDB.load(BugRule(id="KT-2076",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0426）",fix="拆成两个"))
+            title="内联类多属性（Long版）",trigger="@JvmInline value class P(val x:Long,val y:Long)",detection="仅单属性 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0437）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2077",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0427）",fix="拆成两个"))
+            title="内联类多属性（Double版）",trigger="@JvmInline value class P(val x:Double,val y:Double)",detection="仅单属性 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0438）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2078",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MILD,
-            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0428）",fix="拆成两个"))
+            title="内联类多属性（Float版）",trigger="@JvmInline value class P(val x:Float,val y:Float)",detection="仅单属性 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0439）",fix="拆成两个"))
         BugDB.load(BugRule(id="KT-2079",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0457）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Long版）",trigger="inline class N(val i:Long);N(1)==N(1)",detection="equals自动生成 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0468）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2080",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0458）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Double版）",trigger="inline class N(val i:Double);N(1)==N(1)",detection="equals自动生成 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2081",category=BugCategory.VALUE_CLASS,severity=BugSeverity.MODERATE,
-            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0459）",fix="可用但注意引用比较"))
+            title="内联类==比较失效（Float版）",trigger="inline class N(val i:Float);N(1)==N(1)",detection="equals自动生成 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0470）",fix="可用但注意引用比较"))
         BugDB.load(BugRule(id="KT-2082",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2083",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4206,9 +4206,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2089",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2090",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2091",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2092",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2093",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4226,9 +4226,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2099",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2100",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2101",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2102",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2103",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4246,9 +4246,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2109",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2110",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2111",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2112",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2113",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4266,9 +4266,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2119",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2120",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2121",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2122",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2123",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4286,9 +4286,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2129",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2130",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Char类型字符编码边界,正则匹配组越界（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Char类型字符编码边界,正则匹配组越界（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2131",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2132",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2133",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4306,9 +4306,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2139",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2140",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2141",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2142",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2143",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4326,9 +4326,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2149",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2150",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2151",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2152",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — Char类型字符编码边界,正则匹配组越界（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2153",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4346,9 +4346,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2159",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2160",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2161",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2162",category=BugCategory.SEALED_ENUM,severity=BugSeverity.SEVERE,
             title="values()每次新建数组",trigger="values().find{",detection="每次调用新建 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0098）",fix="enumEntries()"))
         BugDB.load(BugRule(id="KT-2163",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
@@ -4366,9 +4366,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2169",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MODERATE,
             title="sealed+反射枚举子类=新增子类不拦截",trigger="sealed class A;通过反射实例化未知子类",detection="when穷举被绕过 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0300）",fix="sealed+禁止反射实例化"))
         BugDB.load(BugRule(id="KT-2170",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0469）",fix="val"))
+            title="枚举包含可变状态（Long版）",trigger="enum class E(var x:Long)",detection="枚举应不可变 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0480）",fix="val"))
         BugDB.load(BugRule(id="KT-2171",category=BugCategory.SEALED_ENUM,severity=BugSeverity.MILD,
-            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0470）",fix="val"))
+            title="枚举包含可变状态（Double版）",trigger="enum class E(var x:Double)",detection="枚举应不可变 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0481）",fix="val"))
         BugDB.load(BugRule(id="KT-2172",category=BugCategory.DELEGATE,severity=BugSeverity.MODERATE,
             title="by lazy默认SYNCHRONIZED",trigger="by lazy{",detection="默认线程安全开销 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0102）",fix="指定LazyThreadSafetyMode.NONE"))
         BugDB.load(BugRule(id="KT-2173",category=BugCategory.DELEGATE,severity=BugSeverity.MODERATE,
@@ -4574,9 +4574,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2273",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="volatile+递增=你以为原子实际不是",trigger="@Volatile var x=0;threads{x++}",detection="volatile只保证可见性不保证原子性 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0317）",fix="AtomicInteger.incrementAndGet"))
         BugDB.load(BugRule(id="KT-2274",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0475）",fix="try-catch-withLock"))
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0486）",fix="try-catch-withLock"))
         BugDB.load(BugRule(id="KT-2275",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭（Long?）",trigger="val c=Channel<Long?>();produce{",detection="生产者完成后未close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0488）",fix="finally{c.close()}"))
+            title="Channel未关闭（Long?）",trigger="val c=Channel<Long?>();produce{",detection="生产者完成后未close — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0499）",fix="finally{c.close()}"))
         BugDB.load(BugRule(id="KT-2276",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="共享可变状态无同步",trigger="var c=0;repeat(100){thread{c++}}",detection="竞态条件 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0105）",fix="AtomicInteger"))
         BugDB.load(BugRule(id="KT-2277",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
@@ -4636,9 +4636,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2304",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="volatile+递增=你以为原子实际不是",trigger="@Volatile var x=0;threads{x++}",detection="volatile只保证可见性不保证原子性 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0317）",fix="AtomicInteger.incrementAndGet"))
         BugDB.load(BugRule(id="KT-2305",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0475）",fix="try-catch-withLock"))
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0486）",fix="try-catch-withLock"))
         BugDB.load(BugRule(id="KT-2306",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭（Any）",trigger="val c=Channel<Any>();produce{",detection="生产者完成后未close — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0488）",fix="finally{c.close()}"))
+            title="Channel未关闭（Any）",trigger="val c=Channel<Any>();produce{",detection="生产者完成后未close — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0499）",fix="finally{c.close()}"))
         BugDB.load(BugRule(id="KT-2307",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="共享可变状态无同步",trigger="var c=0;repeat(100){thread{c++}}",detection="竞态条件 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0105）",fix="AtomicInteger"))
         BugDB.load(BugRule(id="KT-2308",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
@@ -4698,9 +4698,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2335",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="volatile+递增=你以为原子实际不是",trigger="@Volatile var x=0;threads{x++}",detection="volatile只保证可见性不保证原子性 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0317）",fix="AtomicInteger.incrementAndGet"))
         BugDB.load(BugRule(id="KT-2336",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0475）",fix="try-catch-withLock"))
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0486）",fix="try-catch-withLock"))
         BugDB.load(BugRule(id="KT-2337",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭（Char）",trigger="val c=Channel<Char>();produce{",detection="生产者完成后未close — Char类型字符编码边界,正则匹配组越界（参见 KT-0488）",fix="finally{c.close()}"))
+            title="Channel未关闭（Char）",trigger="val c=Channel<Char>();produce{",detection="生产者完成后未close — Char类型字符编码边界,正则匹配组越界（参见 KT-0499）",fix="finally{c.close()}"))
         BugDB.load(BugRule(id="KT-2338",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="共享可变状态无同步",trigger="var c=0;repeat(100){thread{c++}}",detection="竞态条件 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0105）",fix="AtomicInteger"))
         BugDB.load(BugRule(id="KT-2339",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
@@ -4760,9 +4760,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2366",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="volatile+递增=你以为原子实际不是",trigger="@Volatile var x=0;threads{x++}",detection="volatile只保证可见性不保证原子性 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0317）",fix="AtomicInteger.incrementAndGet"))
         BugDB.load(BugRule(id="KT-2367",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0475）",fix="try-catch-withLock"))
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0486）",fix="try-catch-withLock"))
         BugDB.load(BugRule(id="KT-2368",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭（Double）",trigger="val c=Channel<Double>();produce{",detection="生产者完成后未close — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0488）",fix="finally{c.close()}"))
+            title="Channel未关闭（Double）",trigger="val c=Channel<Double>();produce{",detection="生产者完成后未close — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0499）",fix="finally{c.close()}"))
         BugDB.load(BugRule(id="KT-2369",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="共享可变状态无同步",trigger="var c=0;repeat(100){thread{c++}}",detection="竞态条件 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0105）",fix="AtomicInteger"))
         BugDB.load(BugRule(id="KT-2370",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
@@ -4822,9 +4822,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2397",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="volatile+递增=你以为原子实际不是",trigger="@Volatile var x=0;threads{x++}",detection="volatile只保证可见性不保证原子性 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0317）",fix="AtomicInteger.incrementAndGet"))
         BugDB.load(BugRule(id="KT-2398",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
-            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0475）",fix="try-catch-withLock"))
+            title="Mutex未释放",trigger="mutex.withLock{throw E()}",detection="withLock自动释放但异常未处理 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0486）",fix="try-catch-withLock"))
         BugDB.load(BugRule(id="KT-2399",category=BugCategory.CONCURRENCY,severity=BugSeverity.MODERATE,
-            title="Channel未关闭（String）",trigger="val c=Channel<String>();produce{",detection="生产者完成后未close — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0488）",fix="finally{c.close()}"))
+            title="Channel未关闭（String）",trigger="val c=Channel<String>();produce{",detection="生产者完成后未close — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0499）",fix="finally{c.close()}"))
         BugDB.load(BugRule(id="KT-2400",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
             title="共享可变状态无同步",trigger="var c=0;repeat(100){thread{c++}}",detection="竞态条件 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0105）",fix="AtomicInteger"))
         BugDB.load(BugRule(id="KT-2401",category=BugCategory.CONCURRENCY,severity=BugSeverity.SEVERE,
@@ -4876,9 +4876,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2424",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2425",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2426",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2427",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2428",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -4902,9 +4902,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2437",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2438",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2439",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2440",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Char类型字符编码边界,正则匹配组越界（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2441",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -4928,9 +4928,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2450",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2451",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2452",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2453",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2454",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -4954,9 +4954,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2463",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2464",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2465",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2466",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2467",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -4980,9 +4980,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2476",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2477",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2478",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2479",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2480",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -5006,9 +5006,9 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2489",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="LaunchedEffect+错误key+状态更新=死循环重组",trigger="LaunchedEffect(Unit){counter++}",detection="每次重组counter变→触发重组→counter变 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0298）",fix="key使用稳定值"))
         BugDB.load(BugRule(id="KT-2490",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
-            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0490）",fix="直接计算"))
+            title="derivedStateOf滥用",trigger="val v=derivedStateOf{simpleCalc()}",detection="简单计算不需要 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0501）",fix="直接计算"))
         BugDB.load(BugRule(id="KT-2491",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
-            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0491）",fix="LaunchedEffect"))
+            title="副作用在Composition中",trigger="CompositionLocalProvider{loadData()}",detection="每次重组执行 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0502）",fix="LaunchedEffect"))
         BugDB.load(BugRule(id="KT-2492",category=BugCategory.COMPOSE,severity=BugSeverity.SEVERE,
             title="主线程读文件",trigger="Text(File(\\\"x\\\").readText())",detection="卡UI — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0112）",fix="LaunchedEffect+IO"))
         BugDB.load(BugRule(id="KT-2493",category=BugCategory.COMPOSE,severity=BugSeverity.MODERATE,
@@ -5045,27 +5045,27 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2507",category=BugCategory.KMP,severity=BugSeverity.MILD,
             title="KMP模块缺少依赖",trigger="commonMain中import kotlinx.*",detection="kotlinx.datetime需显式依赖 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0236）",fix="确认依赖或添加依赖"))
         BugDB.load(BugRule(id="KT-2508",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）（Float）",trigger="expect fun f():Float;actual fun f():Float",detection="签名不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0357）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）（Float）",trigger="expect fun f():Float;actual fun f():Float",detection="签名不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0361）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2509",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Long?）",trigger="expect fun f():Long;actual fun f():Long?",detection="签名不一致 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0358）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Long?）",trigger="expect fun f():Long;actual fun f():Long?",detection="签名不一致 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0362）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2510",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（MutableList<Double>）",trigger="expect fun f():Double;actual fun f():MutableMutableList<Double><Double>",detection="签名不一致 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0359）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（MutableList<Double>）",trigger="expect fun f():Double;actual fun f():MutableMutableList<Double><Double>",detection="签名不一致 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0363）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2511",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Boolean版）（Boolean）",trigger="expect fun f():Boolean;actual fun f():Boolean",detection="签名不一致 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0360）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Boolean版）（Boolean）",trigger="expect fun f():Boolean;actual fun f():Boolean",detection="签名不一致 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0364）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2512",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Int?）",trigger="expect fun f():Int??;actual fun f():Long",detection="签名不一致 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0361）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Int?）",trigger="expect fun f():Int??;actual fun f():Long",detection="签名不一致 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0365）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2513",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Map<String,Int>）",trigger="expect fun f():Map<String,Map<String,Int>>;actual fun f():Double",detection="签名不一致 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0362）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Map<String,Int>）",trigger="expect fun f():Map<String,Map<String,Int>>;actual fun f():Double",detection="签名不一致 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0366）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2514",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Float版）（Double）",trigger="expect fun f():Double;actual fun f():Float",detection="签名不一致 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0363）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Float版）（Double）",trigger="expect fun f():Double;actual fun f():Float",detection="签名不一致 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0367）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2515",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Int版）（String?）",trigger="expect fun format(d:Double):String?",detection="iOS无actual — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0373）",fix="补actual"))
+            title="expect声明缺少actual（Int版）（String?）",trigger="expect fun format(d:Double):String?",detection="iOS无actual — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0380）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2516",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0374）",fix="补actual"))
+            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0381）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2517",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0375）",fix="补actual"))
+            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0382）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2518",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0376）",fix="补actual"))
+            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0383）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2519",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
             title="expect/actual返回类型不匹配（List<String>）",trigger="expect fun f():List<String><String>;actual fun f():List<String><String>",detection="签名不一致 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0117）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2520",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
@@ -5081,27 +5081,27 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2525",category=BugCategory.KMP,severity=BugSeverity.MILD,
             title="KMP模块缺少依赖",trigger="commonMain中import kotlinx.*",detection="kotlinx.datetime需显式依赖 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0236）",fix="确认依赖或添加依赖"))
         BugDB.load(BugRule(id="KT-2526",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）（Sequence<Long>）",trigger="expect fun f():Sequence<Long>;actual fun f():Sequence<Long>",detection="签名不一致 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0357）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）（Sequence<Long>）",trigger="expect fun f():Sequence<Long>;actual fun f():Sequence<Long>",detection="签名不一致 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0361）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2527",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Char）",trigger="expect fun f():Long;actual fun f():Char",detection="签名不一致 — Char类型字符编码边界,正则匹配组越界（参见 KT-0358）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Char）",trigger="expect fun f():Long;actual fun f():Char",detection="签名不一致 — Char类型字符编码边界,正则匹配组越界（参见 KT-0362）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2528",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Double?）",trigger="expect fun f():Double;actual fun f():Double?",detection="签名不一致 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0359）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Double?）",trigger="expect fun f():Double;actual fun f():Double?",detection="签名不一致 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0363）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2529",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Boolean版）（Array<Boolean>）",trigger="expect fun f():Boolean;actual fun f():Array<Boolean>",detection="签名不一致 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0360）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Boolean版）（Array<Boolean>）",trigger="expect fun f():Boolean;actual fun f():Array<Boolean>",detection="签名不一致 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0364）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2530",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Float）",trigger="expect fun f():Float;actual fun f():Long",detection="签名不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0361）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Float）",trigger="expect fun f():Float;actual fun f():Long",detection="签名不一致 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0365）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2531",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Long?）",trigger="expect fun f():Long?;actual fun f():Double",detection="签名不一致 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0362）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Long?）",trigger="expect fun f():Long?;actual fun f():Double",detection="签名不一致 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0366）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2532",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Float版）（MutableList<Double>）",trigger="expect fun f():MutableMutableList<Double><Double>;actual fun f():Float",detection="签名不一致 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0363）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Float版）（MutableList<Double>）",trigger="expect fun f():MutableMutableList<Double><Double>;actual fun f():Float",detection="签名不一致 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0367）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2533",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Int版）（Boolean）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0373）",fix="补actual"))
+            title="expect声明缺少actual（Int版）（Boolean）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0380）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2534",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0374）",fix="补actual"))
+            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0381）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2535",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0375）",fix="补actual"))
+            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0382）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2536",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0376）",fix="补actual"))
+            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0383）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2537",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
             title="expect/actual返回类型不匹配（String?）",trigger="expect fun f():String?;actual fun f():String?",detection="签名不一致 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0117）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2538",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
@@ -5117,27 +5117,27 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2543",category=BugCategory.KMP,severity=BugSeverity.MILD,
             title="KMP模块缺少依赖",trigger="commonMain中import kotlinx.*",detection="kotlinx.datetime需显式依赖 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0236）",fix="确认依赖或添加依赖"))
         BugDB.load(BugRule(id="KT-2544",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）（Any?）",trigger="expect fun f():Any?;actual fun f():Any?",detection="签名不一致 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0357）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）（Any?）",trigger="expect fun f():Any?;actual fun f():Any?",detection="签名不一致 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0361）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2545",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（String）",trigger="expect fun f():Long;actual fun f():String",detection="签名不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0358）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（String）",trigger="expect fun f():Long;actual fun f():String",detection="签名不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0362）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2546",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Byte）",trigger="expect fun f():Double;actual fun f():Byte",detection="签名不一致 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0359）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Byte）",trigger="expect fun f():Double;actual fun f():Byte",detection="签名不一致 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0363）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2547",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Boolean版）（Boolean?）",trigger="expect fun f():Boolean;actual fun f():Boolean?",detection="签名不一致 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0360）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Boolean版）（Boolean?）",trigger="expect fun f():Boolean;actual fun f():Boolean?",detection="签名不一致 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0364）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2548",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Sequence<Long>）",trigger="expect fun f():Sequence<Long>;actual fun f():Long",detection="签名不一致 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0361）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Sequence<Long>）",trigger="expect fun f():Sequence<Long>;actual fun f():Long",detection="签名不一致 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0365）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2549",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Char）",trigger="expect fun f():Char;actual fun f():Double",detection="签名不一致 — Char类型字符编码边界,正则匹配组越界（参见 KT-0362）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Char）",trigger="expect fun f():Char;actual fun f():Double",detection="签名不一致 — Char类型字符编码边界,正则匹配组越界（参见 KT-0366）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2550",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Float版）（Double?）",trigger="expect fun f():Double?;actual fun f():Float",detection="签名不一致 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0363）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Float版）（Double?）",trigger="expect fun f():Double?;actual fun f():Float",detection="签名不一致 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0367）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2551",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Int版）（Array<Boolean>）",trigger="expect fun format(d:Double):Array<Boolean>",detection="iOS无actual — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0373）",fix="补actual"))
+            title="expect声明缺少actual（Int版）（Array<Boolean>）",trigger="expect fun format(d:Double):Array<Boolean>",detection="iOS无actual — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0380）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2552",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0374）",fix="补actual"))
+            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0381）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2553",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0375）",fix="补actual"))
+            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0382）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2554",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0376）",fix="补actual"))
+            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0383）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2555",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
             title="expect/actual返回类型不匹配（Boolean）",trigger="expect fun f():Boolean;actual fun f():Boolean",detection="签名不一致 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0117）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2556",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
@@ -5153,27 +5153,27 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2561",category=BugCategory.KMP,severity=BugSeverity.MILD,
             title="KMP模块缺少依赖",trigger="commonMain中import kotlinx.*",detection="kotlinx.datetime需显式依赖 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0236）",fix="确认依赖或添加依赖"))
         BugDB.load(BugRule(id="KT-2562",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）（Any）",trigger="expect fun f():Any;actual fun f():Any",detection="签名不一致 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0357）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）（Any）",trigger="expect fun f():Any;actual fun f():Any",detection="签名不一致 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0361）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2563",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（List<String>）",trigger="expect fun f():Long;actual fun f():List<String><String>",detection="签名不一致 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0358）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（List<String>）",trigger="expect fun f():Long;actual fun f():List<String><String>",detection="签名不一致 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0362）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2564",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():Double;actual fun f():Int",detection="签名不一致 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0359）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():Double;actual fun f():Int",detection="签名不一致 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0363）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2565",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Boolean版）（Short）",trigger="expect fun f():Boolean;actual fun f():Short",detection="签名不一致 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0360）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Boolean版）（Short）",trigger="expect fun f():Boolean;actual fun f():Short",detection="签名不一致 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0364）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2566",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（Any?）",trigger="expect fun f():Any?;actual fun f():Long",detection="签名不一致 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0361）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（Any?）",trigger="expect fun f():Any?;actual fun f():Long",detection="签名不一致 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0365）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2567",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():String;actual fun f():Double",detection="签名不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0362）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）",trigger="expect fun f():String;actual fun f():Double",detection="签名不一致 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0366）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2568",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Float版）（Byte）",trigger="expect fun f():Byte;actual fun f():Float",detection="签名不一致 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0363）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Float版）（Byte）",trigger="expect fun f():Byte;actual fun f():Float",detection="签名不一致 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0367）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2569",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Int版）（Boolean?）",trigger="expect fun format(d:Double):Boolean?",detection="iOS无actual — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0373）",fix="补actual"))
+            title="expect声明缺少actual（Int版）（Boolean?）",trigger="expect fun format(d:Double):Boolean?",detection="iOS无actual — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0380）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2570",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0374）",fix="补actual"))
+            title="expect声明缺少actual（Long版）",trigger="expect fun format(d:Double):Long",detection="iOS无actual — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0381）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2571",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Char类型字符编码边界,正则匹配组越界（参见 KT-0375）",fix="补actual"))
+            title="expect声明缺少actual（Double版）",trigger="expect fun format(d:Double):Double",detection="iOS无actual — Char类型字符编码边界,正则匹配组越界（参见 KT-0382）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2572",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
-            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0376）",fix="补actual"))
+            title="expect声明缺少actual（Boolean版）",trigger="expect fun format(d:Double):Boolean",detection="iOS无actual — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0383）",fix="补actual"))
         BugDB.load(BugRule(id="KT-2573",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
             title="expect/actual返回类型不匹配（Array<Boolean>）",trigger="expect fun f():Array<Boolean>;actual fun f():Array<Boolean>",detection="签名不一致 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0117）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2574",category=BugCategory.KMP,severity=BugSeverity.MODERATE,
@@ -5189,11 +5189,11 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2579",category=BugCategory.KMP,severity=BugSeverity.MILD,
             title="KMP模块缺少依赖",trigger="commonMain中import kotlinx.*",detection="kotlinx.datetime需显式依赖 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0236）",fix="确认依赖或添加依赖"))
         BugDB.load(BugRule(id="KT-2580",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Int版）（Double）",trigger="expect fun f():Double;actual fun f():Double",detection="签名不一致 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0357）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Int版）（Double）",trigger="expect fun f():Double;actual fun f():Double",detection="签名不一致 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0361）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2581",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Long版）（String?）",trigger="expect fun f():Long;actual fun f():String?",detection="签名不一致 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0358）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Long版）（String?）",trigger="expect fun f():Long;actual fun f():String?",detection="签名不一致 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0362）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2582",category=BugCategory.KMP,severity=BugSeverity.SEVERE,
-            title="expect/actual返回类型不匹配（Double版）（Set<Int>）",trigger="expect fun f():Double;actual fun f():Set<Int>",detection="签名不一致 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0359）",fix="对齐签名"))
+            title="expect/actual返回类型不匹配（Double版）（Set<Int>）",trigger="expect fun f():Double;actual fun f():Set<Int>",detection="签名不一致 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0363）",fix="对齐签名"))
         BugDB.load(BugRule(id="KT-2583",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="重载解析选错（String）",trigger="fun f(i:String){};fun f(a:Any){};f(42)",detection="选Int不选Any — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0121）",fix="显式参数类型"))
         BugDB.load(BugRule(id="KT-2584",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
@@ -5285,37 +5285,37 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2627",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
             title="默认参数+扩展函数+泛型=三歧义（Double版）（String）",trigger="fun <T> String<T>.f(n:Double=1){};listOf(1).f()",detection="扩展接收者+泛型+默认参数解析 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0340）",fix="显式传参"))
         BugDB.load(BugRule(id="KT-2628",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
-            title="类型推断选了谁都没想到的类型（Long版）（Byte）",trigger="listOf(1)与emptyByte()合并推断Byte<Long>?",detection="多个候选时选最意外的 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0365）",fix="显式泛型参数"))
+            title="类型推断选了谁都没想到的类型（Long版）（Byte）",trigger="listOf(1)与emptyByte()合并推断Byte<Long>?",detection="多个候选时选最意外的 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0369）",fix="显式泛型参数"))
         BugDB.load(BugRule(id="KT-2629",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
-            title="类型推断选了谁都没想到的类型（Double版）（Boolean?）",trigger="listOf(1)与emptyBoolean?()合并推断Boolean?<Double>?",detection="多个候选时选最意外的 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0366）",fix="显式泛型参数"))
+            title="类型推断选了谁都没想到的类型（Double版）（Boolean?）",trigger="listOf(1)与emptyBoolean?()合并推断Boolean?<Double>?",detection="多个候选时选最意外的 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0370）",fix="显式泛型参数"))
         BugDB.load(BugRule(id="KT-2630",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
-            title="类型推断选了谁都没想到的类型（Float版）（Sequence<Long>）",trigger="listOf(1)与emptySequence<Long>()合并推断Sequence<Long><Float>?",detection="多个候选时选最意外的 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0367）",fix="显式泛型参数"))
+            title="类型推断选了谁都没想到的类型（Float版）（Sequence<Long>）",trigger="listOf(1)与emptySequence<Long>()合并推断Sequence<Long><Float>?",detection="多个候选时选最意外的 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0371）",fix="显式泛型参数"))
         BugDB.load(BugRule(id="KT-2631",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="函数引用+重载（Int版）（Char）",trigger="fun f(i:Char){};fun f(s:Char){};val r=::f",detection="歧义 — Char类型字符编码边界,正则匹配组越界（参见 KT-0384）",fix="指定类型:(Int)->Unit"))
+            title="函数引用+重载（Int版）（Char）",trigger="fun f(i:Char){};fun f(s:Char){};val r=::f",detection="歧义 — Char类型字符编码边界,正则匹配组越界（参见 KT-0391）",fix="指定类型:(Int)->Unit"))
         BugDB.load(BugRule(id="KT-2632",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="函数引用+重载（Long版）（Double?）",trigger="fun f(i:Double?){};fun f(s:Long){};val r=::f",detection="歧义 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0385）",fix="指定类型:(Int)->Unit"))
+            title="函数引用+重载（Long版）（Double?）",trigger="fun f(i:Double?){};fun f(s:Long){};val r=::f",detection="歧义 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0392）",fix="指定类型:(Int)->Unit"))
         BugDB.load(BugRule(id="KT-2633",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="函数引用+重载（Double版）（Array<Boolean>）",trigger="fun f(i:Array<Boolean>){};fun f(s:Double){};val r=::f",detection="歧义 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0386）",fix="指定类型:(Int)->Unit"))
+            title="函数引用+重载（Double版）（Array<Boolean>）",trigger="fun f(i:Array<Boolean>){};fun f(s:Double){};val r=::f",detection="歧义 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0393）",fix="指定类型:(Int)->Unit"))
         BugDB.load(BugRule(id="KT-2634",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="函数引用+重载（Boolean版）（Float）",trigger="fun f(i:Float){};fun f(s:Boolean){};val r=::f",detection="歧义 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0387）",fix="指定类型:(Int)->Unit"))
+            title="函数引用+重载（Boolean版）（Float）",trigger="fun f(i:Float){};fun f(s:Boolean){};val r=::f",detection="歧义 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0394）",fix="指定类型:(Int)->Unit"))
         BugDB.load(BugRule(id="KT-2635",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="Kotlin T!类型让编译器以为非空实则null（Int版）（Long?）",trigger="val x=javaGet();编译器推断Long?;运行时NPE",detection="T!被不当优化 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0400）",fix="显式标注Int?"))
+            title="Kotlin T!类型让编译器以为非空实则null（Int版）（Long?）",trigger="val x=javaGet();编译器推断Long?;运行时NPE",detection="T!被不当优化 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0407）",fix="显式标注Int?"))
         BugDB.load(BugRule(id="KT-2636",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="Kotlin T!类型让编译器以为非空实则null（Long版）",trigger="val x=javaGet();编译器推断Long;运行时NPE",detection="T!被不当优化 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0401）",fix="显式标注Long?"))
+            title="Kotlin T!类型让编译器以为非空实则null（Long版）",trigger="val x=javaGet();编译器推断Long;运行时NPE",detection="T!被不当优化 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0408）",fix="显式标注Long?"))
         BugDB.load(BugRule(id="KT-2637",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="Kotlin T!类型让编译器以为非空实则null（Double版）",trigger="val x=javaGet();编译器推断Double;运行时NPE",detection="T!被不当优化 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0402）",fix="显式标注Double?"))
+            title="Kotlin T!类型让编译器以为非空实则null（Double版）",trigger="val x=javaGet();编译器推断Double;运行时NPE",detection="T!被不当优化 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0409）",fix="显式标注Double?"))
         BugDB.load(BugRule(id="KT-2638",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="Kotlin T!类型让编译器以为非空实则null（Boolean版）",trigger="val x=javaGet();编译器推断Boolean;运行时NPE",detection="T!被不当优化 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0403）",fix="显式标注Boolean?"))
+            title="Kotlin T!类型让编译器以为非空实则null（Boolean版）",trigger="val x=javaGet();编译器推断Boolean;运行时NPE",detection="T!被不当优化 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0410）",fix="显式标注Boolean?"))
         BugDB.load(BugRule(id="KT-2639",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
-            title="自引用属性（Long版）",trigger="val x:Long=x+1",detection="循环引用 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0407）",fix="用by lazy或初始化块"))
+            title="自引用属性（Long版）",trigger="val x:Long=x+1",detection="循环引用 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0418）",fix="用by lazy或初始化块"))
         BugDB.load(BugRule(id="KT-2640",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="类型推断在递归函数中选择最窄类型（Long版）",trigger="fun f()=if(cond) f() else 0→Long",detection="递归基推断为Long但期望Long — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0471）",fix="显式返回类型"))
+            title="类型推断在递归函数中选择最窄类型（Long版）",trigger="fun f()=if(cond) f() else 0→Long",detection="递归基推断为Long但期望Long — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0482）",fix="显式返回类型"))
         BugDB.load(BugRule(id="KT-2641",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="类型推断在递归函数中选择最窄类型（Double版）",trigger="fun f()=if(cond) f() else 0→Double",detection="递归基推断为Double但期望Long — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0472）",fix="显式返回类型"))
+            title="类型推断在递归函数中选择最窄类型（Double版）",trigger="fun f()=if(cond) f() else 0→Double",detection="递归基推断为Double但期望Long — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0483）",fix="显式返回类型"))
         BugDB.load(BugRule(id="KT-2642",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
-            title="默认参数与Java重载冲突（Set<Int>）",trigger="fun f(a:Set<Int>,b:Set<Int>=0)在Java中",detection="Java看不到默认参数 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0482）",fix="@JvmOverloads"))
+            title="默认参数与Java重载冲突（Set<Int>）",trigger="fun f(a:Set<Int>,b:Set<Int>=0)在Java中",detection="Java看不到默认参数 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0493）",fix="@JvmOverloads"))
         BugDB.load(BugRule(id="KT-2643",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
-            title="data class自动equals递归栈溢出",trigger="data class N(val n:N?)",detection="自引用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0483）",fix="手动equals"))
+            title="data class自动equals递归栈溢出",trigger="data class N(val n:N?)",detection="自引用 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0494）",fix="手动equals"))
         BugDB.load(BugRule(id="KT-2644",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.SEVERE,
             title="重载解析选错（Any）",trigger="fun f(i:Any){};fun f(a:Any){};f(42)",detection="选Int不选Any — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0121）",fix="显式参数类型"))
         BugDB.load(BugRule(id="KT-2645",category=BugCategory.COMPILER_TRAP,severity=BugSeverity.MODERATE,
@@ -5417,17 +5417,17 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2693",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="benchmark跑在debug模式结果当release用",trigger="./gradlew benchmark在debug变体",detection="debug无优化→性能数据假 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0327）",fix="用release变体或benchmark构建类型"))
         BugDB.load(BugRule(id="KT-2694",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Int版）（String）",trigger="fun f(vararg s:String);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0445）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Int版）（String）",trigger="fun f(vararg s:String);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0456）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2695",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0446）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0457）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2696",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0447）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0458）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2697",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0448）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0459）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2698",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Char类型字符编码边界,正则匹配组越界（参见 KT-0476）",fix="单例"))
+            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Char类型字符编码边界,正则匹配组越界（参见 KT-0487）",fix="单例"))
         BugDB.load(BugRule(id="KT-2699",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0477）",fix="单例"))
+            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0488）",fix="单例"))
         BugDB.load(BugRule(id="KT-2700",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="循环中字符串拼接",trigger="for(i in 1..1000){s+=\\\"\\\$i\\\"}",detection="反复分配 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0127）",fix="buildString"))
         BugDB.load(BugRule(id="KT-2701",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
@@ -5473,17 +5473,17 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2721",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="benchmark跑在debug模式结果当release用",trigger="./gradlew benchmark在debug变体",detection="debug无优化→性能数据假 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0327）",fix="用release变体或benchmark构建类型"))
         BugDB.load(BugRule(id="KT-2722",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Int版）（Array<Boolean>）",trigger="fun f(vararg s:Array<Boolean>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0445）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Int版）（Array<Boolean>）",trigger="fun f(vararg s:Array<Boolean>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0456）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2723",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0446）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0457）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2724",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0447）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0458）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2725",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0448）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0459）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2726",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0476）",fix="单例"))
+            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0487）",fix="单例"))
         BugDB.load(BugRule(id="KT-2727",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0477）",fix="单例"))
+            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0488）",fix="单例"))
         BugDB.load(BugRule(id="KT-2728",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="循环中字符串拼接",trigger="for(i in 1..1000){s+=\\\"\\\$i\\\"}",detection="反复分配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0127）",fix="buildString"))
         BugDB.load(BugRule(id="KT-2729",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
@@ -5529,17 +5529,17 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2749",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="benchmark跑在debug模式结果当release用",trigger="./gradlew benchmark在debug变体",detection="debug无优化→性能数据假 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0327）",fix="用release变体或benchmark构建类型"))
         BugDB.load(BugRule(id="KT-2750",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Int版）（Map<String,Int>）",trigger="fun f(vararg s:Map<String,Int>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0445）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Int版）（Map<String,Int>）",trigger="fun f(vararg s:Map<String,Int>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0456）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2751",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0446）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0457）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2752",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0447）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0458）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2753",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0448）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0459）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2754",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0476）",fix="单例"))
+            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0487）",fix="单例"))
         BugDB.load(BugRule(id="KT-2755",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0477）",fix="单例"))
+            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0488）",fix="单例"))
         BugDB.load(BugRule(id="KT-2756",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="循环中字符串拼接",trigger="for(i in 1..1000){s+=\\\"\\\$i\\\"}",detection="反复分配 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0127）",fix="buildString"))
         BugDB.load(BugRule(id="KT-2757",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
@@ -5585,17 +5585,17 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2777",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="benchmark跑在debug模式结果当release用",trigger="./gradlew benchmark在debug变体",detection="debug无优化→性能数据假 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0327）",fix="用release变体或benchmark构建类型"))
         BugDB.load(BugRule(id="KT-2778",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Int版）（List<String>）",trigger="fun f(vararg s:List<String><String>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0445）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Int版）（List<String>）",trigger="fun f(vararg s:List<String><String>);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0456）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2779",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0446）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Long版）",trigger="fun f(vararg s:Long);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0457）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2780",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0447）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Double版）",trigger="fun f(vararg s:Double);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0458）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2781",category=BugCategory.PERFORMANCE,severity=BugSeverity.MILD,
-            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0448）",fix="f(*arrayOf)"))
+            title="varargs传递数组（Boolean版）",trigger="fun f(vararg s:Boolean);f(arrayOf(\\\\\\\"a\\\\\\\"))",detection="需要展开操作符 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0459）",fix="f(*arrayOf)"))
         BugDB.load(BugRule(id="KT-2782",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0476）",fix="单例"))
+            title="频繁创建Gson实例",trigger="Gson().toJson(obj)",detection="每次新建开销大 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0487）",fix="单例"))
         BugDB.load(BugRule(id="KT-2783",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
-            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0477）",fix="单例"))
+            title="OkHttpClient每次创建",trigger="OkHttpClient().newCall(...)",detection="连接池浪费 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0488）",fix="单例"))
         BugDB.load(BugRule(id="KT-2784",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
             title="循环中字符串拼接",trigger="for(i in 1..1000){s+=\\\"\\\$i\\\"}",detection="反复分配 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0127）",fix="buildString"))
         BugDB.load(BugRule(id="KT-2785",category=BugCategory.PERFORMANCE,severity=BugSeverity.MODERATE,
@@ -5641,23 +5641,23 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2805",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="环境变量里的密钥被Git提交",trigger="BuildConfig.API_KEY从local.properties读但.gitignore漏了",detection="git add -f — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0277）",fix="ci环境变量+不提交"))
         BugDB.load(BugRule(id="KT-2806",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Int版）（Map<String,Int>）",trigger="prefs.edit().putMap<String,Int>(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0347）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Int版）（Map<String,Int>）",trigger="prefs.edit().putMap<String,Int>(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0351）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2807",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0348）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0352）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2808",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0349）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0353）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2809",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0350）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0354）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2810",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0404）",fix="@JavascriptLongerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0415）",fix="@JavascriptLongerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2811",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0405）",fix="@JavascriptDoubleerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0416）",fix="@JavascriptDoubleerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2812",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0406）",fix="@JavascriptFloaterface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0417）",fix="@JavascriptFloaterface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2813",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
-            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0478）",fix="禁用"))
+            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0489）",fix="禁用"))
         BugDB.load(BugRule(id="KT-2814",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0479）",fix="移除或用if-release检查"))
+            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0490）",fix="移除或用if-release检查"))
         BugDB.load(BugRule(id="KT-2815",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
             title="硬编码密钥",trigger="val API_KEY=\\\"sk-abc123\\\"",detection="源码暴露 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0133）",fix="环境变量或BuildConfig"))
         BugDB.load(BugRule(id="KT-2816",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
@@ -5683,23 +5683,23 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2826",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="环境变量里的密钥被Git提交",trigger="BuildConfig.API_KEY从local.properties读但.gitignore漏了",detection="git add -f — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0277）",fix="ci环境变量+不提交"))
         BugDB.load(BugRule(id="KT-2827",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Int版）（Int?）",trigger="prefs.edit().putInt?(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0347）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Int版）（Int?）",trigger="prefs.edit().putInt?(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0351）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2828",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0348）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0352）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2829",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0349）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0353）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2830",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0350）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0354）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2831",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0404）",fix="@JavascriptLongerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0415）",fix="@JavascriptLongerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2832",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0405）",fix="@JavascriptDoubleerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0416）",fix="@JavascriptDoubleerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2833",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0406）",fix="@JavascriptFloaterface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0417）",fix="@JavascriptFloaterface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2834",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
-            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0478）",fix="禁用"))
+            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0489）",fix="禁用"))
         BugDB.load(BugRule(id="KT-2835",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0479）",fix="移除或用if-release检查"))
+            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0490）",fix="移除或用if-release检查"))
         BugDB.load(BugRule(id="KT-2836",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
             title="硬编码密钥",trigger="val API_KEY=\\\"sk-abc123\\\"",detection="源码暴露 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0133）",fix="环境变量或BuildConfig"))
         BugDB.load(BugRule(id="KT-2837",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
@@ -5725,23 +5725,23 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2847",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="环境变量里的密钥被Git提交",trigger="BuildConfig.API_KEY从local.properties读但.gitignore漏了",detection="git add -f — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0277）",fix="ci环境变量+不提交"))
         BugDB.load(BugRule(id="KT-2848",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Int版）（Boolean）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0347）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Int版）（Boolean）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0351）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2849",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0348）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0352）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2850",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0349）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0353）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2851",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0350）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0354）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2852",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0404）",fix="@JavascriptLongerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Long版）",trigger="webView.addJavascriptLongerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0415）",fix="@JavascriptLongerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2853",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0405）",fix="@JavascriptDoubleerface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Double版）",trigger="webView.addJavascriptDoubleerface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0416）",fix="@JavascriptDoubleerface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2854",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0406）",fix="@JavascriptFloaterface仅暴露必要方法"))
+            title="WebView.addJavascriptInterface（Float版）",trigger="webView.addJavascriptFloaterface(obj,\\\\\\\"android\\\\\\\")",detection="JS可调用Java — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0417）",fix="@JavascriptFloaterface仅暴露必要方法"))
         BugDB.load(BugRule(id="KT-2855",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
-            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0478）",fix="禁用"))
+            title="WebView允许文件访问",trigger="webView.settings.allowFileAccess=true",detection="文件泄露 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0489）",fix="禁用"))
         BugDB.load(BugRule(id="KT-2856",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0479）",fix="移除或用if-release检查"))
+            title="debug模式泄露",trigger="if(BuildConfig.DEBUG){logFullDump()}",detection="发布包残留调试代码 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0490）",fix="移除或用if-release检查"))
         BugDB.load(BugRule(id="KT-2857",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
             title="硬编码密钥",trigger="val API_KEY=\\\"sk-abc123\\\"",detection="源码暴露 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0133）",fix="环境变量或BuildConfig"))
         BugDB.load(BugRule(id="KT-2858",category=BugCategory.SECURITY,severity=BugSeverity.SEVERE,
@@ -5767,13 +5767,13 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2868",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
             title="环境变量里的密钥被Git提交",trigger="BuildConfig.API_KEY从local.properties读但.gitignore漏了",detection="git add -f — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0277）",fix="ci环境变量+不提交"))
         BugDB.load(BugRule(id="KT-2869",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Int版）（MutableList<Double>）",trigger="prefs.edit().putMutableMutableList<Double><Double>(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0347）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Int版）（MutableList<Double>）",trigger="prefs.edit().putMutableMutableList<Double><Double>(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0351）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2870",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0348）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Long版）",trigger="prefs.edit().putLong(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0352）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2871",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0349）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Double版）",trigger="prefs.edit().putDouble(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0353）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2872",category=BugCategory.SECURITY,severity=BugSeverity.MODERATE,
-            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0350）",fix="EncryptedSharedPreferences"))
+            title="明文存储密码（Boolean版）",trigger="prefs.edit().putBoolean(\\\\\\\"pwd\\\\\\\",password).apply()",detection="SharedPreferences明文 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0354）",fix="EncryptedSharedPreferences"))
         BugDB.load(BugRule(id="KT-2873",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="平台特定导入",trigger="import java.io.File",detection="不可移植 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0139）",fix="expect/actual"))
         BugDB.load(BugRule(id="KT-2874",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
@@ -5789,21 +5789,21 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2879",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Array<Boolean>）",trigger="Array<Boolean>.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0274）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2880",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Float）",trigger="Float.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0380）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Float）",trigger="Float.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0387）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2881",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0381）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0388）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2882",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0382）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0389）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2883",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0383）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0390）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2884",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Int版）（Int?）",trigger="Int?.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0408）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Int版）（Int?）",trigger="Int?.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0419）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2885",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0409）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0420）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2886",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0410）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0421）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2887",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0411）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0422）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2888",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="平台特定导入",trigger="import java.io.File",detection="不可移植 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0139）",fix="expect/actual"))
         BugDB.load(BugRule(id="KT-2889",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
@@ -5819,21 +5819,21 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2894",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Any?）",trigger="Any?.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0274）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2895",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（String）",trigger="String.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0380）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（String）",trigger="String.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0387）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2896",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0381）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0388）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2897",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0382）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean?类型三态逻辑误用,配置项缺失默认值（参见 KT-0389）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2898",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0383）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Sequence<Long>类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0390）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2899",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Int版）（Char）",trigger="Char.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Char类型字符编码边界,正则匹配组越界（参见 KT-0408）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Int版）（Char）",trigger="Char.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Char类型字符编码边界,正则匹配组越界（参见 KT-0419）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2900",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0409）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double?类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0420）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2901",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0410）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Array<Boolean>类型三态逻辑误用,配置项缺失默认值（参见 KT-0421）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2902",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0411）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0422）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2903",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="平台特定导入",trigger="import java.io.File",detection="不可移植 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0139）",fix="expect/actual"))
         BugDB.load(BugRule(id="KT-2904",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
@@ -5849,21 +5849,21 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2909",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（String?）",trigger="String?.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0274）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2910",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Set<Int>）",trigger="Set<Int>.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0380）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Set<Int>）",trigger="Set<Int>.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0387）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2911",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0381）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0388）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2912",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0382）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Any类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0389）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2913",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0383）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — List<String>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0390）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2914",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Int版）",trigger="Int.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0408）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Int版）",trigger="Int.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Int类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0419）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2915",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0409）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0420）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2916",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0410）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Any?类型类型擦除信息丢失,动态代理返回,反射调用（参见 KT-0421）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2917",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0411）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0422）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2918",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="平台特定导入",trigger="import java.io.File",detection="不可移植 — Byte类型二进制协议解析,文件I/O偏移量,位运算掩码（参见 KT-0139）",fix="expect/actual"))
         BugDB.load(BugRule(id="KT-2919",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
@@ -5879,21 +5879,21 @@ object BugRules {
         BugDB.load(BugRule(id="KT-2924",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
             title="Windows的\\\\r\\\\n在Linux被当两个换行（Float）",trigger="Float.split('\\\\n')在Windows残留\\\\r",detection="跨平台行尾差异 — Float类型精度低于Double,GPU纹理坐标,传感器数据（参见 KT-0274）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2925",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Long?）",trigger="Long?.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0380）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Int版）（Long?）",trigger="Long?.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Long?类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0387）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2926",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0381）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Long版）",trigger="Long.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — MutableList<Double>类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0388）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2927",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0382）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Double版）",trigger="Double.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Boolean类型三态逻辑误用,配置项缺失默认值（参见 KT-0389）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2928",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.SEVERE,
-            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0383）",fix="System.lineSeparator或trimEnd"))
+            title="Windows的\\\\\\\\r\\\\\\\\n在Linux被当两个换行（Boolean版）",trigger="Boolean.split('\\\\\\\\n')在Windows残留\\\\\\\\r",detection="跨平台行尾差异 — Int?类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0390）",fix="System.lineSeparator或trimEnd"))
         BugDB.load(BugRule(id="KT-2929",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Int版）（Map<String,Int>）",trigger="Map<String,Int>.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0408）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Int版）（Map<String,Int>）",trigger="Map<String,Int>.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Map<String,Int>类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0419）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2930",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0409）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Long版）",trigger="Long.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Double类型浮点精度丢失,JSON数字类型模糊,累积误差（参见 KT-0420）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2931",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0410）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Double版）",trigger="Double.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — String?类型Java互操作T!,JSON缺字段,DB nullable列（参见 KT-0421）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2932",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
-            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0411）",fix="System.lineSeparator()"))
+            title="Windows/macOS/Linux换行符（Boolean版）",trigger="Boolean.split(\\\\\\\"\\\\\\\\\\\\\\\\n\\\\\\\")在Windows",detection="\\\\\\\\r\\\\\\\\n不被匹配 — Set<Int>类型Map.get返回值,SharedPreferences读取,DB自增ID溢出（参见 KT-0422）",fix="System.lineSeparator()"))
         BugDB.load(BugRule(id="KT-2933",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
             title="平台特定导入",trigger="import java.io.File",detection="不可移植 — Long类型时间戳边界,ID生成器溢出,计数器超限（参见 KT-0139）",fix="expect/actual"))
         BugDB.load(BugRule(id="KT-2934",category=BugCategory.MULTIPLATFORM,severity=BugSeverity.MODERATE,
@@ -5906,4 +5906,4 @@ object BugRules {
             title="时区硬编码",trigger="SimpleDateFormat(\\\"yyyy\\\",Locale.US)",detection="跨时区偏差 — Short类型端口号溢出,旧协议数据长度字段（参见 KT-0254）",fix="java.time+UTC"))
     }
 }
-// MILD=570 MODERATE=1528 SEVERE=839 TOTAL=2937
+// MILD=572 MODERATE=1540 SEVERE=825 TOTAL=2937
