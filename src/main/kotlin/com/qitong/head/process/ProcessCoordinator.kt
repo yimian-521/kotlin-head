@@ -61,6 +61,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
     // ─── 旧结构保留（进程不自学时的兜底）───
     private val commanders = HMap<String, CommanderImpl>()
+    private val broadcastLog = HMap<String, HList<String>>()
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 

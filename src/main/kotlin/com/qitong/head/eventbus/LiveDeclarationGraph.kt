@@ -68,20 +68,21 @@ object LiveDeclarationGraph {
 
     fun registerOrUpdate(filePath: String, decl: KtDecl) {
         val node = toNode(filePath, decl) ?: return
-        // 移除旧反向索引
-        deps.get(node.declId)?.let { oldRefs ->
-            for (i in 0 until oldRefs.size) {
-                revDeps.get(oldRefs[i])?.let { it.remove(node.declId) }
+        // 更新正向依赖
+        deps.put(node.declId, collectRefs(node.declId, decl))
+        // 全量重建反向索引（HList无remove单个元素）
+        rebuildRevDeps()
+    }
+
+    private fun rebuildRevDeps() {
+        revDeps.clear()
+        deps.forEach { from, refs ->
+            for (i in 0 until refs.size) {
+                val to = refs[i]
+                var list = revDeps.get(to)
+                if (list == null) { list = HList(); revDeps.put(to, list) }
+                list.add(from)
             }
-        }
-        val newRefs = collectRefs(node.declId, decl)
-        deps.put(node.declId, newRefs)
-        // 重建反向索引
-        for (i in 0 until newRefs.size) {
-            val to = newRefs[i]
-            var list = revDeps.get(to)
-            if (list == null) { list = HList(); revDeps.put(to, list) }
-            list.add(node.declId)
         }
     }
 
