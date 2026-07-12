@@ -93,8 +93,6 @@ class HMap<K, V> {
 
     fun containsKey(key: K): Boolean = get(key) != null
 
-    fun getExact(key: K): V? = get(key)
-
     @Suppress("UNCHECKED_CAST")
     fun forEach(fn: (K, V) -> Unit) {
         for (i in 0 until _size) {
