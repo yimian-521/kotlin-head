@@ -332,7 +332,7 @@ object SceneEngine {
                     val fileId = payload["fileId"] as? String ?: return
                     @Suppress("UNCHECKED_CAST")
                     val depsSatisfied = (payload["depsSatisfied"] as? List<String>) ?: emptyList()
-                    commanders.values().forEach { cmd -> cmd.onDepReady(fileId, depsSatisfied) }
+                    commanders.forEach { _, cmd -> cmd.onDepReady(fileId, depsSatisfied) }
                 }
             }
         })
@@ -364,12 +364,13 @@ object SceneEngine {
     /** 手动注册一个处理器类（骨架期用） */
     fun registerProcessor(tag: String, processorClass: Class<*>) {
         val pkg = processorClass.`package`?.name ?: ""
-        val existing = commanders.values().find { it.tag == tag }
+        val existing = commanders.get(tag)  // O(1)直接key查找
         
         if (existing != null) {
             existing.addProcessor(processorClass)
         } else {
-            val samePkgOtherTag = commanders.values().find { it.pkg == pkg && it.tag != tag }
+            var samePkgOtherTag: CommanderImpl? = null
+            commanders.forEach { _, cmd -> if (cmd.pkg == pkg && cmd.tag != tag) samePkgOtherTag = cmd }
             if (samePkgOtherTag != null) {
                 broadcastLog.getOrPut("reverse-exclude") { HList<String>() }
                     .add("WARN: $processorClass 与 ${samePkgOtherTag.id} 同包但标签不同 → 强制分家")
@@ -531,7 +532,7 @@ fun processAnnotations(
     }
     
     fun broadcast(commanderId: String, message: String) {
-        commanders.values().forEach { cmd ->
+        commanders.forEach { _, cmd ->
             if (cmd.id != commanderId) {
                 cmd.onBroadcast(message)
             }
