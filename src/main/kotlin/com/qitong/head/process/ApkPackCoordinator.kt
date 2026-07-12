@@ -113,12 +113,19 @@ object ApkPackCoordinator {
     }
 
     private fun androidJar(): String {
-        val candidates = listOf(
-            System.getenv(ANDROID_HOME)?.let { $it/platforms/android-34/android.jar },
-            /usr/lib/android-sdk/platforms/android-34/android.jar,
-            /opt/android-sdk/platforms/android-34/android.jar
-        )
-        return candidates.filterNotNull().firstOrNull { java.io.File(it).exists() } ?: 
+        val sdkHome = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT") ?: ""
+        val searchPaths = if (sdkHome.isNotEmpty()) listOf(sdkHome)
+            else listOf("/usr/lib/android-sdk", "/opt/android-sdk", System.getProperty("user.home") + "/Android/Sdk")
+        for (sdk in searchPaths) {
+            val platforms = java.io.File("$sdk/platforms")
+            if (platforms.exists()) {
+                val latest = platforms.listFiles()
+                    ?.filter { it.isDirectory && it.name.startsWith("android-") }
+                    ?.maxByOrNull { it.name.removePrefix("android-").toIntOrNull() ?: 0 }
+                if (latest != null) return "${latest.absolutePath}/android.jar"
+            }
+        }
+        return ""
     }
 
     private fun injectDex(apkPath: String, dexPath: String, outputPath: String): Boolean {
