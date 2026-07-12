@@ -111,7 +111,10 @@ class HMap<K, V> {
             _vals[i] = _vals[_size]
         }
         _keys[_size] = null; _vals[_size] = null
-        featIdx = null  // 索引失效，下次重建
+        featIdx?.get(keyPrefix(key))?.let { group ->
+            group.removeAt(group.indexOf(i))
+            featIdxSize--  // 版本号降级，下次ensureFeatIdx时检查
+        }
         return old
     }
 
@@ -168,11 +171,11 @@ class HMap<K, V> {
     }
 
     private fun compareKeys(a: K, b: K): Int =
-        a.toString().compareTo(b.toString())
+        (a as Comparable<K>).compareTo(b)
 
     private fun checkKey(i: Int, key: K): Boolean {
         val k = _keys[i] ?: return false
-        return k == key || k.equals(key)
+        return k == key
     }
 
     private fun indexOf(key: K): Int {
@@ -202,7 +205,7 @@ class HMap<K, V> {
     }
 
     private fun ensureFeatIdx(): MutableMap<String, MutableList<Int>> {
-        featIdx?.let { if (it.size == _size) return it }
+        featIdx?.let { if (featIdxSize == _size) return it }
         val idx = mutableMapOf<String, MutableList<Int>>()
         for (i in 0 until _size) {
             val prefix = keyPrefix(_keys[i] as K)
@@ -214,6 +217,7 @@ class HMap<K, V> {
     }
 
     private fun matchScore(a: String, b: String): Int {
+        if (a.isEmpty() || b.isEmpty()) return 0
         var score = 0
         var i = 0
         while (i < a.length && i < b.length && a[i] == b[i]) { i++; score += 2 }
