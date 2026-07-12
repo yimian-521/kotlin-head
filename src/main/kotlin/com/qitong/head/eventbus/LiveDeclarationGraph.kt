@@ -105,10 +105,15 @@ object LiveDeclarationGraph {
     }
 
     fun getNode(declId: String): DeclNode? {
-        // 从deps推导kind/name（简化：从declId格式解析）
-        val parts = declId.split(":")
-        if (parts.size < 3) return null
-        return DeclNode(declId, parts[1], parts[2], "?", null, parts[0])
+        // 从右向左解析：最后一个冒号前是name，倒数第二个是kind，剩余是path
+        val lastColon = declId.lastIndexOf(':')
+        if (lastColon < 0) return null
+        val secondLast = declId.lastIndexOf(':', lastColon - 1)
+        if (secondLast < 0) return null
+        val path = declId.substring(0, secondLast)
+        val kind = declId.substring(secondLast + 1, lastColon)
+        val name = declId.substring(lastColon + 1)
+        return DeclNode(declId, kind, name, "?", null, path)
     }
 
     fun totalDeclarations(): Int { var c = 0; deps.keys().forEach { c++ }; return c }
