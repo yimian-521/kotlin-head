@@ -40,10 +40,17 @@ import java.util.concurrent.atomic.AtomicInteger
     private val selfAware = HList<SelfAware>()
     fun registerSelfAware(p: SelfAware) { selfAware.add(p) }
 
+    // ★ 逐任务 fallback 结果封装
+    private data class SelfAssignResult(
+        val handled: List<Pair<AnnotationTask, ProcessResult>>,
+        val unhandled: List<AnnotationTask>
+    )
+
     /** 进程链式交接——找不到人接才走旧调度 */
-    private fun trySelfAssign(tasks: List<AnnotationTask>): List<Pair<AnnotationTask, ProcessResult>>? {
-        if (selfAware.isEmpty()) return null
+    private fun trySelfAssign(tasks: List<AnnotationTask>): SelfAssignResult {
+        if (selfAware.isEmpty()) return SelfAssignResult(emptyList(), tasks)
         val results = mutableListOf<Pair<AnnotationTask, ProcessResult>>()
+        val unhandled = mutableListOf<AnnotationTask>()
         for (task in tasks) {
             var current = selfAware.find { it.canHandle(task) }
             var tried = 0
@@ -53,15 +60,22 @@ import java.util.concurrent.atomic.AtomicInteger
                 current = start.forwardTo(task)
                 tried++
             }
-            if (current == null) return null  // 链条断了→走旧调度
-            results.add(task to current.handle(task))
+            if (current == null) {
+                unhandled.add(task)  // 逐任务 fallback：仅当前任务走旧调度
+            } else {
+                results.add(task to current.handle(task))
+            }
         }
-        return results
+        return SelfAssignResult(results, unhandled)
     }
 
     // ─── 旧结构保留（进程不自学时的兜底）───
     private val commanders = HMap<String, CommanderImpl>()
     private val broadcastLog = HMap<String, HList<String>>()
+    private const val BROADCAST_LOG_CAP = 200
+    private var fileEventHandler: EventHandler? = null
+    private var depReadyEventHandler: EventHandler? = null
+
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 
@@ -182,7 +196,7 @@ object SceneEngine {
             input.fileSize < 50000 -> "L"; else -> "XL"
         }
         val dense = if (input.bugDensity >= 0.3f) "D" else "d"
-        return "${input.hellType.name}_${sizeBucket}_${dense}_${if(input.incremental)"I" else "i"}_${input.style.name}"
+        return "${input.hellType.name}_${sizeBucket}_${dense}_${if(input.incremental) "I" else "i"}_${input.style.name}"
     }
 
     /** v0.11.6: 缓存网关——老兵命中可信≥10→跳过derive */
@@ -212,11 +226,12 @@ object SceneEngine {
     /** v0.11.4: 根据文件特征自动选最合适的父进程风格 */
     fun autoStyle(isHostile: Boolean, bugDensity: Float, fileSize: Int, incremental: Boolean): MainProcessStyle {
         return when {
-            isHostile -> MainProcessStyle.CONTRACT        // 地狱→契约
-            bugDensity > 0.3f -> MainProcessStyle.XIAOXIONG // 高密bug→枭雄
-            fileSize > 200000 -> MainProcessStyle.FEDERAL   // 超大→元帅
-            incremental -> MainProcessStyle.EMERGENCY       // 增量→紧急
-            else -> MainProcessStyle.FEDERAL               // 默认联邦
+            isHostile -> MainProcessStyle.CONTRACT
+            bugDensity > 0.3f && fileSize < 50000 -> MainProcessStyle.XIAOXIONG
+            fileSize > 200000 -> MainProcessStyle.FEDERAL
+            incremental -> MainProcessStyle.EMERGENCY
+            fileSize < 5000 -> MainProcessStyle.RENYONG  // 微型文件→仁勇
+            else -> MainProcessStyle.FEDERAL
         }
     }
 }
@@ -224,12 +239,15 @@ object SceneEngine {
     /** v0.11.3: 运行时切换治理风格 */
     fun setStyle(style: MainProcessStyle) {
         activeStyle = style
-        broadcastLog.getOrPut("system") { HList<String>() }
-            .add("治理风格切换: $style")
+        addLog("system", "治理风格切换: $style")
     }
 
-    // ★ v0.11.7: 多项目模式开关
+    // ★ v0.11.7: 多项目模式开关——受管对象属性
     var multiProjectMode: Boolean = false
+        set(value) {
+            field = value
+            broadcast("system", "多项目模式: ${if (value) "开启" else "关闭"}")
+        }
 
     // ★ v0.11.8: Java 检测开关
     var javaDetectionEnabled: Boolean = false
@@ -252,7 +270,7 @@ object SceneEngine {
     val javaChannel: JavaDetectionChannel get() = Unit.channel
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false) {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0) {
         val strategy = activeStyle
         if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
         if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
@@ -261,10 +279,10 @@ object SceneEngine {
         val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
         val (occs, ratio) = SceneEngine.derive(input)
         val estTasks = (fileSize / 500).coerceIn(1, 100)
-        val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
+        val cap = ((estTasks * ratio).toInt()).coerceIn(1, if (multiProjectMode) 120 else 60)
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
+        broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@$"%.2f".format(ratio)}")
     }
 
     /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
@@ -304,6 +322,7 @@ object SceneEngine {
     }
 
     // ─── 初始化：扫描并注册指挥官 ───
+    private var eventBusInitialized = false
 
     fun initialize() {
         commanders.clear()
@@ -311,31 +330,35 @@ object SceneEngine {
         // v0.11.3: 退役所有军队
         for (army in armyPool.toList()) army.retire()
 
-        // v0.8.3: 指挥官订阅 "file" 频道，接管异步文件读取
-        EventBus.subscribe("file", object : EventHandler {
-            override fun onEvent(event: Event) {
-                if (event.type == "file_ready") {
-                    val payload = event.payload as? Map<*, *> ?: return
-                    val path = payload["path"] as? String ?: return
-                    val content = payload["content"] as? String ?: return
-                    val fileId = payload["fileId"] as? String ?: path
-                    onFileReady(fileId, path, content)
+        // ★ 去重：仅首次订阅事件总线，避免重复初始化导致重复处理
+        if (!eventBusInitialized) {
+            // v0.8.3: 指挥官订阅 "file" 频道，接管异步文件读取
+            EventBus.subscribe("file", object : EventHandler {
+                override fun onEvent(event: Event) {
+                    if (event.type == "file_ready") {
+                        val payload = event.payload as? Map<*, *> ?: return
+                        val path = payload["path"] as? String ?: return
+                        val content = payload["content"] as? String ?: return
+                        val fileId = payload["fileId"] as? String ?: path
+                        onFileReady(fileId, path, content)
+                    }
                 }
-            }
-        })
+            })
 
-        // v0.8.5: 指挥官订阅 "dep_ready" 频道——被动响应，不主动查依赖图
-        EventBus.subscribe("dep_ready", object : EventHandler {
-            override fun onEvent(event: Event) {
-                if (event.type == "dep_ready") {
-                    val payload = event.payload as? Map<*, *> ?: return
-                    val fileId = payload["fileId"] as? String ?: return
-                    @Suppress("UNCHECKED_CAST")
-                    val depsSatisfied = (payload["depsSatisfied"] as? List<String>) ?: emptyList()
-                    commanders.forEach { _, cmd -> cmd.onDepReady(fileId, depsSatisfied) }
+            // v0.8.5: 指挥官订阅 "dep_ready" 频道——被动响应，不主动查依赖图
+            EventBus.subscribe("dep_ready", object : EventHandler {
+                override fun onEvent(event: Event) {
+                    if (event.type == "dep_ready") {
+                        val payload = event.payload as? Map<*, *> ?: return
+                        val fileId = payload["fileId"] as? String ?: return
+                        @Suppress("UNCHECKED_CAST")
+                        val depsSatisfied = (payload["depsSatisfied"] as? List<String>) ?: emptyList()
+                        commanders.forEach { _, cmd -> cmd.onDepReady(fileId, depsSatisfied) }
+                    }
                 }
-            }
-        })
+            })
+            eventBusInitialized = true
+        }
     }
     
     // v0.8.3: 指挥官调度文件读取（主进程只下命令，不自己读）
@@ -372,8 +395,7 @@ object SceneEngine {
             var samePkgOtherTag: CommanderImpl? = null
             commanders.forEach { _, cmd -> if (cmd.pkg == pkg && cmd.tag != tag) samePkgOtherTag = cmd }
             if (samePkgOtherTag != null) {
-                broadcastLog.getOrPut("reverse-exclude") { HList<String>() }
-                    .add("WARN: $processorClass 与 ${samePkgOtherTag.id} 同包但标签不同 → 强制分家")
+                addLog("reverse-exclude", "WARN: $processorClass 与 ${samePkgOtherTag.id} 同包但标签不同 → 强制分家")
             }
             
             val newCmd = CommanderImpl(
@@ -395,12 +417,15 @@ object SceneEngine {
      * @param annotations 待处理的注解列表（每个带标签+负载）
      * @return 按指挥官分组的处理结果
      */
-fun processAnnotations(
+    fun processAnnotations(
             annotations: List<AnnotationTask>
         ): Map<String, CommanderReport> {
-            // 本质路径：进程自己认领
-            val selfResults = trySelfAssign(annotations)
-            if (selfResults != null) {
+            // 本质路径：进程自己认领（逐任务 fallback）
+            val selfAssignResult = trySelfAssign(annotations)
+            val selfResults = selfAssignResult.handled
+            val unhandled = selfAssignResult.unhandled
+
+            if (selfResults.isNotEmpty()) {
                 val report = CommanderReport(
                     commanderId = "self-aware", tag = "auto",
                     summary = "进程自认领: ${selfResults.size}/${annotations.size}",
@@ -408,11 +433,22 @@ fun processAnnotations(
                     completedCount = selfResults.count { it.second is ProcessResult.Success },
                     totalCount = annotations.size
                 )
-                return mapOf("self-aware" to report)
+                if (unhandled.isEmpty()) {
+                    return mapOf("self-aware" to report)
+                }
+                // 部分自认领 + 剩余走旧调度
+                val oldResults = dispatchByTag(unhandled)
+                return mapOf("self-aware" to report) + oldResults
             }
 
-            // 旧调度路径（兜底）
-            for (task in annotations) {
+            // 全部走旧调度
+            return dispatchByTag(annotations)
+        }
+
+    // ─── 按标签分派（旧调度兜底） ───
+    
+    private fun dispatchByTag(annotations: List<AnnotationTask>): Map<String, CommanderReport> {
+        for (task in annotations) {
             if (!commanders.containsKey(task.tag)) {
                 val cmd = CommanderImpl(
                     id = "cmd-${cmdCounter.incrementAndGet()}",
@@ -531,14 +567,26 @@ fun processAnnotations(
         val s = parserSentinel!!; return { l, f -> s.tryRecover(l, f) }
     }
     
+    // ★ 广播日志环形缓冲上限
+    private const val MAX_BROADCAST_LOG_PER_CHANNEL = 200
+
+    private fun addLog(key: String, message: String) {
+        val log = broadcastLog.getOrPut(key) { HList<String>() }
+        log.add(message)
+        if (log.size > MAX_BROADCAST_LOG_PER_CHANNEL) {
+            val excess = log.size - MAX_BROADCAST_LOG_PER_CHANNEL
+            val trimmed = log.drop(excess)
+            broadcastLog.put(key, trimmed)
+        }
+    }
+
     fun broadcast(commanderId: String, message: String) {
         commanders.forEach { _, cmd ->
             if (cmd.id != commanderId) {
                 cmd.onBroadcast(message)
             }
         }
-        broadcastLog.getOrPut("all") { HList<String>() }
-            .add("[$commanderId] → $message")
+        addLog("all", "[$commanderId] → $message")
     }
 
     fun getBroadcastLog(): Map<String, List<String>> {
@@ -725,7 +773,6 @@ class CommanderImpl(
 
         // v0.9.1: 通知检测进程开始
         notifyWatches(ProcessStep(bodyId = "commander", action = "dispatch_start", durationNs = 0))
-
         val modePayload = HMap<String, Any>()
         modePayload.put("taskCount", tasks.size)
         modePayload.put("stages", if (tasks.any { it.stages > 1 }) 2 else 1)

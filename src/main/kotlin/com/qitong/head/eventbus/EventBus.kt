@@ -51,7 +51,9 @@ class EventChannel(val name: String) {
     fun emit(type: String, payload: Any? = null) {
         val event = Event(channel = name, type = type, payload = payload)
         for (h in handlers) {
-            try { h.onEvent(event) } catch (_: Exception) { /* 一个订阅者崩不影响其他 */ }
+            try { h.onEvent(event) } catch (ex: Exception) {
+                System.err.println("[EventBus:$name] handler error on '$type': ${ex.message}")
+            }
         }
     }
 
