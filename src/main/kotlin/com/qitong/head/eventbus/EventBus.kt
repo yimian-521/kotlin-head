@@ -3,7 +3,8 @@ package com.qitong.head.eventbus
 import java.util.concurrent.ConcurrentHashMap
 import com.qitong.head.headstd.HMap
 import java.util.concurrent.Executors
-import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * EventBus 三种通道 + 事件循环 —— v0.8.1 Node.js 能力适配
@@ -42,7 +43,7 @@ interface WorkTask<R> {
 
 // ─── 事件通道：一发多收 ───
 class EventChannel(val name: String) {
-    private val handlers = mutableListOf<EventHandler>()
+    private val handlers = CopyOnWriteArrayList<EventHandler>()
 
     fun subscribe(handler: EventHandler) { handlers.add(handler) }
     fun unsubscribe(handler: EventHandler) { handlers.remove(handler) }
@@ -79,25 +80,36 @@ class StreamChannel<T>(val name: String) {
 
 // ─── 工作通道：一发一收，任务分发给空闲 worker ───
 class WorkerChannel<R>(val name: String, workers: Int = 4) {
-    private val pendingTasks = ConcurrentLinkedQueue<Pair<WorkTask<R>, (R) -> Unit>>()
+    private val queue = LinkedBlockingQueue<Pair<WorkTask<R>, (R) -> Unit>>()
     private val executor = Executors.newFixedThreadPool(workers)
 
-    fun submit(task: WorkTask<R>, callback: (R) -> Unit) {
-        pendingTasks.add(task to callback)
-        executor.submit {
-            val pair = pendingTasks.poll() ?: return@submit
-            try {
-                val result = pair.first.execute()
-                pair.second(result)
-            } catch (e: Exception) {
-                // 工作异常广播到 error 频道供接替
-                val m = HMap<String, Any>(); m.put("channel", name); m.put("error", e.message ?: "unknown")
-                EventBus.emitTo("error", "worker_crashed", m)
+    init {
+        repeat(workers) {
+            executor.submit {
+                while (!Thread.currentThread().isInterrupted) {
+                    try {
+                        val pair = queue.take()
+                        try {
+                            val result = pair.first.execute()
+                            pair.second(result)
+                        } catch (e: Exception) {
+                            // 工作异常广播到 error 频道供接替
+                            val m = HMap<String, Any>(); m.put("channel", name); m.put("error", e.message ?: "unknown")
+                            EventBus.emitTo("error", "worker_crashed", m)
+                        }
+                    } catch (e: InterruptedException) {
+                        Thread.currentThread().interrupt()
+                    }
+                }
             }
         }
     }
 
-    fun shutdown() { executor.shutdown() }
+    fun submit(task: WorkTask<R>, callback: (R) -> Unit) {
+        queue.put(task to callback)
+    }
+
+    fun shutdown() { executor.shutdownNow() }
 }
 
 // ─── EventBus 全局单例 ───

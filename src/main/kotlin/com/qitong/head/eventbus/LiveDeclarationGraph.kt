@@ -68,20 +68,38 @@ object LiveDeclarationGraph {
 
     fun registerOrUpdate(filePath: String, decl: KtDecl) {
         val node = toNode(filePath, decl) ?: return
-        // 更新正向依赖
-        deps.put(node.declId, collectRefs(node.declId, decl))
-        // 全量重建反向索引（HList无remove单个元素）
-        rebuildRevDeps()
+        val newRefs = collectRefs(node.declId, decl)
+        // 移除旧反向边
+        val oldRefs = deps.get(node.declId)
+        if (oldRefs != null) {
+            for (i in 0 until oldRefs.size) {
+                revDeps.get(oldRefs[i])?.let { list ->
+                    // 只能全量重建该被引用者的反向索引
+                    rebuildRevDepsFor(oldRefs[i])
+                }
+            }
+        }
+        // 更新正向
+        deps.put(node.declId, newRefs)
+        // 添加新反向边
+        for (i in 0 until newRefs.size) {
+            val to = newRefs[i]
+            var list = revDeps.get(to)
+            if (list == null) { list = HList(); revDeps.put(to, list) }
+            list.add(node.declId)
+        }
     }
 
-    private fun rebuildRevDeps() {
-        revDeps.clear()
+    private fun rebuildRevDepsFor(declId: String) {
+        revDeps.remove(declId)
         deps.forEach { from, refs ->
             for (i in 0 until refs.size) {
-                val to = refs[i]
-                var list = revDeps.get(to)
-                if (list == null) { list = HList(); revDeps.put(to, list) }
-                list.add(from)
+                if (refs[i] == declId) {
+                    var list = revDeps.get(declId)
+                    if (list == null) { list = HList(); revDeps.put(declId, list) }
+                    list.add(from)
+                    return@rebuildRevDepsFor // 找到就停，一个声明不会被同一引用者多次引用
+                }
             }
         }
     }
@@ -121,20 +139,21 @@ object LiveDeclarationGraph {
         return refs
     }
 
-    private fun scanExpr(expr: KtExpr, refs: HList<String>) {
+    private fun scanExpr(expr: KtExpr, refs: HList<String>, depth: Int = 0) {
+        if (depth > 100) return // 防止深层嵌套栈溢出
         when (expr) {
-            is KtCall -> { scanTarget(expr.target, refs); expr.args.forEach { scanExpr(it, refs) } }
-            is KtBinary -> { scanExpr(expr.left, refs); scanExpr(expr.right, refs) }
-            is KtMemberAccess -> { scanExpr(expr.target, refs); refs.add("*:fun:${expr.member}") }
+            is KtCall -> { scanTarget(expr.target, refs); expr.args.forEach { scanExpr(it, refs, depth + 1) } }
+            is KtBinary -> { scanExpr(expr.left, refs, depth + 1); scanExpr(expr.right, refs, depth + 1) }
+            is KtMemberAccess -> { scanExpr(expr.target, refs, depth + 1); refs.add("*:fun:${expr.member}") }
             is KtRef -> refs.add("*:val:${expr.name}")
-            is KtIf -> { scanExpr(expr.cond, refs); scanExpr(expr.thenBranch, refs); expr.elseBranch?.let { scanExpr(it, refs) } }
-            is KtBlock -> expr.statements.forEach { if (it is KtExpr) scanExpr(it, refs) }
-            is KtLambda -> scanExpr(expr.body, refs)
-            is KtReturn -> expr.value?.let { scanExpr(it, refs) }
+            is KtIf -> { scanExpr(expr.cond, refs, depth + 1); scanExpr(expr.thenBranch, refs, depth + 1); expr.elseBranch?.let { scanExpr(it, refs, depth + 1) } }
+            is KtBlock -> expr.statements.forEach { if (it is KtExpr) scanExpr(it, refs, depth + 1) }
+            is KtLambda -> scanExpr(expr.body, refs, depth + 1)
+            is KtReturn -> expr.value?.let { scanExpr(it, refs, depth + 1) }
             is KtWhen -> {
-                expr.subject?.let { scanExpr(it, refs) }
-                expr.branches.forEach { scanExpr(it.condition, refs); scanExpr(it.body, refs) }
-                expr.elseBranch?.let { scanExpr(it, refs) }
+                expr.subject?.let { scanExpr(it, refs, depth + 1) }
+                expr.branches.forEach { scanExpr(it.condition, refs, depth + 1); scanExpr(it.body, refs, depth + 1) }
+                expr.elseBranch?.let { scanExpr(it, refs, depth + 1) }
             }
             else -> {}
         }
