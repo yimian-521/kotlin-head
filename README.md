@@ -200,24 +200,6 @@ kotlin -cp build/kotlin-head.jar com.qitong.head.Main test.kt
 | v1.0.2 ✅ | 25模块重构：本质化架构+三分索引+去中心调度。BugDB 2937全真实。178S满分 |
 | v1.0.3 ✅ | 自举审计修复：编译器吃自己。占位符清零+catch收窄+skipPatterns+自举扫描 |
 
-|------|---------|
-| v1.0.0 | 架构全面超越 javac/Node.js 官方工具链 |
-| v0.12.5 | --sim-ui五链路全通 + 分体式沙盒六审修复(免免独杀6条) |
-| v0.12.4 | 军师动态+独行扩军+自定义配队+基类匹配+headstd全兼容 |
-| v0.12.3 | 八军生态+专武绑定+军师闪电双体系 |
-| v0.12.2 | 双开关特调版：军师建议 + APK只编译 |
-| v0.12.1 | BugDB 5000条特调版 + 生态重构 |
-| v0.12.0 | 内存树 + HED V5超预索引 |
-| v0.11.8 | 定量混合打包 + java-head |
-| v0.11.3 | 父进程觉醒：八种治理风格 |
-| v0.11.2 | 进程帝国：指挥官+性格+职业 |
-| v0.10.0 | 头标库 HList/HMap/HString |
-| v0.9.0 | LiveDeclarationGraph 混合编译 |
-| v0.8.0 | 四层进程树 + EventBus |
-| v0.7.0 | 綦桐 32/32 全通过 |
-| v0.3.0 | HED/TDL 双格式落地 |
-| v0.1.0 | data class / fun / val / if |
-
 详见 [CHANGELOG](./CHANGELOG.md)
 
 ---
