@@ -115,7 +115,7 @@ object BugDB {
      * 长代码: Trie一次扫描，O(代码长度) 非 O(key数×代码长度)
      */
     fun scan(code: String, skipPatterns: List<String> = emptyList()): List<BugRule> {
-        val fp = code.hashCode().toString() + skipPatterns.hashCode()
+        val fp = "${code.hashCode()}|${skipPatterns.hashCode()}"
         scanCache[fp]?.let { return it }
         val idx = ensureIndex()
         val seen = mutableSetOf<String>()

@@ -84,9 +84,13 @@ class HMap<K, V> {
         @Suppress("UNCHECKED_CAST")
         val old = _vals[i] as V
         _size--
-        if (i < _size) { _keys[i] = _keys[_size]; _vals[i] = _vals[_size] }
+        if (i < _size) {
+            // swap-remove：末尾元素挪到i，它的旧组索引失效
+            val movedKey = _keys[_size] as K
+            _keys[i] = movedKey; _vals[i] = _vals[_size]
+            featIdx?.get(keyPrefix(movedKey))?.let { it.valid = false }
+        }
         _keys[_size] = null; _vals[_size] = null
-        // 标记组失效——下次get时局部重建
         featIdx?.get(keyPrefix(key))?.let { it.valid = false }
         return old
     }
