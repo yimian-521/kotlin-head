@@ -37,28 +37,21 @@ object ApkPackCoordinator {
             // Step1: kotlinc → classes.jar → d8 → classes.dex
             if (!compileToDex(base, buildDir)) return PackReport(false, listOf("compileToDex失败"), com.qitong.head.headstd.HList())
             
-            // Step2: aapt2 link
-            val manifest = "$base/AndroidManifest.xml"
-            val resDir = "$base/res"
-            if (java.io.File(manifest).exists()) {
-                val aapt2 = ProcessBuilder(listOf("aapt2", "link", "-o", unsignedApk, "-I", "${androidJar()}", "--manifest", manifest, if (java.io.File(resDir).exists()) "-S" to resDir else "" to "").filter { it.second.isNotEmpty() }.flatMap { listOf(it.first, it.second) })
-                    .redirectErrorStream(true).start()
-                if (!aapt2.waitFor(30, java.util.concurrent.TimeUnit.SECONDS) || aapt2.exitValue() != 0) return PackReport(false, listOf("aapt2失败"), com.qitong.head.headstd.HList())
-            } else {
-                // 无manifest: 用基础manifest
-                val genManifest = "$buildDir/AndroidManifest.xml"
-                java.io.File(genManifest).writeText("<manifest package='com.example'/>")
-                val aapt2 = ProcessBuilder(listOf("aapt2", "link", "-o", unsignedApk, "--manifest", genManifest))
-                    .redirectErrorStream(true).start()
-                if (!aapt2.waitFor(30, java.util.concurrent.TimeUnit.SECONDS) || aapt2.exitValue() != 0) return PackReport(false, listOf("aapt2失败"), com.qitong.head.headstd.HList())
-            }
+            // Step2: aapt2 link → APK骨架
+            if (!aapt2Link(base, buildDir, unsignedApk)) return PackReport(false, listOf("aapt2失败"), com.qitong.head.headstd.HList())
             
-            // Step3: zipalign
+            // Step3: 将classes.dex注入APK
+            val dexPath = "$buildDir/classes.dex"
+            if (!java.io.File(dexPath).exists()) return PackReport(false, listOf("dex缺失"), com.qitong.head.headstd.HList())
+            val withDexApk = "$buildDir/${outputName}-withdex.apk"
+            if (!injectDex(unsignedApk, dexPath, withDexApk)) return PackReport(false, listOf("dex注入失败"), com.qitong.head.headstd.HList())
+            
+            // Step4: zipalign
             val alignedApk = "$buildDir/${outputName}-aligned.apk"
-            val align = ProcessBuilder(listOf("zipalign", "-f", "4", unsignedApk, alignedApk)).redirectErrorStream(true).start()
+            val align = ProcessBuilder(listOf("zipalign", "-f", "4", withDexApk, alignedApk)).redirectErrorStream(true).start()
             if (!align.waitFor(10, java.util.concurrent.TimeUnit.SECONDS) || align.exitValue() != 0) return PackReport(false, listOf("zipalign失败"), com.qitong.head.headstd.HList())
             
-            // Step4: apksigner (如果提供了密钥)
+            // Step5: apksigner (如果提供了密钥)
             val finalApk = if (keystorePath.isNotEmpty()) {
                 val sign = ProcessBuilder(listOf("apksigner", "sign", "--ks", keystorePath, "--ks-pass", "pass:$keystorePass", "--ks-key-alias", keyAlias, signedApk)).redirectErrorStream(true).start()
                 if (!sign.waitFor(10, java.util.concurrent.TimeUnit.SECONDS) || sign.exitValue() != 0) return PackReport(false, listOf("签名失败"), com.qitong.head.headstd.HList())
@@ -104,12 +97,51 @@ object ApkPackCoordinator {
         } catch (_: Exception) { false }
     }
 
+    private fun aapt2Link(baseDir: String, buildDir: String, outputApk: String): Boolean {
+        return try {
+            val manifest = "$baseDir/AndroidManifest.xml"
+            val cmd = mutableListOf("aapt2", "link", "-o", outputApk)
+            val androidJar = androidJar()
+            if (androidJar.isNotEmpty()) { cmd.add("-I"); cmd.add(androidJar) }
+            if (java.io.File(manifest).exists()) { cmd.add("--manifest"); cmd.add(manifest) }
+            else { val gen = "$buildDir/AndroidManifest.xml"; java.io.File(gen).writeText("<manifest package='com.example'/>"); cmd.add("--manifest"); cmd.add(gen) }
+            val resDir = "$baseDir/res"
+            if (java.io.File(resDir).exists()) { cmd.add("-S"); cmd.add(resDir) }
+            val p = ProcessBuilder(cmd).redirectErrorStream(true).start()
+            p.waitFor(30, java.util.concurrent.TimeUnit.SECONDS) && p.exitValue() == 0
+        } catch (_: Exception) { false }
+    }
+
     private fun androidJar(): String {
         val candidates = listOf(
-            System.getenv("ANDROID_HOME")?.let { "$it/platforms/android-34/android.jar" },
-            "/usr/lib/android-sdk/platforms/android-34/android.jar",
-            "/opt/android-sdk/platforms/android-34/android.jar"
+            System.getenv(ANDROID_HOME)?.let { $it/platforms/android-34/android.jar },
+            /usr/lib/android-sdk/platforms/android-34/android.jar,
+            /opt/android-sdk/platforms/android-34/android.jar
         )
-        return candidates.filterNotNull().firstOrNull { java.io.File(it).exists() } ?: ""
+        return candidates.filterNotNull().firstOrNull { java.io.File(it).exists() } ?: 
+    }
+
+    private fun injectDex(apkPath: String, dexPath: String, outputPath: String): Boolean {
+        return try {
+            java.io.File(apkPath).copyTo(java.io.File(outputPath), true)
+            // 用zip把classes.dex写入APK（APK本质是ZIP）
+            val apkFile = java.io.File(outputPath)
+            val dexFile = java.io.File(dexPath)
+            if (!apkFile.exists() || !dexFile.exists()) return false
+            val zipIn = java.util.zip.ZipInputStream(java.io.FileInputStream(apkFile))
+            val entries = mutableListOf<Pair<String, ByteArray>>()
+            var entry = zipIn.nextEntry
+            while (entry != null) {
+                if (entry.name != "classes.dex") entries.add(entry.name to zipIn.readBytes())
+                zipIn.closeEntry(); entry = zipIn.nextEntry
+            }
+            zipIn.close()
+            // 写回：原内容 + classes.dex
+            val zipOut = java.util.zip.ZipOutputStream(java.io.FileOutputStream(apkFile))
+            for ((name, data) in entries) { zipOut.putNextEntry(java.util.zip.ZipEntry(name)); zipOut.write(data); zipOut.closeEntry() }
+            zipOut.putNextEntry(java.util.zip.ZipEntry("classes.dex")); zipOut.write(dexFile.readBytes()); zipOut.closeEntry()
+            zipOut.close()
+            true
+        } catch (_: Exception) { false }
     }
 }
