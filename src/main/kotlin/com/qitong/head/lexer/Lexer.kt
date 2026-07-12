@@ -116,7 +116,10 @@ class Lexer(private val src: String) {
         advance()
         val sb = StringBuilder()
         while (i < src.length && src[i] != '"') {
-            if (src[i] == '\\') { i++; sb.append('\\') }
+            if (src[i] == '\\') {
+                i++; sb.append('\\')
+                if (i >= src.length) break // 反斜杠结尾 → 安全退出
+            }
             sb.append(src[i]); i++; col++
         }
         if (i < src.length) advance()

@@ -247,7 +247,7 @@ class Parser(
     private fun parsePrimaryCtorMembers(): List<KtDecl> {
         expect(LPAREN); advance()
         val members = mutableListOf<KtDecl>()
-        while (!check(RPAREN)) {
+        while (!isEof() && !check(RPAREN)) {
             if (checkType(COMMA)) { advance(); continue }
             // 跳过注解
             if (checkType(AT)) {
@@ -288,7 +288,7 @@ class Parser(
         val name = advance().text
         expect(LPAREN); advance()
         val params = mutableListOf<KtParam>()
-        while (!check(RPAREN)) {
+        while (!isEof() && !check(RPAREN)) {
             if (checkType(COMMA)) { advance(); continue }
             val pName = advance().text
             var pType: String? = null
@@ -323,7 +323,7 @@ class Parser(
     private fun parseBlockBody(): KtExpr {
         val start = advance().pos  // {
         val stmts = mutableListOf<KtNode>()
-        while (!check(RBRACE)) {
+        while (!isEof() && !check(RBRACE)) {
             when {
                 checkType(VAL) || checkType(VAR) -> stmts += parseVal()
                 matchType(RETURN) -> {
@@ -385,7 +385,7 @@ class Parser(
         val members = if (checkType(LBRACE)) {
             advance() // {
             val ms = mutableListOf<KtDecl>()
-            while (!check(RBRACE)) {
+            while (!isEof() && !check(RBRACE)) {
                 parseAnnotations()
                 if (check(RBRACE)) break
                 parseDeclaration()?.let { ms += it }
@@ -404,7 +404,7 @@ class Parser(
         val members = if (checkType(LBRACE)) {
             advance()
             val ms = mutableListOf<KtDecl>()
-            while (!check(RBRACE)) {
+            while (!isEof() && !check(RBRACE)) {
                 parseAnnotations()
                 if (check(RBRACE)) break
                 if (matchType(FUN)) {
@@ -431,14 +431,14 @@ class Parser(
         if (checkType(LBRACE)) {
             advance()
             // 先读常量列表
-            while (!check(RBRACE) && !checkType(SEMICOLON)) {
+            while (!isEof() && !check(RBRACE) && !checkType(SEMICOLON)) {
                 if (checkType(COMMA)) { advance(); continue }
                 if (checkType(IDENT)) { constants += advance().text; continue }
                 advance()
             }
             if (checkType(SEMICOLON)) advance()
             // 再读成员
-            while (!check(RBRACE)) {
+            while (!isEof() && !check(RBRACE)) {
                 parseAnnotations()
                 if (check(RBRACE)) break
                 parseDeclaration()?.let { members += it }
@@ -471,7 +471,7 @@ class Parser(
         expect(LBRACE); advance()
         val branches = mutableListOf<KtWhenBranch>()
         var elseBranch: KtExpr? = null
-        while (!check(RBRACE)) {
+        while (!isEof() && !check(RBRACE)) {
             if (match("else")) {
                 advance()
                 expect(ARROW); advance()
@@ -652,7 +652,7 @@ RETURN -> {
     private fun parseCall(target: KtExpr): KtExpr {
         expect(LPAREN); advance()
         val args = mutableListOf<KtExpr>()
-        while (!check(RPAREN)) {
+        while (!isEof() && !check(RPAREN)) {
             if (checkType(COMMA)) { advance(); continue }
             // ★ 命名参数拦截：IDENT = value → 吃 IDENT+EQ，只存值
             if (checkType(IDENT) && peekNext()?.type == EQ) {
