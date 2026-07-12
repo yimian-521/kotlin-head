@@ -114,13 +114,18 @@ object BugDB {
      * 短代码(<500字符): 直接倒排索引子串匹配，JVM原生优化
      * 长代码: Trie一次扫描，O(代码长度) 非 O(key数×代码长度)
      */
-    fun scan(code: String): List<BugRule> {
-        val fp = code.hashCode().toString()
+    fun scan(code: String, skipPatterns: List<String> = emptyList()): List<BugRule> {
+        val fp = code.hashCode().toString() + skipPatterns.hashCode()
         scanCache[fp]?.let { return it }
         val idx = ensureIndex()
         val seen = mutableSetOf<String>()
         val hits = mutableListOf<BugRule>()
-        val normalized = code.replace("\\s+".toRegex(), "").toLowerCase()
+        // 按行过滤：跳过自引用/预热代码
+        val filtered = if (skipPatterns.isNotEmpty()) {
+            code.lines().filter { line -> skipPatterns.none { Regex(it).containsMatchIn(line) } }
+                .joinToString("\n")
+        } else code
+        val normalized = filtered.replace("\\s+".toRegex(), "").toLowerCase()
 
         if (normalized.length < 500) {
             // 轻量通道：短代码直接用子串匹配（JVM原生优化）

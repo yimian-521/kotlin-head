@@ -25,7 +25,10 @@ class BugScanner {
 
         // ① BugDB 字符串级扫描（2937条规则）
         if (source.isNotEmpty()) {
-            val dbHits = BugDB.scan(source)
+            // 自举检测：当前文件是规则文件/预热代码时自动跳过自引用行
+            val skip = if (source.contains("BugRule(") || source.contains("fun preheat"))
+                listOf("BugRule\\(", "fun preheat") else emptyList()
+            val dbHits = BugDB.scan(source, skip)
             for (rule in dbHits) {
                 val sev = when (rule.severity) {
                     BugSeverity.SEVERE -> Severity.HIGH
