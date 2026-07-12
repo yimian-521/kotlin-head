@@ -282,7 +282,8 @@ object SceneEngine {
         val cap = ((estTasks * ratio).toInt()).coerceIn(1, if (multiProjectMode) 120 else 60)
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
-        broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@$"%.2f".format(ratio)}")
+        val ratioStr = "%.2f".format(ratio)
+        broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@$ratioStr")
     }
 
     /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
@@ -395,7 +396,8 @@ object SceneEngine {
             var samePkgOtherTag: CommanderImpl? = null
             commanders.forEach { _, cmd -> if (cmd.pkg == pkg && cmd.tag != tag) samePkgOtherTag = cmd }
             if (samePkgOtherTag != null) {
-                addLog("reverse-exclude", "WARN: $processorClass 与 ${samePkgOtherTag.id} 同包但标签不同 → 强制分家")
+                val otherId = samePkgOtherTag.id
+                addLog("reverse-exclude", "WARN: $processorClass 与 $otherId 同包但标签不同 → 强制分家")
             }
             
             val newCmd = CommanderImpl(
