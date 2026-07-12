@@ -22,16 +22,22 @@ data class SimNode(
     val sourceRef: Any? = null   // 仅溯源，不依赖其字段
 )
 
-/** 候选集管理 — 内置 + 适配层注册 */
+/** 候选集管理 — 内置 + 外部注册，线程安全 */
 object SimSchema {
-    private val builtIn = setOf(
+    @Volatile private var builtIn = mutableSetOf(
         "Button", "IconButton", "TextButton", "OutlinedButton",
-        "FloatingActionButton", "clickable", "onClick"
+        "FloatingActionButton", "clickable", "onClick", "Modifier.clickable",
+        "Text", "Image", "Row", "Column", "Box", "Card"
     )
-    private val _external = mutableSetOf<String>()
+    @Volatile private var _external = mutableSetOf<String>()
 
-    fun register(name: String) { _external.add(name) }
+    fun register(name: String) { synchronized(this) { _external.add(name) } }
+    fun unregister(name: String) { synchronized(this) { _external.remove(name) } }
+    fun addBuiltIn(name: String) { synchronized(this) { builtIn.add(name) } }
 
     fun isCandidate(name: String): Boolean =
         name in builtIn || name in _external
+
+    fun registered(): Set<String> = builtIn + _external
+    fun clear() { synchronized(this) { _external.clear() } }
 }

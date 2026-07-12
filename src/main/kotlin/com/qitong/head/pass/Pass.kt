@@ -17,11 +17,9 @@ abstract class Pass(val name: String) : StreamTransform<IRModule, IRModule> {
 
     companion object {
         fun standardChain(): HList<Pass> = HList.from(listOf(
-            DeadCodeElimination(),
-            ConstantFolding(),
-            CompileTimeAnalyze(),
-            InlineExpansion()
+            DeadCodeElimination(), ConstantFolding(), InlineExpansion()
         ))
+        fun names(): String = standardChain().joinToString("→") { it.name }
     }
 }
 
@@ -190,68 +188,6 @@ class InlineExpansion : Pass("inline") {
             func.instructions = newInsts  // 直接赋值，纯add零开销
         }
         input.metadata.put("pass:inline", "inlined=$inlined")
-        return input
-    }
-}
-// ─── 编译期分析预计算：长缨式倒推 ───
-
-// ================================================================
-// CompileTimeAnalyze — 长缨式倒推：编译期预计算 analyze 调用
-// 扫描 IRCall(analyze, 字面量) → 预编译 → 替换为 IRLit 常量
-// ================================================================
-class CompileTimeAnalyze : Pass("compile-time-analyze") {
-    override fun transform(input: IRModule): IRModule {
-        var precomputed = 0
-        for (func in input.functions.toList()) {
-            val newInsts = com.qitong.head.runtime.ProHList<IRInst>()
-            for (inst in func.instructions.toList()) {
-                var handled = false
-                if (inst is IRCall && inst.func == "analyze") {
-                    val args = inst.args.toList()
-                    if (args.size == 1) {
-                        val src = args[0]
-                        // 检测字面量字符串
-                        if (src.length >= 2 && src[0] == '"' && src[src.length-1] == '"') {
-                            val code = src.substring(1, src.length - 1)
-                                .replace("\\n", "\n")
-                                .replace("\\t", "\t")
-                            try {
-                                val tokens = com.qitong.head.lexer.Lexer(code).tokenize()
-                                @Suppress("UNCHECKED_CAST")
-                                val p = com.qitong.head.parser.Parser(
-                                    tokens as List<com.qitong.head.lexer.Token>,
-                                    onRecover = { _, _ -> true }
-                                )
-                                val file = p.parseFile()
-                                if (file != null) {
-                                    val diagCount = mutableListOf<String>().apply {
-                                        for (d in p.parserDiags()) add(d.msg)
-                                        try {
-                                            for (d in com.qitong.head.checker.TypeChecker().check(file)) add(d.msg)
-                                        } catch (_: Exception) {}
-                                    }.size
-                                    val bugCount = try {
-                                        com.qitong.head.bugscan.BugScanner.from(file).size
-                                    } catch (_: Exception) { 0 }
-                                    val summary = "OK(" + bugCount + " bugs, " + diagCount + " diags)"
-                                    val key = "analyze:" + src
-                                    HeadStd.foldCache.put(key, summary)
-                                    inst.dest?.let { d ->
-                                        newInsts.add(IRLit(d, "\"" + summary + "\"", "String"))
-                                    }
-                                    newInsts.add(IRComment("precomputed: analyze(...)"))
-                                    precomputed++
-                                    handled = true
-                                }
-                            } catch (_: Exception) {}
-                        }
-                    }
-                }
-                if (!handled) newInsts.add(inst)
-            }
-            func.instructions = newInsts
-        }
-        input.metadata.put("pass:ct-analyze", "precomputed=" + precomputed)
         return input
     }
 }

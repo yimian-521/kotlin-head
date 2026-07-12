@@ -1,5 +1,7 @@
 package com.qitong.head.runtime
-import com.qitong.head.headstd.*
+
+import com.qitong.head.headstd.HMap
+import com.qitong.head.headstd.HList
 
 /**
  * ProHList — 进化版有序追加列表（v0.12.0 头标库）
@@ -18,7 +20,7 @@ import com.qitong.head.headstd.*
  */
 class ProHList<T> {
     private var elems: Array<Any?> = arrayOfNulls(4)
-    private val removed = HList<T>()  // 暂存被删的
+    private val removed = HMap<T, Boolean>()  // 特征索引O(1)查删除标记
     private var dirtyCount: Int = 0
 
     var size: Int = 0
@@ -32,41 +34,41 @@ class ProHList<T> {
 
     // ─── E 路径：O(1)标记删除 ───
     fun remove(elem: T) {
-        removed.add(elem)
+        removed.put(elem, true)
         dirtyCount++
     }
 
     // ─── B 路径：脏了才 filter 重建 ───
     fun apply() {
         if (dirtyCount == 0) return
-        val newElems = arrayOfNulls<Any?>(elems.size)
+        var newElems = arrayOfNulls<Any?>(elems.size)
         var newSize = 0
         for (i in 0 until size) {
             val e = elems[i]!!
-            if (!removed.contains(e as T)) {
+            if (removed.get(e as T) == null) {
                 if (newSize == newElems.size) {
-                    newElems.copyOf(newElems.size * 2)
+                    newElems = newElems.copyOf(newElems.size * 2)
                 }
                 newElems[newSize++] = e
             }
         }
         elems = newElems
         size = newSize
-        removed.removeAll(removed)  // 清空暂存
+        removed.clear()
         dirtyCount = 0
     }
 
     val hasDirty: Boolean get() = dirtyCount > 0
     fun effectiveSize(): Int = size - dirtyCount
 
-    // ─── 访问（自动跳过被删的） ───
+    // ─── 访问（自动跳过被删的）───
     operator fun get(index: Int): T {
         var skipped = 0
         var i = 0
         while (i < size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e)) {
+            if (removed.get(e) == null) {
                 if (skipped == index) return e
                 skipped++
             }
@@ -74,6 +76,8 @@ class ProHList<T> {
         }
         throw IndexOutOfBoundsException("index $index, effective size ${effectiveSize()}")
     }
+
+    private fun isAlive(e: T): Boolean = removed.get(e) == null
 
     fun isEmpty() = effectiveSize() == 0
     fun isNotEmpty() = effectiveSize() > 0
@@ -83,7 +87,7 @@ class ProHList<T> {
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e)) fn(e)
+            if (isAlive(e)) fn(e)
         }
     }
 
@@ -103,7 +107,7 @@ class ProHList<T> {
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e) && fn(e)) return true
+            if (isAlive(e) && fn(e)) return true
         }
         return false
     }
@@ -121,7 +125,7 @@ class ProHList<T> {
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e) && fn(e)) return e
+            if (isAlive(e) && fn(e)) return e
         }
         return null
     }
@@ -130,7 +134,7 @@ class ProHList<T> {
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e) && (e == elem || e?.equals(elem) == true)) return true
+            if (isAlive(e) && (e == elem || e?.equals(elem) == true)) return true
         }
         return false
     }
@@ -144,7 +148,7 @@ class ProHList<T> {
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             val e = elems[i] as T
-            if (!removed.contains(e)) {
+            if (isAlive(e)) {
                 if (c++ < n) result.add(e) else return result
             }
         }
@@ -181,26 +185,36 @@ class ProHList<T> {
         return sb.append(postfix).toString()
     }
 
+    // ─── 归并排序 O(n log n) ───
     fun <R : Comparable<R>> sortedBy(fn: (T) -> R): ProHList<T> {
         val arr = arrayOfNulls<Any?>(effectiveSize())
         var idx = 0
-        forEach {
-            arr[idx++] = it
-        }
-        for (i in 0 until idx - 1) {
-            for (j in i + 1 until idx) {
-                @Suppress("UNCHECKED_CAST")
-                if ((fn(arr[i] as T)).compareTo(fn(arr[j] as T)) > 0) {
-                    val tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp
-                }
-            }
-        }
+        forEach { arr[idx++] = it }
+        mergeSort(arr, 0, idx - 1, fn)
         val result = ProHList<T>()
         for (i in 0 until idx) {
             @Suppress("UNCHECKED_CAST")
             result.add(arr[i] as T)
         }
         return result
+    }
+
+    private fun <R : Comparable<R>> mergeSort(arr: Array<Any?>, lo: Int, hi: Int, fn: (T) -> R) {
+        if (lo >= hi) return
+        val mid = (lo + hi) / 2
+        mergeSort(arr, lo, mid, fn)
+        mergeSort(arr, mid + 1, hi, fn)
+        merge(arr, lo, mid, hi, fn)
+    }
+
+    private fun <R : Comparable<R>> merge(arr: Array<Any?>, lo: Int, mid: Int, hi: Int, fn: (T) -> R) {
+        val tmp = arr.copyOfRange(lo, hi + 1)
+        var i = 0; val mid2 = mid - lo; var j = mid2 + 1; var k = lo
+        while (i <= mid2 && j < tmp.size) {
+            @Suppress("UNCHECKED_CAST")
+            arr[k++] = if ((fn(tmp[i] as T)).compareTo(fn(tmp[j] as T)) <= 0) tmp[i++] else tmp[j++]
+        }
+        while (i <= mid2) arr[k++] = tmp[i++]
     }
 
     fun partition(fn: (T) -> Boolean): Pair<ProHList<T>, ProHList<T>> {
@@ -240,19 +254,17 @@ class ProHList<T> {
 
     operator fun iterator(): Iterator<T> = object : Iterator<T> {
         private var idx = 0
-        private var skip = 0
         override fun hasNext(): Boolean {
             while (idx < size) {
                 @Suppress("UNCHECKED_CAST")
-                if (!removed.contains(elems[idx] as T)) return true
+                if (isAlive(elems[idx] as T)) return true
                 idx++
             }
             return false
         }
         override fun next(): T {
             @Suppress("UNCHECKED_CAST")
-            val e = elems[idx++] as T
-            return e
+            return elems[idx++] as T
         }
     }
 

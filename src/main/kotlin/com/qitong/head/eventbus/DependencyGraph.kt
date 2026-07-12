@@ -83,22 +83,12 @@ object DependencyGraph {
     fun resolveConflicts(): HMap<String, String> {
         val resolutions = HMap<String, String>()
         val conflicts = detectConflicts()
-        for (c in conflicts.toList()) {
-            var best = ""
-            var bestScore = -1
-            for (v in c.versions) {
-                val score = parseVersion(v)
-                if (score > bestScore) { bestScore = score; best = v }
-            }
+        for (i in 0 until conflicts.size) {
+            val c = conflicts[i]
+            var best = ""; var bestScore = -1
+            for (v in c.versions) { val score = parseVersion(v); if (score > bestScore) { bestScore = score; best = v } }
             if (best.isEmpty()) continue
             resolutions.put(c.dep, best)
-            EventBus.emitTo("dep", "conflict_resolved", mapOf(
-                "dep" to c.dep, "chosen" to best,
-                "alternatives" to (c.versions - best),
-                "isolated_files" to c.files.toList().filter { f ->
-                    fileDeps.get(f)?.any { dep -> dep.name == c.dep && dep.version != best } ?: false
-                }
-            ))
         }
         return resolutions
     }

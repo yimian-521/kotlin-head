@@ -1,7 +1,7 @@
 {
   "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
   "project": "kotlin-head",
-  "version": "0.12.8",
+  "version": "1.0.2",
   "capabilities": {
     "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
     "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
@@ -202,7 +202,7 @@
       "desc": "EventBus→HMap, IR→ProHList, 进程树全HList/HMap。老模块不动，新模块全头标库"
     },
     "v0.12.1": {
-      "done": "BugDB 5000条规则(倒排索引+超预指纹缓存<1μs)。kotlin-int+不可能级。20分类全覆盖",
+      "done": "BugDB 2937条全真实规则(双模超预索引+预加载≤1μs)。331种子+知识库变异。int++ 320命中/20分类。178S 8/8满分",
       "desc": "SEVERE60%/MODERATE30%/MILD10%。倒排索引95x+指纹缓存3x。gen_bugdb.py可复刻"
     },
     "v0.12.2": {
@@ -220,11 +220,15 @@
       "keywords": ["strategist_dynamic","solo_expansion","squad_config","strategist_match","headstd_compat"],
       "desc": "derive()加时间维度(趋势→切兵种)。无队友时自动检测+create临时ArmyProcess。RoomSlotManager栈位分配。matchStrategist按bug密度选兵种。headstd.jar全版本零错"
     },
-    "v0.12.6": { "done": "按钮动态化: Command枚举+三层数据源+懒汉/探测双职业+HED O(1)路由+模板切换+自定义按钮持久化+@Volatile并发安全+clearSimUiInjections组合漏洞修复" },
     "v0.12.5": {
       "done": "--sim-ui源码模拟测试(五链路全通)+分体式沙盒六审修复(14条bug，免免10条独杀6条)",
       "keywords": ["sim_ui","sandbox","six_audit","mianmian","if_vs_equals"],
-      "desc": "无APK测试APK功能：--list/--click/--params/--bench/--name全通。沙盒模拟器六审：阿言+小安+望安+DeepSeek望安+Claude+免免。免免独杀：if语义、连锁烫伤、parentAlive无体温计、开门≠返回门、终结不用成败。核心洞察：AI看写了什么，免免看什么该写但没写"
+      "desc": "无APK测试APK功能。沙盒模拟器六审。免免独杀6条"
+    },
+    "v1.0.2": {
+      "done": "25模块重构：本质化架构+三分索引+去中心调度。BugDB2937全真实。墓碑引擎。178S 8/8",
+      "keywords": ["重构","本质化","三分索引","去中心","墓碑引擎","BugDB","HMap","LiveDeclarationGraph","ProcessCoordinator"],
+      "desc": "底层库(HMap/HList/HString/HeadStd)+编译器核心(Ast/IR/Lexer/TypeChecker)+进程系统(自认领+forwardTo)+BugDB生态(双模+预加载)+墓碑引擎。小版本=别人大版本"
     }
   },
   "bugs_active": 0,

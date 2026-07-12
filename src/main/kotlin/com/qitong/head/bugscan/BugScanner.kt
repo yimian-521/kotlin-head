@@ -1,6 +1,9 @@
 package com.qitong.head.bugscan
 
 import com.qitong.head.ast.*
+import com.qitong.head.bugdb.BugDB
+import com.qitong.head.bugdb.BugRule
+import com.qitong.head.bugdb.BugSeverity
 
 class BugScanner {
 
@@ -8,15 +11,32 @@ class BugScanner {
         val rule: String,
         val severity: Severity,
         val message: String,
-        val span: Span
+        val span: Span,
+        val fix: String = ""  // 新增修复建议
     )
 
     enum class Severity { HIGH, MEDIUM, LOW }
 
     private val findings = mutableListOf<Finding>()
 
-    fun scan(file: KtFile): List<Finding> {
+    /** 集成BugDB：字符串扫描 + AST遍历 */
+    fun scan(file: KtFile, source: String = ""): List<Finding> {
         findings.clear()
+
+        // ① BugDB 字符串级扫描（2937条规则）
+        if (source.isNotEmpty()) {
+            val dbHits = BugDB.scan(source)
+            for (rule in dbHits) {
+                val sev = when (rule.severity) {
+                    BugSeverity.SEVERE -> Severity.HIGH
+                    BugSeverity.MODERATE -> Severity.MEDIUM
+                    else -> Severity.LOW
+                }
+                findings.add(Finding(rule.id, sev, "${rule.title}: ${rule.detection}", Span(Pos(0,0), Pos(0,0)), rule.fix))
+            }
+        }
+
+        // ② AST 结构级扫描（11条冷门规则）
         scanNode(file)
         return findings.toList()
     }
@@ -171,6 +191,6 @@ class BugScanner {
     }
 
     companion object {
-        fun from(file: KtFile) = BugScanner().scan(file)
+        fun from(file: KtFile, source: String = "") = BugScanner().scan(file, source)
     }
 }

@@ -18,6 +18,14 @@ interface JavaDetectionChannel {
     fun diagnose(filePath: String, strictMode: Boolean = false): JavaDiagnosis?
     fun diagnoseBatch(filePaths: HList<String>, strictMode: Boolean = false): HList<JavaDiagnosis>
     val isAvailable: Boolean
+
+    /** 批量诊断后的汇总统计 */
+    fun summarize(results: HList<JavaDiagnosis>): String {
+        if (results.isEmpty()) return "无Java文件"
+        val passed = results.count { it.passed }
+        val totalErrors = results.fold(0) { acc, d -> acc + d.errors.size }
+        return "Java检测: $passed/${results.size}通过 | ${totalErrors}个错误"
+    }
 }
 
 data class JavaDiagnosis(

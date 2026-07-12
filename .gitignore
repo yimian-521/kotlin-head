@@ -1,6 +1,5 @@
-build/
-mcp/
-test.kt
-*.jar
-.DS_Store
-node/rank.js
+# kotlin-head 测试文件 —— 不上GitHub
+_test/
+*.py
+gen_bugdb*.py
+validate_bugdb.py

@@ -17,8 +17,7 @@ data class ProcessIdentity(
     val career: MutableMap<SubProcessOccupation, ExperienceCache> = mutableMapOf(), // 每个岗位的记忆
     var currentOccupation: SubProcessOccupation = SubProcessOccupation.SOLDIER,
     var status: ProcessStatus = ProcessStatus.ACTIVE,
-    var lastActiveTime: Long = System.currentTimeMillis(),
-    var roomId: Int? = null                             // v0.12.4: 房间栈位编号，删除回收
+    var lastActiveTime: Long = System.currentTimeMillis()
 ) {
     /** 换职业：经验留档，新岗位从零开始 */
     fun switchOccupation(newOccupation: SubProcessOccupation) {
@@ -83,19 +82,19 @@ class ExperienceCache(
         entries[fingerprint] = Entry(fingerprint, occupation, occs, ratio, result)
     }
 
-    /** 职业倾向淘汰：优先忘掉非本职业的记忆，其次忘最久没用的 */
+    /** 职业倾向淘汰：优先忘掉非本职业的——遍历一次找最早，O(n) */
     private fun evict() {
-        // 1. 找非当前职业的条目，踢最久没用的
-        val foreign = entries.values.filter { it.occupation != occupation }.sortedBy { it.lastHit }
-        if (foreign.isNotEmpty()) {
-            entries.remove(foreign.first().fingerprint)
-            return
+        var oldestForeign: Entry? = null
+        var oldestLocal: Entry? = null
+        for (e in entries.values) {
+            if (e.occupation != occupation) {
+                if (oldestForeign == null || e.lastHit < oldestForeign.lastHit) oldestForeign = e
+            } else {
+                if (oldestLocal == null || e.lastHit < oldestLocal.lastHit) oldestLocal = e
+            }
         }
-        // 2. 全是本职业 → 踢最久没用的
-        val sorted = entries.values.toList().sortedBy { it.lastHit }
-        if (sorted.isNotEmpty()) {
-            entries.remove(sorted.first().fingerprint)
-        }
+        val victim = oldestForeign ?: oldestLocal ?: return
+        entries.remove(victim.fingerprint)
     }
 
     fun size(): Int = entries.size
@@ -347,57 +346,4 @@ object ArmyPresetManager {
 enum class ReinforcePolicy(val label: String) {
     PROTECTIVE("缺人只踢经验少的，老兵不动"),
     AGGRESSIVE("缺人就踢，不管经验")
-}
-
-// ═══════ v0.12.4: 房间栈位 + 指挥官自定义配队 ═══════
-
-object RoomSlotManager {
-    /** 每个预设房间的容量上限 */
-    private val roomCapacities = mutableMapOf<String, Int>()
-    /** 每个预设房间的已分配编号集合 */
-    private val roomSlots = mutableMapOf<String, MutableSet<Int>>()
-    /** 房间内编号→职业映射 */
-    private val roomSquads = mutableMapOf<String, MutableMap<Int, SubProcessOccupation>>()
-
-    /** 初始化房间，指定容量上限 */
-    fun initRoom(presetName: String, capacity: Int) {
-        roomCapacities[presetName] = capacity
-        roomSlots.getOrPut(presetName) { mutableSetOf() }
-        roomSquads.getOrPut(presetName) { mutableMapOf() }
-    }
-
-    /** 分配最小可用编号（栈位机制） */
-    fun assignRoomId(presetName: String): Int? {
-        val capacity = roomCapacities[presetName] ?: return null
-        val effectiveCap = (capacity * 1.03f).toInt()  // v0.12.4: 与isRoomFull同步3%余量
-        val slots = roomSlots.getOrPut(presetName) { mutableSetOf() }
-        for (id in 1..effectiveCap) {
-            if (id !in slots) {
-                slots.add(id)
-                return id
-            }
-        }
-        return null  // 房间满
-    }
-
-    /** 释放编号（删除时回收） */
-    fun releaseRoomId(presetName: String, roomId: Int) {
-        roomSlots[presetName]?.remove(roomId)
-        roomSquads[presetName]?.remove(roomId)
-    }
-
-    /** 指挥官自定义配队：指定房间编号→职业 */
-    fun configureSquad(presetName: String, mapping: Map<Int, SubProcessOccupation>) {
-        val squads = roomSquads.getOrPut(presetName) { mutableMapOf() }
-        squads.putAll(mapping)
-    }
-
-    /** 查询某编号的职业 */
-    fun getOccupation(presetName: String, roomId: Int): SubProcessOccupation? {
-        return roomSquads[presetName]?.get(roomId)
-    }
-
-    fun roomSize(presetName: String): Int = roomSlots[presetName]?.size ?: 0
-    fun roomCapacity(presetName: String): Int = roomCapacities[presetName] ?: 0
-    fun isRoomFull(presetName: String): Boolean = roomSize(presetName) >= (roomCapacity(presetName) * 1.03f).toInt()  // v0.12.4: 3%余量，防满载误判
 }

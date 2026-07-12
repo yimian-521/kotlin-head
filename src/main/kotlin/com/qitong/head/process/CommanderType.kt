@@ -40,8 +40,8 @@ enum class CommanderType(val label: String, val description: String) {
     }
 
     companion object {
-        /** 可扩展入口：用户注册自定义指挥官类型 */
         private val customTypes = HMap<String, CommanderTypeConfig>()
+        private val cachedValues = values()  // 缓存避免每次values()生成数组
 
         fun register(custom: CommanderTypeConfig) {
             customTypes[custom.name] = custom
@@ -49,10 +49,16 @@ enum class CommanderType(val label: String, val description: String) {
 
         fun getCustom(name: String): CommanderTypeConfig? = customTypes[name]
 
-        fun listAll(): List<String> =
-            values().map { it.name } + customTypes.keys().toList()
+        fun listAll(): List<String> {
+            val builtIn = cachedValues.map { it.name }
+            val custom = customTypes.keys().toList()
+            return builtIn + custom
+        }
 
-        fun isBuiltin(name: String): Boolean = values().any { it.name == name }
+        fun isBuiltin(name: String): Boolean = cachedValues.any { it.name == name }
+
+        fun builtInCount() = cachedValues.size
+        fun customCount(): Int { var c = 0; customTypes.values().forEach { c++ }; return c }
     }
 }
 

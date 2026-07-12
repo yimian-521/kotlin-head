@@ -2,8 +2,6 @@ package com.qitong.head.checker
 
 import com.qitong.head.ast.*
 
-import java.util.LinkedList
-
 typealias SymbolTable = MutableMap<String, Symbol>
 
 data class Symbol(
@@ -17,8 +15,9 @@ enum class SymbolKind { CLASS, FUN, VAL, PARAM }
 
 class TypeChecker {
     private val global = mutableMapOf<String, Symbol>()
-    private val scopes = LinkedList<SymbolTable>()
+    private val scopes = mutableListOf<SymbolTable>()
     private val diagnostics = mutableListOf<Diag>()
+    private val usedNames = mutableSetOf<String>()  // 追踪已使用变量
 
     data class Diag(
         val level: DiagLevel,
@@ -30,7 +29,9 @@ class TypeChecker {
 
     fun check(file: KtFile): List<Diag> {
         diagnostics.clear()
-        scopes.addLast(global)
+        scopes.clear()
+        usedNames.clear()
+        scopes.add(global)
         for (decl in file.declarations) checkDecl(decl)
         return diagnostics.toList()
     }
@@ -40,18 +41,18 @@ class TypeChecker {
         when (decl) {
             is KtClass -> {
                 register(decl.name, SymbolKind.CLASS, decl)
-                scopes.addLast(mutableMapOf<String, Symbol>())
+                scopes.add(mutableMapOf<String, Symbol>())
                 for (m in decl.members) checkDecl(m)
-                scopes.removeLast()
+                scopes.removeAt(scopes.lastIndex)
             }
             is KtFun -> {
                 register(decl.name, SymbolKind.FUN, decl)
-                scopes.addLast(mutableMapOf<String, Symbol>())
+                scopes.add(mutableMapOf<String, Symbol>())
                 for (p in decl.params) {
                     register(p.name, SymbolKind.PARAM, decl, p.type)
                 }
                 decl.body?.let { bindExpr(it) }
-                scopes.removeLast()
+                scopes.removeAt(scopes.lastIndex)
             }
             is KtVal -> {
                 decl.value?.let { bindExpr(it) }
@@ -97,10 +98,10 @@ class TypeChecker {
             is KtWhile -> { loopDepth++; bindExpr(expr.condition); bindExpr(expr.body); loopDepth-- }
             is KtReturn -> { expr.value?.let { bindExpr(it) } }
             is KtLambda -> {
-                scopes.addLast(mutableMapOf<String, Symbol>())
+                scopes.add(mutableMapOf<String, Symbol>())
                 for (p in expr.params) register(p.name, SymbolKind.PARAM, expr, p.type)
                 bindExpr(expr.body)
-                scopes.removeLast()
+                scopes.removeAt(scopes.lastIndex)
             }
             is KtBlock -> {
                 for (stmt in expr.statements) {
@@ -149,8 +150,8 @@ class TypeChecker {
     }
 
     private fun lookup(name: String): Symbol? {
-        for (scope in scopes.reversed()) {
-            val s = scope[name]
+        for (i in scopes.lastIndex downTo 0) {
+            val s = scopes[i][name]
             if (s != null) return s
         }
         return null

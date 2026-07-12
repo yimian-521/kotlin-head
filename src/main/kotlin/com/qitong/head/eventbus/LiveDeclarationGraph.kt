@@ -1,239 +1,149 @@
 package com.qitong.head.eventbus
 
 import com.qitong.head.ast.*
+import com.qitong.head.headstd.HMap
+import com.qitong.head.headstd.HList
 
 /**
- * LiveDeclarationGraph —— v0.9.0 声明级活图（混合编译的核心）
+ * LiveDeclarationGraph — 声明级活图（本质化重构）
  *
- * 不是全量，不是增量，是第三种：
- * - 全量属性：每个声明都在图里，完整性来自图本身
- * - 增量属性：只动受影响的声明，经济性来自传播
- * - 图始终活在内存，编译一次后持续维护，重启只是重连
- *
- * 指挥官管图——图和 AST 同源，同一个指挥官既管调度又管图，永不过期。
- *
- * 循环依赖：浅提取（签名+返回值类型+注解，跳过 body，可随时展开）。
+ * 本质原则：引用即传播。
+ * 每个声明自带反向索引（谁引用我），改了自动暴露受影响者。
+ * 不需要教进程"怎么算传播"——数据结构自身就包含答案。
  */
 object LiveDeclarationGraph {
 
     data class DeclNode(
-        val declId: String,
-        val kind: String,
-        val name: String,
-        val signature: String,
-        val returnType: String?,
-        val annotations: List<String>,
-        val bodyRef: Any? = null,
-        val depDeclIds: MutableSet<String> = mutableSetOf(),
-        var isShallow: Boolean = false
+        val declId: String, val kind: String, val name: String,
+        val signature: String, val returnType: String?,
+        val filePath: String
     )
 
-    private val nodes = mutableMapOf<String, DeclNode>()
-    private val byFile = mutableMapOf<String, MutableSet<String>>()
+    // 正向：declId → 它引用了哪些声明
+    private val deps = HMap<String, HList<String>>()
+    // 反向：declId → 被哪些声明引用（本质）
+    private val revDeps = HMap<String, HList<String>>()
 
-    @Volatile var isLive = false
-        private set
+    @Volatile var isLive = false; private set
 
     fun buildFromAst(files: Map<String, KtFile>) {
-        nodes.clear()
-        byFile.clear()
-        for ((fileName, ktFile) in files) {
-            val declIds = mutableSetOf<String>()
-            for (decl in ktFile.declarations) {
-                val node = toDeclNode(fileName, decl) ?: continue
-                nodes[node.declId] = node
-                declIds.add(node.declId)
+        clear()
+        for ((path, file) in files) {
+            for (decl in file.declarations) {
+                val node = toNode(path, decl) ?: continue
+                deps.put(node.declId, collectRefs(node.declId, decl))
             }
-            byFile[fileName] = declIds
         }
-        resolveDeclDeps()
+        // 建反向索引：对于dep A→B，记录B被A引用
+        deps.forEach { from, refs ->
+            for (i in 0 until refs.size) {
+                val to = refs[i]
+                var list = revDeps.get(to)
+                if (list == null) { list = HList(); revDeps.put(to, list) }
+                list.add(from)
+            }
+        }
         isLive = true
     }
 
-    private fun toDeclNode(fileName: String, decl: KtDecl): DeclNode? = when (decl) {
-        is KtFun -> DeclNode(
-            declId = "$fileName:fun:${decl.name}",
-            kind = "fun", name = decl.name,
-            signature = decl.params.joinToString(",") { "${it.name}:${it.type ?: "Any"}" },
-            returnType = decl.returnType,
-            annotations = decl.annotations.map { it.name },
-            bodyRef = decl
-        )
-        is KtClass -> DeclNode(
-            declId = "$fileName:class:${decl.name}",
-            kind = "class", name = decl.name,
-            signature = decl.members.joinToString(",") { memberName(it) },
-            returnType = null,
-            annotations = decl.annotations.map { it.name },
-            bodyRef = decl
-        )
-        is KtVal -> DeclNode(
-            declId = "$fileName:val:${decl.name}",
-            kind = "val", name = decl.name,
-            signature = decl.type ?: "inferred",
-            returnType = decl.type,
-            annotations = decl.annotations.map { it.name },
-            bodyRef = decl
-        )
-        else -> null
+    /** 唯一公共方法：声明变了，谁受影响？
+     * @return 直接+间接受影响的声明ID列表
+     */
+    fun affectedBy(changedDeclIds: Set<String>): HList<String> {
+        val result = HList<String>()
+        val queue = HList<String>()
+        val visited = mutableSetOf<String>()
+        for (id in changedDeclIds) { queue.add(id); visited.add(id); result.add(id) }
+        var idx = 0
+        while (idx < queue.size) {
+            val current = queue[idx++]
+            val affected = revDeps.get(current) ?: continue
+            for (i in 0 until affected.size) {
+                val a = affected[i]
+                if (visited.add(a)) { queue.add(a); result.add(a) }
+            }
+        }
+        return result
     }
 
-    private fun memberName(decl: KtDecl): String = when (decl) {
-        is KtFun -> "fun:${decl.name}"
-        is KtClass -> "class:${decl.name}"
-        is KtVal -> "val:${decl.name}"
-        is KtObject -> "object:${decl.name ?: "?"}"
-        is KtInterface -> "interface:${decl.name}"
-        is KtEnum -> "enum:${decl.name}"
-    }
-
-    private fun resolveDeclDeps() {
-        for ((_, node) in nodes) {
-            node.depDeclIds.addAll(collectDeclRefs(node))
+    fun registerOrUpdate(filePath: String, decl: KtDecl) {
+        val node = toNode(filePath, decl) ?: return
+        // 移除旧反向索引
+        deps.get(node.declId)?.let { oldRefs ->
+            for (i in 0 until oldRefs.size) {
+                revDeps.get(oldRefs[i])?.let { it.remove(node.declId) }
+            }
+        }
+        val newRefs = collectRefs(node.declId, decl)
+        deps.put(node.declId, newRefs)
+        // 重建反向索引
+        for (i in 0 until newRefs.size) {
+            val to = newRefs[i]
+            var list = revDeps.get(to)
+            if (list == null) { list = HList(); revDeps.put(to, list) }
+            list.add(node.declId)
         }
     }
 
-    private fun collectDeclRefs(node: DeclNode): Set<String> {
-        val refs = mutableSetOf<String>()
-        when (val body = node.bodyRef) {
-            is KtFun -> body.body?.let { collectExprRefs(it, refs) }
-            is KtClass -> body.members.forEach { m ->
-                if (m is KtFun) m.body?.let { collectExprRefs(it, refs) }
-            }
-            is KtVal -> body.value?.let { collectExprRefs(it, refs) }
+    fun getNode(declId: String): DeclNode? {
+        // 从deps推导kind/name（简化：从declId格式解析）
+        val parts = declId.split(":")
+        if (parts.size < 3) return null
+        return DeclNode(declId, parts[1], parts[2], "?", null, parts[0])
+    }
+
+    fun totalDeclarations(): Int { var c = 0; deps.keys().forEach { c++ }; return c }
+    fun totalFiles(): Int { val files = mutableSetOf<String>(); deps.keys().forEach { files.add(it.substringBefore(":")) }; return files.size }
+
+    fun clear() { deps.clear(); revDeps.clear(); isLive = false }
+
+    // ─── 内部 ───
+    private fun toNode(path: String, decl: KtDecl): DeclNode? = when (decl) {
+        is KtFun -> DeclNode("$path:fun:${decl.name}", "fun", decl.name,
+            decl.params.joinToString(",") { "${it.name}:${it.type ?: "Any"}" },
+            decl.returnType, path)
+        is KtClass -> DeclNode("$path:class:${decl.name}", "class", decl.name,
+            decl.members.size.toString(), null, path)
+        is KtVal -> DeclNode("$path:val:${decl.name}", "val", decl.name,
+            decl.type ?: "inferred", decl.type, path)
+        else -> null
+    }
+
+    private fun collectRefs(declId: String, decl: KtDecl): HList<String> {
+        val refs = HList<String>()
+        when (decl) {
+            is KtFun -> decl.body?.let { scanExpr(it, refs) }
+            is KtClass -> decl.members.forEach { if (it is KtFun) it.body?.let { b -> scanExpr(b, refs) } }
+            is KtVal -> decl.value?.let { scanExpr(it, refs) }
+            else -> {}
         }
         return refs
     }
 
-    private fun collectExprRefs(expr: KtExpr, refs: MutableSet<String>) {
+    private fun scanExpr(expr: KtExpr, refs: HList<String>) {
         when (expr) {
-            is KtCall -> {
-                collectTargetRef(expr.target, refs)
-                expr.args.forEach { collectExprRefs(it, refs) }
-            }
-            is KtBinary -> {
-                collectExprRefs(expr.left, refs)
-                collectExprRefs(expr.right, refs)
-            }
+            is KtCall -> { scanTarget(expr.target, refs); expr.args.forEach { scanExpr(it, refs) } }
+            is KtBinary -> { scanExpr(expr.left, refs); scanExpr(expr.right, refs) }
+            is KtMemberAccess -> { scanExpr(expr.target, refs); refs.add("*:fun:${expr.member}") }
             is KtRef -> refs.add("*:val:${expr.name}")
-            is KtMemberAccess -> {
-                collectExprRefs(expr.target, refs)
-                refs.add("*:fun:${expr.member}")
-            }
-            is KtLambda -> collectExprRefs(expr.body, refs)
-            is KtIf -> {
-                collectExprRefs(expr.cond, refs)
-                collectExprRefs(expr.thenBranch, refs)
-                expr.elseBranch?.let { collectExprRefs(it, refs) }
-            }
-            is KtBlock -> expr.statements.forEach {
-                if (it is KtExpr) collectExprRefs(it, refs)
-            }
-            is KtReturn -> expr.value?.let { collectExprRefs(it, refs) }
+            is KtIf -> { scanExpr(expr.cond, refs); scanExpr(expr.thenBranch, refs); expr.elseBranch?.let { scanExpr(it, refs) } }
+            is KtBlock -> expr.statements.forEach { if (it is KtExpr) scanExpr(it, refs) }
+            is KtLambda -> scanExpr(expr.body, refs)
+            is KtReturn -> expr.value?.let { scanExpr(it, refs) }
             is KtWhen -> {
-                expr.subject?.let { collectExprRefs(it, refs) }
-                expr.branches.forEach {
-                    collectExprRefs(it.condition, refs)
-                    collectExprRefs(it.body, refs)
-                }
-                expr.elseBranch?.let { collectExprRefs(it, refs) }
+                expr.subject?.let { scanExpr(it, refs) }
+                expr.branches.forEach { scanExpr(it.condition, refs); scanExpr(it.body, refs) }
+                expr.elseBranch?.let { scanExpr(it, refs) }
             }
             else -> {}
         }
     }
 
-    private fun collectTargetRef(target: KtExpr, refs: MutableSet<String>) {
+    private fun scanTarget(target: KtExpr, refs: HList<String>) {
         when (target) {
             is KtRef -> refs.add("*:fun:${target.name}")
             is KtMemberAccess -> refs.add("*:fun:${target.member}")
             else -> {}
         }
-    }
-
-    // ─── 浅提取 ───
-
-    fun extractShallow(declId: String): DeclNode? {
-        val node = nodes[declId] ?: return null
-        if (node.isShallow) return node
-        return node.copy(isShallow = true, bodyRef = null)
-    }
-
-    fun expand(declId: String): DeclNode? {
-        val node = nodes[declId] ?: return null
-        if (!node.isShallow) return node
-        return node.copy(isShallow = false)
-    }
-
-    // ─── 传播 ───
-
-    fun propagate(changedDeclIds: Set<String>): Set<String> {
-        if (!isLive) return changedDeclIds
-        val affected = mutableSetOf<String>()
-        val visited = mutableSetOf<String>()
-        val queue = changedDeclIds.toMutableList()
-
-        while (queue.isNotEmpty()) {
-            val current = queue.removeAt(0)
-            if (current in visited) {
-                extractShallow(current)
-                affected.add(current)
-                continue
-            }
-            visited.add(current)
-            affected.add(current)
-            if (nodes[current] == null) continue
-            for ((otherId, otherNode) in nodes) {
-                if (otherId in visited) continue
-                if (otherNode.depDeclIds.any { matchesDecl(it, current) }) {
-                    if (otherId !in queue) queue.add(otherId)
-                }
-            }
-        }
-        return affected
-    }
-
-    private fun matchesDecl(ref: String, declId: String): Boolean {
-        val refParts = ref.split(":")
-        val declParts = declId.split(":")
-        if (refParts.size < 3 || declParts.size < 3) return false
-        return (refParts[0] == "*" || refParts[0] == declParts[0]) &&
-               refParts[2] == declParts[2]
-    }
-
-    // ─── 维护 ───
-
-    fun registerOrUpdate(fileName: String, decl: KtDecl) {
-        val node = toDeclNode(fileName, decl) ?: return
-        nodes[node.declId] = node
-        byFile.getOrPut(fileName) { mutableSetOf() }.add(node.declId)
-        node.depDeclIds.clear()
-        node.depDeclIds.addAll(collectDeclRefs(node))
-    }
-
-    fun invalidate(declId: String) {
-        nodes.remove(declId)
-        for ((_, declIds) in byFile) declIds.remove(declId)
-    }
-
-    fun invalidateFile(fileName: String) {
-        val declIds = byFile[fileName] ?: return
-        for (id in declIds) nodes.remove(id)
-        byFile.remove(fileName)
-    }
-
-    // ─── 查询 ───
-
-    fun getNode(declId: String): DeclNode? = nodes[declId]
-    fun getByFile(fileName: String): List<DeclNode> =
-        (byFile[fileName] ?: emptySet<String>()).mapNotNull { nodes[it] }
-    fun totalDeclarations(): Int = nodes.size
-    fun totalFiles(): Int = byFile.size
-    fun isAffected(declId: String, changedSet: Set<String>): Boolean =
-        propagate(changedSet).contains(declId)
-
-    fun clear() {
-        nodes.clear()
-        byFile.clear()
-        isLive = false
     }
 }

@@ -45,7 +45,7 @@ data class IRModule(
     fun addFunction(func: IRFunction) { functions.add(func) }
     fun totalInstructions(): Int {
         var sum = 0
-        for (f in functions.toList()) sum += f.instructionCount()
+        functions.forEach { sum += it.instructionCount() }
         return sum
     }
     fun functionCount() = functions.effectiveSize()

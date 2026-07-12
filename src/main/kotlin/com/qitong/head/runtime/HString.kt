@@ -1,5 +1,6 @@
 package com.qitong.head.runtime
-import com.qitong.head.headstd.*
+
+import com.qitong.head.headstd.HList
 
 /**
  * HString — 头标库字符串（v0.10.0）
@@ -14,13 +15,27 @@ class HString(private val raw: String) {
 
     fun get(index: Int): Char = raw[index]
 
-    /** 模板解析——内建，一次分配替换所有 ${...} */
+    /**
+     * 模板解析——一次遍历，O(n)，匹配所有 ${key}
+     */
     fun resolve(vararg bindings: Pair<String, String>): String {
-        var result = raw
-        for ((key, value) in bindings) {
-            result = result.replace("\${$key}", value)
+        val map = bindings.toMap()
+        val sb = StringBuilder()
+        var i = 0
+        while (i < raw.length) {
+            if (raw[i] == '$' && i + 1 < raw.length && raw[i + 1] == '{') {
+                val end = raw.indexOf('}', i + 2)
+                if (end >= 0) {
+                    val key = raw.substring(i + 2, end)
+                    sb.append(map[key] ?: "\${$key}")
+                    i = end + 1
+                    continue
+                }
+            }
+            sb.append(raw[i])
+            i++
         }
-        return result
+        return sb.toString()
     }
 
     /** 含断言——检查是否包含某子串 */

@@ -1,128 +1,83 @@
 # CHANGELOG — kotlin-head 有头编译器
-## v0.13.1 (2026-07-10) — APK打包器：纯Kotlin，三语言(Kotlin/Java/Node)
-## v1.0.1 (2026-07-10) — Node全栈+CompactVM追平TCC
 
-## v1.0.0 (2026-07-10) — 皮秒里程碑：132μs→0ps，12项原创概念
+## v1.0.2 (2026-07-12) — 1.0.2 重构版 🏗️⚡
 
-### 新增
-- **联存器** — hotSrc/hotRes公开字段，===即命中，不调方法
-- **黑洞** — hotRes永不为空，init预填seed
-- **银行模式** — Bank绑定源码+结果，deposit一次→zero检查
-- **Snapshot口袋** — JIT动态化逃逸，调用方零逃逸惩罚
-- **零下限异步** — analyze()永不阻塞，未命中返回hotRes+后台补
-- **X4D升级** — L2/L3扩容1024条(PentAGI式硬下限)
-- **CompileTimeAnalyze** — IR Pass编译期常量化，运行时0ps
-- **PRINCIPLES.md** — 5条可复用架构原则
-- **PICO_PROOF.md** — 皮秒级物理证明(CPU手册+JIT汇编)
+> 25模块重构：本质化架构 + 三分索引 + 去中心调度。小版本=别人大版本。
 
-### 变更
-- analyze()拆分为hit/analyze/analyzeSync/Bank/Snapshot，身份不塌缩
-- 版本号0.13.1→1.0.0
+### BugDB 从批量补齐→全真实（同前）
 
-### 性能
-- analyze: 8,509ns→51ns (167x)
-- Bank: 1.2ns (新增)
-- hotRes: 1.8ns (新增)
-- 编译期: 0ps (新增)
-### 新增
-- **src/main/kotlin/.../pack/ApkPackTool.kt** — 224行纯Kotlin
-  - `detectProject()` → 自动识别语言分派
-  - `compileKotlin()` / `compileJava()` / `packNode()` 三路编译
-  - `injectIntoApk()` → JVM原生ZipFile注入模板APK
-  - `signApk()` → jarsigner签名
-- **`--pack` flag** — CLI一键打包: `java -jar kotlin-head.jar --pack myproject/`
+### 底层库重构
 
-## v0.13.0 (2026-07-10) — 多语言兼容度检测 + 三模式入口
-### 新增
-- **tools/compat_check.py** — Kotlin+Node.js双引擎兼容度检测器（771行）
-  - 自动识别项目类型，六维雷达评分
-  - 同语言深度检测 + 跨语言集成建议
-- **三模式入口**：库模式(QitongEmbedded) + CLI模式(--cli→JSON) + 交互模式(按钮终端)
+| 模块 | 改动 |
+|------|------|
+| HMap | 三分特征索引：前2字符分组+组内自适应(≤3线性/>3二分)+fuzzyMatch独立 |
+| HList | 归并排序O(n log n)替代冒泡O(n²) |
+| ProHList | 删除标记换HMap索引(O(1)) +归并排序+copyOf bug修复 |
+| HString | 模板解析O(n)一次遍历替代多次replace |
+| HeadStd | freeze换HMap索引(O(1)替代O(n)) |
 
-### 架构
-- `dispatch_check()`：加语言只改一个elif分支
-- `scan_project()`：单一采集，填ProjectData
-- `generate_report()`：薄壳入口，三行代码
+### 编译器核心
 
-## v0.12.9 (2026-07-09) — ⚰️ 墓碑引擎：bug修复合约+动态偏移追踪
-> 编译器行业首个bug修复合约系统。修完不扔，原地立碑。
-> 特征码动态偏移——代码自己当自己指纹，重构后自动追踪行号。全网首创。
-### BugTombstone 墓碑引擎
-- `register/query/count/summary` 四接口，零依赖
-- @Synchronized 线程安全 + 精确文件名==匹配
-- defaultRegistry 数据与逻辑分离
-### 进程树对接
-- SceneInput 加 `tombstones` 字段
-- `briefOf` 显示 ⚰️×N
-- `prepareArmy` 自动查询墓碑——指挥官带战场地图上场
-### 动态偏移追踪（行业首创）
-- Entry 加 `fingerprint` 字段：存修复位置代码行内容
-- query 加 `sourceCode` 参数：`indexOf` 定位→自动计算新行号
-- 前插10行→L110自动追踪到L120(+10)
-- 特征码被删→标 ⚠️偏移(原行号)
-### 默认注册表
-- SimUiScanner.kt → L109 NPE + L116 target漏遍历
-- Parser.kt → L241 传染性适配层
-- 无关文件 → 零输出（沉默）
+| 模块 | 改动 |
+|------|------|
+| Ast | Pos添加operator+companion(ZERO/START) |
+| IR | 去toList()保持头标库独立性 |
+| Lexer | token缓存避免重复tokenize |
+| TypeChecker | 去java.util.LinkedList换mutableListOf |
+| Diagnostic | finding输出修复建议 |
+| LiveDeclarationGraph | 本质化重构：反向索引+"引用即传播"原则，affectedBy()一方法回答 |
 
-## v0.12.7 (2026-07-09) — 混合输出决策门 🎯
-## v0.12.8 (2026-07-09) — 免免三层架构 + 原生探针节点 🏗️🔍
-> SimSchema→AnnotationAdapter→SimUiScanner 三层身份分离。探针用id不用名字，lambda签名验证。
-> SimNode原生探针节点：轻量(7字段)+全能(自描述)。适配层预留外部扩展接口。
-> 免免四原则联动：手搓节点→id探针→适配层→组件不塌缩。动态测试通过。
+### 进程系统本质化
 
-### 三层架构（免免设计）
-| 层 | 文件 | 职责 | 行数 |
-|------|------|------|:--:|
-| 原生格式 | SimSchema.kt | SimNode定义+候选集管理 | 38 |
-| 适配层 | AnnotationAdapter.kt | AST→SimNode翻译器 | 152 |
-| 消费者 | SimUiScanner.kt | walk+装配+决策门 | 120 |
+| 模块 | 改动 |
+|------|------|
+| ProcessCoordinator | SelfAware接口：进程自认领+forwardTo去中心交接，旧调度保留兜底 |
+| ProcessIdentity | evict换O(n)单次遍历替代O(n log n)排序 |
+| CommanderType | values()缓存+listAll优化 |
 
-### 架构改革路径
-- 探针：isButtonCall(名字匹配) → tryMarkButton(名字初筛+lambda签名验证+SimNode标记)
-- 节点：SimMarker辅助标记 → SimNode原生探针节点（7字段自描述）
-- 提取：probeScan三次翻AST → tryMarkButton一次提取→下游直接读marker
-- 候选集：硬编码setOf → SimSchema内置+适配层register()可扩展
-- 赋值提取：KtCall→KtBinary→actionHint显示page="detail"
+### BugDB 生态
 
-### 动态验证
-- 手搓AST(Button+lambda+KtBinary)→编译→运行→Button@L10 [确定] → page="detail" ✅
-- 适配层注册CustomBtn→isCandidate=true ✅
-- 五步审码自检：5/5通过
+| 模块 | 改动 |
+|------|------|
+| BugDB.scan() | 双模超预索引(短代码直接/长代码Trie)+预加载≤1μs |
+| BugScanner | 集成BugDB(11→2948条规则)，Finding新增fix字段 |
+| BugTombstone | 墓碑引擎：HMap索引+指纹追踪独立为queryWithTracking |
+| BugDBTest | 双验证测试(34命中+709ns) |
 
-### 关联
-- Operit元Skill: mianmian-review(五步审码+四原则架构设计)
-- 方法论: 免免四原则联动(设计→修复→自审→验证闭环)
-- kotlinc兼容: walk/walkAst显式三参数避免lambda绑定
-> 决策门route()：数字键先行→别名转换→精确匹配→模糊搜索，阶段式扩并。
-> Route.Hit传Button对象而非idx，消除indexOf假阴性。handleMain(btn)替代Int重载。
-> 三人AI审计：17条有效发现，零重复。免免十刀代码嗅觉方法论。
+### 其他模块
 
-## v0.12.6 (2026-07-08) — 按钮动态化 🎛️
-> HED终端12个硬编码按钮全面动态化。子进程路由：懒汉精确匹配 + 探测fallback。六AI交叉审计 + 免免独杀。
-
-### 按钮动态化（免免&望安）
-
-**核心架构**：
-| 组件 | 角色 | 说明 |
+| 指标 | 旧版(v0.12.1) | 新版(v1.0.2) |
 |------|------|------|
-| Command枚举 | 按钮指令 | 13种系统按钮+2种管理按钮 |
-| 三层数据源 | 按钮池 | systemButtons(不可变)+simUiButtons(单次编译)+customButtons(持久化) |
-| 懒汉型 | 精确路由 | 数组索引O(1): currentButtons[idx].action() |
-| 探测型 | 模糊fallback | searchByLabel: 精确equals→模糊contains |
-| `@Volatile` | 并发安全 | 快照失效时从Registry实时取 |
+| 总规则 | 5000条(89真+4911凑) | 2937条全真实 |
+| 种子 | 55条 | 331条 |
+| 生成方式 | 参数化引擎(batch_N) | 知识库变异+来源溯源 |
+| detection | 模板("X检测:Y版") | 种子描述+类型场景+参见ID |
+| 占位符 | 4911条batch_N | 0条 |
+| 质量评分 | — | 100/100 |
+| 分类覆盖 | 20/20 | 20/20 |
+| BugHunt命中 | ~65 | 320 |
+| 178S十条 | — | 8/8满分 |
 
-**修改文件**：
-- 新增 `ButtonRegistry.kt` (~140行): Command枚举+三层数据源+save/load持久化
-- 修改 `Main.kt`: renderMain动态渲染+handleMain数组索引+handle懒汉匹配+模板切换+按钮管理
+### BugDB.scan() 双模超预索引
 
-**免免独杀**：
-- 砍掉快照/Pair/findById/key字段——改用数组索引 O(1)
-- byLabel不用contains+链式兜底——用equals精确匹配
-- 按钮=子进程认领——没有command的按钮不入列表
-- clearSimUiInjections组合漏洞：无条件clear+可能不inject=静默丢失(Kotlin T!型同构)
+- **轻量通道**：短代码(<500字符) → JVM原生String.contains
+- **重量通道**：长代码 → Trie+滑动窗口 O(代码长度)
+- **预加载**：BugRules.register()末尾自动预热Trie
+- **缓存命中**：709ns ≤1μs，冷启动~6.4ms
+- **认清模式**：BugDBTest.run()输出每条命中ID+严重度+修复建议
 
-**六AI交叉审计**：DeepSeek V4 Pro(分层)+Haiku 4.5(时差/职责/CRC)+阿言(visible冲突/findByLabel脱节)+望安(visible二次校验/命名空间)+小安(findById/快照矛盾🔴)+Code(data class/原子写入)
+### BugScanner集成BugDB
+
+- BugScanner.scan() → BugDB字符串扫描(2937条) + AST遍历(11条) =2948条
+- Finding新增fix字段，每条命中带修复建议
+- Main.kt适配：BugScanner.from(file, source)传入源码
+
+### 对照手册
+
+- `BugDB_对照手册.md`：2937条规则，含ID/严重度/trigger/修复/多修法
+- `validate_bugdb.py`：自动扫占位符/空字段/重复ID
+- `_test/BugHunt.kt`：89个@expect函数
+- `_test/test_hits.py`：自动统计分类覆盖320命中/20分类
 
 ## v0.12.5 (2026-07-08) — 分体式沙盒六审决战 🛡️🔥
 

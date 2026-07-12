@@ -15,7 +15,7 @@ data class Diag(
 
 open class DiagStore {
     private val groups = HMap<String, HList<Diag>>()
-    private var frozen = HList<String>()
+    private var frozen = HMap<String, Boolean>()
 
     open fun put(group: String, diag: Diag) {
         var list = groups.get(group)
@@ -43,13 +43,10 @@ open class DiagStore {
         }
     }
 
-    fun freeze(group: String) { if (!isFrozen(group)) frozen.add(group) }
-    fun unfreeze(group: String) { frozen = frozen.filter { it != group } }
-    fun isFrozen(group: String): Boolean {
-        for (i in 0 until frozen.size) { if (frozen.get(i) == group) return true }
-        return false
-    }
-    fun frozenGroups(): HList<String> = frozen
+    fun freeze(group: String) { frozen.put(group, true) }
+    fun unfreeze(group: String) { frozen.remove(group) }
+    fun isFrozen(group: String): Boolean = frozen.get(group) != null
+    fun frozenGroups(): HList<String> = frozen.keys()
 
 fun forEachGroup(fn: (String, HList<Diag>) -> Unit) {
         groups.forEach { g, diags -> if (!isFrozen(g)) fn(g, diags) }

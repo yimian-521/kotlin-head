@@ -3,6 +3,12 @@ package com.qitong.head.ast
 /** 源码位置：行号从 1 开始，列号从 1 开始 */
 data class Pos(val line: Int, val col: Int) {
     override fun toString() = "$line:$col"
+    companion object {
+        val ZERO = Pos(0,0)
+        val START = Pos(1,1)
+    }
+    operator fun compareTo(other: Pos): Int =
+        when { line != other.line -> line - other.line; else -> col - other.col }
 }
 
 /** 源码范围 */
@@ -16,7 +22,7 @@ sealed class KtNode(val span: Span)
 // ─── 顶层 ───
 /** 一个 .kt 文件 = 包声明 + 零或多个顶层声明 */
 data class KtFile(val pkg: String?, val declarations: List<KtDecl>) : KtNode(
-    Span(Pos(1, 1), Pos(1, 1)) // 文件级，范围由外部设置
+    Span(Pos.START, Pos.START)
 )
 
 // ─── 声明 ───

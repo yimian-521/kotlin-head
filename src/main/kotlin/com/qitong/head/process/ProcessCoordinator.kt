@@ -9,27 +9,58 @@ import com.qitong.head.headstd.HMap
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * 进程树协调器 —— v0.8.0-a
- *
- * 连接进程树契约与 kotlin-head 编译管线。
- * 负责：扫描标签 → 创建指挥官 → 按领域分组 → 驱动注解处理全流程。
- *
- * 三层容错：局部错误继续走 / 成功一半分报 / 架构错误才停。
- */
-object ProcessCoordinator {
+     * 进程树协调器 —— v1.0.2 本质化重构
+     *
+     * 本质原则：进程自己判断自己适不适合。
+     * ProcessCoordinator 不做"场景→军队"推导——只广播任务，让进程认领。
+     */
+    object ProcessCoordinator {
 
-    // 所有已注册的指挥官（按标签索引）
+        // 所有活跃进程（子进程+军队进程），自己认领任务
+        private val activeProcesses = HList<SelfAwareProcess>()
+        private val cmdCounter = AtomicInteger(0)
+
+        /** 任何知道自己能不能处理某任务的进程 */
+        interface SelfAwareProcess {
+            fun canHandle(task: AnnotationTask): Boolean
+            fun handle(task: AnnotationTask): ProcessResult
+            fun id(): String
+            fun priority(): Int  // 越小越优先——经验越丰富越靠前
+        }
+
+    // ─── 本质原则：进程自己判断───
+    interface SelfAware {
+        fun canHandle(task: AnnotationTask): Boolean
+        fun handle(task: AnnotationTask): ProcessResult
+        /** 自己不接时推荐下一个进程——去中心交接 */
+        fun forwardTo(task: AnnotationTask): SelfAware? = null
+        fun myId(): String
+        fun myPriority(): Int
+    }
+    private val selfAware = HList<SelfAware>()
+    fun registerSelfAware(p: SelfAware) { selfAware.add(p) }
+
+    /** 进程链式交接——找不到人接才走旧调度 */
+    private fun trySelfAssign(tasks: List<AnnotationTask>): List<Pair<AnnotationTask, ProcessResult>>? {
+        if (selfAware.isEmpty()) return null
+        val results = mutableListOf<Pair<AnnotationTask, ProcessResult>>()
+        for (task in tasks) {
+            var current = selfAware.find { it.canHandle(task) }
+            var tried = 0
+            while (current == null && tried < selfAware.size) {
+                // 没人直接接——从任意进程出发，让他们推荐下一个
+                val start = selfAware[tried % selfAware.size]
+                current = start.forwardTo(task)
+                tried++
+            }
+            if (current == null) return null  // 链条断了→走旧调度
+            results.add(task to current.handle(task))
+        }
+        return results
+    }
+
+    // ─── 旧结构保留（进程不自学时的兜底）───
     private val commanders = HMap<String, CommanderImpl>()
-    
-    // 用于生成唯一ID
-    private val cmdCounter = AtomicInteger(0)
-    private val subCounter = AtomicInteger(0)
-    private val bodyCounter = AtomicInteger(0)
-    
-    // 全局广播日志（指挥官之间）
-    private val broadcastLog = HMap<String, HList<String>>()
-
-    // ★ v0.11.3: 父进程治理风格——影响容错判断、检测进程数量
     var activeStyle: MainProcessStyle = MainProcessStyle.FEDERAL
         private set
 
@@ -69,9 +100,7 @@ object ProcessCoordinator {
     val fileSize: Int, val fileCount: Int, val isHostile: Boolean,
     val hellType: HellType, val bugDensity: Float,
     val isBatch: Boolean, val incremental: Boolean, val qitongScore: Int,
-    val style: MainProcessStyle,
-    val trend: Int = 0,  // v0.12.4: 正=Bug增长→需快攻，负=衰减→需收尾，零=稳定
-    val tombstones: Int = 0  // v0.12.9: 已知bug修复合约数量——墓碑引擎查询结果
+    val style: MainProcessStyle
 )
 
 object SceneEngine {
@@ -118,29 +147,6 @@ object SceneEngine {
         return Pair(occs.toList(), ratio[0].coerceIn(0.1f, 1f))
     }
 
-    /** v0.12.4: 动态模式识别——见趋势调整兵种
-     *  衰减(trend<-10)→GUARD | 增长(trend>10)→BURST | 稳定(-10~10)→GUARD
-     *  🏗️ 主力80%+预备20%混合编队机制待实现 */
-    fun deriveTrend(input: SceneInput): Pair<List<SubProcessOccupation>, Float> {
-        val (base, ratio) = derive(input)
-        val adjusted = base.toMutableList()
-        val trend = input.trend
-        
-        // 趋势调整兵种（用现有枚举：GUARD稳守 / BURST快攻 / SOLDIER通用）
-        if (trend > 10) {
-            if (SubProcessOccupation.BURST !in adjusted) adjusted.add(0, SubProcessOccupation.BURST)
-        } else if (trend < -10) {
-            if (SubProcessOccupation.GUARD !in adjusted) adjusted.add(SubProcessOccupation.GUARD)
-        } else {
-            if (SubProcessOccupation.GUARD !in adjusted) adjusted.add(SubProcessOccupation.GUARD)
-        }
-        // 预备兵
-        val backup = if (SubProcessOccupation.SOLDIER !in adjusted) SubProcessOccupation.SOLDIER else SubProcessOccupation.GUARD
-        if (backup !in adjusted && adjusted.size < 4) adjusted.add(backup)
-        
-        return Pair(adjusted, ratio)
-    }
-
     /** v0.11.5: 态势简报——只在需要广播时调用，不参与热路径 */
     fun briefOf(input: SceneInput, occs: List<SubProcessOccupation>, ratio: Float): String {
         val r = mutableListOf<String>()
@@ -165,7 +171,6 @@ object SceneEngine {
             MainProcessStyle.EMERGENCY -> r.add("紧急"); MainProcessStyle.CONSERVATIVE -> r.add("保守")
             MainProcessStyle.CONTRACT -> r.add("契约"); else -> r.add("联邦")
         }
-        if (input.tombstones > 0) r.add("⚰️×${input.tombstones}")
         return r.joinToString("·")
     }
 
@@ -191,31 +196,6 @@ object SceneEngine {
         val result = derive(input)
         cache.store(fp, result.first, result.second, "success")
         return result
-    }
-
-    /** v0.12.4: 军师基类匹配——根据环境和队友类型返回匹配度
-     *  安全(低密度) → BURST/MICRO快攻 | 中等 → DIGEST缺方向受益最大
-     *  危险(高密度) → 全员匹配度低，应独行扩军 */
-    fun matchStrategist(bugDensity: Float, buddyType: SubProcessOccupation): Float {
-        return when {
-            bugDensity < 0.2f -> when (buddyType) {  // 安全
-                SubProcessOccupation.BURST -> 0.90f   // 快攻
-                SubProcessOccupation.MICRO -> 0.75f    // 精英级
-                SubProcessOccupation.GUARD -> 0.40f
-                SubProcessOccupation.DIGEST -> -0.15f
-                SubProcessOccupation.SOLDIER -> -0.25f
-                SubProcessOccupation.ASSAULT -> -0.20f
-            }
-            bugDensity < 0.5f -> when (buddyType) {  // 中等
-                SubProcessOccupation.DIGEST -> 0.85f   // 缺方向受益最大
-                SubProcessOccupation.MICRO -> 0.70f
-                SubProcessOccupation.BURST -> 0.60f
-                SubProcessOccupation.SOLDIER -> 0.45f
-                SubProcessOccupation.GUARD -> 0.40f
-                SubProcessOccupation.ASSAULT -> -0.05f
-            }
-            else -> return 0.10f  // 危险——不匹配，独行
-        }
     }
     fun severityScore(occs: List<SubProcessOccupation>, ratio: Float, isHostile: Boolean): Int {
         var score = (occs.size * 2.5f).toInt()
@@ -256,36 +236,34 @@ object SceneEngine {
 
     /** 启用 Java 检测——尝试挂载 java-head */
     fun enableJavaDetection(): Boolean {
-        val ok = JavaHeadAdapter.tryMount()
+        val ok = Unit.tryMount()
         if (ok) javaDetectionEnabled = true
         return ok
     }
 
     /** 关闭 Java 检测 */
     fun disableJavaDetection() {
-        JavaHeadAdapter.unmount()
+        Unit.unmount()
         javaDetectionEnabled = false
     }
 
     /** 当前 Java 检测通道 */
-    val javaChannel: JavaDetectionChannel get() = JavaHeadAdapter.channel
+    val javaChannel: JavaDetectionChannel get() = Unit.channel
 
     /** v0.11.3: 主动增派——编译前根据源码特征预判兵力 */
-    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false, fileName: String = "") {
+    fun prepareArmy(fileSize: Int, fileCount: Int, isHostile: Boolean = false, bugDensity: Float = 0f, hellType: HellType = HellType.NONE, incremental: Boolean = false, qitongScore: Int = 0, multiProjectMode: Boolean = false) {
         val strategy = activeStyle
         if (strategy == MainProcessStyle.RENYONG && fileSize < 5000 && !isHostile) return
         if (strategy == MainProcessStyle.CONSERVATIVE && fileSize < 3000 && !isHostile) return
         if (fileSize < 500 && fileCount <= 1 && !isHostile) return
         
-        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy, tombstones = com.qitong.head.tomb.BugTombstone.count(fileName))
+        val input = SceneInput(fileSize, fileCount, isHostile, hellType, bugDensity, fileCount > 1, incremental, qitongScore, strategy)
         val (occs, ratio) = SceneEngine.derive(input)
         val estTasks = (fileSize / 500).coerceIn(1, 100)
         val cap = ((estTasks * ratio).toInt()).coerceIn(1, 60)
         val army = ArmyProcess("army-${armyCounter.incrementAndGet()}", cap, permanent = true, occupations = occs)
         armyPool.add(army)
         broadcast("system", "⚔️ 主动增派 [${SceneEngine.briefOf(input, occs, ratio)}] → ${occs.map { it.name }.joinToString("+")} cap@${"%.2f".format(ratio)}")
-        // v0.12.4: 军师独行扩军检测
-        checkSoloStrategist(bugDensity, 0)
     }
 
     /** v0.11.4: 被动增派——走SceneEngine，不再当瞎子 */
@@ -322,31 +300,6 @@ object SceneEngine {
     /** v0.11.3: 退役所有临时军队 */
     fun retireTemporary() {
         armyPool.filter { !it.isPermanent() }.forEach { it.retire() }
-    }
-
-    // v0.12.4: 军师独行扩军——总指挥层决策，军师不上报，总指挥主动扫描
-    fun handleStrategistSolo(bugDensity: Float, trend: Int) {
-        val isUrgent = bugDensity > 0.5f || trend > 20
-        val isHostile = bugDensity > 0.5f || trend > 20  // v0.12.4-fix: trend>20也标记hostile
-        val (occs, ratio) = SceneEngine.deriveTrend(
-            SceneInput(10000, 5, isHostile, HellType.NONE, bugDensity, false, false, 0, activeStyle, trend)
-        )
-        val cap = if (isUrgent) 12 else 8
-        val army = ArmyProcess("solo-${armyCounter.incrementAndGet()}", cap, permanent = false, occupations = occs)
-        armyPool.add(army)
-        broadcast("system", "🧠 军师独行扩军 [urgent=$isUrgent] → ${occs.map { it.name }.joinToString("+")} cap=$cap")
-    }
-
-    private fun checkSoloStrategist(bugDensity: Float = 0f, trend: Int = 0): Boolean {
-        // v0.12.4-fix: 先检查是否已有活跃solo军队，避免重复创建
-        val hasSolo = armyPool.any { it.id.startsWith("solo-") && it.isActive() && it.currentLoad() > 0 }
-        if (hasSolo) return false
-        val strategists = commanders.values().filter { it.commanderType == CommanderType.STRATEGIST }
-        if (strategists.size == 1 && commanders.size == 1) {
-            handleStrategistSolo(bugDensity, trend)
-            return true
-        }
-        return false
     }
 
     // ─── 初始化：扫描并注册指挥官 ───
@@ -440,10 +393,24 @@ object SceneEngine {
      * @param annotations 待处理的注解列表（每个带标签+负载）
      * @return 按指挥官分组的处理结果
      */
-    fun processAnnotations(
-        annotations: List<AnnotationTask>
-    ): Map<String, CommanderReport> {
-        for (task in annotations) {
+fun processAnnotations(
+            annotations: List<AnnotationTask>
+        ): Map<String, CommanderReport> {
+            // 本质路径：进程自己认领
+            val selfResults = trySelfAssign(annotations)
+            if (selfResults != null) {
+                val report = CommanderReport(
+                    commanderId = "self-aware", tag = "auto",
+                    summary = "进程自认领: ${selfResults.size}/${annotations.size}",
+                    results = HList.from(selfResults.map { it.second }),
+                    completedCount = selfResults.count { it.second is ProcessResult.Success },
+                    totalCount = annotations.size
+                )
+                return mapOf("self-aware" to report)
+            }
+
+            // 旧调度路径（兜底）
+            for (task in annotations) {
             if (!commanders.containsKey(task.tag)) {
                 val cmd = CommanderImpl(
                     id = "cmd-${cmdCounter.incrementAndGet()}",

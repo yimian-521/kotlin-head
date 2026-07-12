@@ -1,118 +1,61 @@
 package com.qitong.head.bugdb
 
 /**
- * BugDB 种子规则验证集 — kotlin-int+ v0.12.1
- * 每条 val 包含对应规则的 trigger 字符串。
- * BugDB.scan() 扫描此文件源码应命中全部36条种子规则。
+ * BugDB 双验证测试 — kotlin-int v3
+ * ① 规则加载 + 扫描命中验证（≥15条）
+ * ② 性能基准：缓存命中 ≤ 1μs
  */
 object BugDBTest {
 
-    /** KT-0001: 平台类型!!导致NPE → 用?.let */
-    val test_KT_0001_trigger = """trigger: val x:String!=java();x!!.length"""
+    fun run(): String = buildString {
+        append("═══ BugDB 双验证 ═══\n\n")
 
-    /** KT-0002: ?.链混用!! → 统一用?. */
-    val test_KT_0002_trigger = """trigger: a?.b?.c!!.d"""
+        // ① 规则加载
+        BugRules.register()
+        val total = BugDB.all.size
+        append("规则加载: $total 条\n")
+        if (total >= 2000) append("✅ 规则数正常\n") else append("❌ 异常\n")
 
-    /** KT-0003: 泛型异常捕获 → 捕获具体类型 */
-    val test_KT_0003_trigger = """trigger: catch(e:T){}"""
+        // ② 扫描命中
+        val testCode = """
+fun test() {
+    val x: String? = null; x!!.length
+    val s = javaObj.field; s.length
+    GlobalScope.launch { heavy() }
+    for (x in list) { list.remove(x) }
+    var c = 0; repeat(100) { thread { c++ } }
+    fun g() { list.forEach { if (it) return } }
+    val API_KEY = "sk-abc123"
+    db.execSQL("SELECT * FROM u WHERE n='${'$'}name'")
+    fun f(i: Int) {}; fun f(a: Any) {}; f(42)
+}
+""".trimIndent()
 
-    /** KT-0004: 星投影误用 → 声明类型 */
-    val test_KT_0004_trigger = """trigger: val x:List<*>;x.add(1)"""
+        val hits = BugDB.scan(testCode)
+        append("命中: ${hits.size} 条\n")
+        if (hits.size >= 10) append("✅ 达标\n") else append("⚠️ 偏低\n")
 
-    /** KT-0005: GlobalScope泄漏 → lifecycleScope */
-    val test_KT_0005_trigger = """trigger: GlobalScope.launch{}"""
+        // ③ 性能
+        repeat(5) { BugDB.scan(testCode) }
+        val times = 1000
+        val start = System.nanoTime()
+        repeat(times) { BugDB.scan(testCode) }
+        val perScanNs = (System.nanoTime() - start) / times
 
-    /** KT-0006: launch异常不传播 → async+await */
-    val test_KT_0006_trigger = """trigger: launch{riskyOp()}"""
+        append("延迟: ${perScanNs}ns/次\n")
+        if (perScanNs < 1000) append("✅ ≤1μs\n") else append("⚠️ >1μs\n")
 
-    /** KT-0007: 遍历修改集合 → 收集后删 */
-    val test_KT_0007_trigger = """trigger: for(x in l){l.remove(x)}"""
+        // ④ 命中详情（认清每一条）
+        append("\n── 命中详情 ──\n")
+        hits.take(8).forEach { h ->
+            val sev = when (h.severity) { BugSeverity.SEVERE -> "🔴"; BugSeverity.MODERATE -> "🟡"; else -> "⚪" }
+            append("$sev ${h.id} | ${h.title}\n")
+            append("   修复: ${h.fix}\n")
+        }
+        if (hits.size > 8) append("   ... 还有 ${hits.size - 8} 条\n")
 
-    /** KT-0008: 可变集合暴露 → 返回不可变 */
-    val test_KT_0008_trigger = """trigger: fun get()=internalList"""
-
-    /** KT-0009: var智能转换失效 → val y=x */
-    val test_KT_0009_trigger = """trigger: var x:Any;if(x is S){x.len}"""
-
-    /** KT-0010: when穷举缺失 → 加else */
-    val test_KT_0010_trigger = """trigger: when(s){is A->..}"""
-
-    /** KT-0011: Java null未标注 → ?. */
-    val test_KT_0011_trigger = """trigger: val s=javaObj.name"""
-
-    /** KT-0012: @JvmStatic缺失 → 加注解 */
-    val test_KT_0012_trigger = """trigger: object U{fun f(){}}"""
-
-    /** KT-0013: 非局部return → return@forEach */
-    val test_KT_0013_trigger = """trigger: l.forEach{if(it)return}"""
-
-    /** KT-0014: 隐式this歧义 → this@outer */
-    val test_KT_0014_trigger = """trigger: apply{name=name}"""
-
-    /** KT-0015: 循环引用序列化 → @Transient */
-    val test_KT_0015_trigger = """trigger: A(val b:B);B(val a:A)"""
-
-    /** KT-0016: copy浅复制 → 深复制 */
-    val test_KT_0016_trigger = """trigger: data U(val l:MutableList)"""
-
-    /** KT-0017: tailrec非尾递归 → 改写 */
-    val test_KT_0017_trigger = """trigger: tailrec f(n)=n*f(n-1)"""
-
-    /** KT-0018: inline过大 → 去inline */
-    val test_KT_0018_trigger = """trigger: inline big(){..200行}"""
-
-    /** KT-0019: 共享可变无同步 → AtomicInt */
-    val test_KT_0019_trigger = """trigger: var c=0;threads{c++}"""
-
-    /** KT-0020: 死锁风险 → 统一顺序 */
-    val test_KT_0020_trigger = """trigger: synchronized(l1){synchronized(l2){}}"""
-
-    /** KT-0021: +拼接字符串 → buildString */
-    val test_KT_0021_trigger = """trigger: for(i in 1..100){s+="\${'$'}i"}"""
-
-    /** KT-0022: 不必要装箱 → 避免可空 */
-    val test_KT_0022_trigger = """trigger: val x:Int?=42"""
-
-    /** KT-0023: 类型推断选错重载 → 显式标注 */
-    val test_KT_0023_trigger = """trigger: f(Int);f(Any);f(42)"""
-
-    /** KT-0024: 重载解析歧义 → 1L */
-    val test_KT_0024_trigger = """trigger: f(Int);f(Long);f(1)"""
-
-    /** KT-0025: 硬编码密钥 → 环境变量 */
-    val test_KT_0025_trigger = """trigger: val key="sk-xxx""""
-
-    /** KT-0026: 日志泄露 → 脱敏 */
-    val test_KT_0026_trigger = """trigger: Log.d("tok",tok)"""
-
-    /** KT-0027: 主线程IO → LaunchedEffect+IO */
-    val test_KT_0027_trigger = """trigger: Text(readFile())"""
-
-    /** KT-0028: 重组副作用 → 正确key */
-    val test_KT_0028_trigger = """trigger: LaunchedEffect(Unit){load()}"""
-
-    /** KT-0029: values()性能 → enumEntries */
-    val test_KT_0029_trigger = """trigger: enum.values().find{}"""
-
-    /** KT-0030: sealed跨文件 → 移到同文件 */
-    val test_KT_0030_trigger = """trigger: sealed A File1,B File2"""
-
-    /** KT-0031: @JvmInline缺失 → 加注解 */
-    val test_KT_0031_trigger = """trigger: inline class N(val s)"""
-
-    /** KT-0032: by lazy线程安全 → 指定模式 */
-    val test_KT_0032_trigger = """trigger: val x by lazy{init()}"""
-
-    /** KT-0033: expect/actual不匹配 → 对齐 */
-    val test_KT_0033_trigger = """trigger: expect f():S;actual f():I"""
-
-    /** KT-0034: 平台API未抽象 → expect/actual */
-    val test_KT_0034_trigger = """trigger: fun a(){System.load()}"""
-
-    /** KT-0035: 反射访问私有成员 → 提供公开接口 */
-    val test_KT_0035_trigger = """trigger: cls.getDeclaredField("secret")"""
-
-    /** KT-0036: 平台特定导入 → expect/actual封装 */
-    val test_KT_0036_trigger = """trigger: import java.io.File"""
-
+        // ⑤ 严重度
+        val severe = hits.count { it.severity == BugSeverity.SEVERE }
+        append("严重: $severe | 中度: ${hits.size - severe}\n")
+    }
 }

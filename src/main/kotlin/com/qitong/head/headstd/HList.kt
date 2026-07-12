@@ -134,20 +134,31 @@ class HList<T> {
 
     fun <R : Comparable<R>> sortedBy(fn: (T) -> R): HList<T> {
         val arr = elems.copyOf(size)
-        for (i in 0 until size - 1) {
-            for (j in i + 1 until size) {
-                @Suppress("UNCHECKED_CAST")
-                if ((fn(arr[i] as T)).compareTo(fn(arr[j] as T)) > 0) {
-                    val tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp
-                }
-            }
-        }
+        mergeSort(arr, 0, size - 1, fn)
         val result = HList<T>()
         for (i in 0 until size) {
             @Suppress("UNCHECKED_CAST")
             result.add(arr[i] as T)
         }
         return result
+    }
+
+    private fun <R : Comparable<R>> mergeSort(arr: Array<Any?>, lo: Int, hi: Int, fn: (T) -> R) {
+        if (lo >= hi) return
+        val mid = (lo + hi) / 2
+        mergeSort(arr, lo, mid, fn)
+        mergeSort(arr, mid + 1, hi, fn)
+        merge(arr, lo, mid, hi, fn)
+    }
+
+    private fun <R : Comparable<R>> merge(arr: Array<Any?>, lo: Int, mid: Int, hi: Int, fn: (T) -> R) {
+        val tmp = arr.copyOfRange(lo, hi + 1)
+        var i = 0; val mid2 = mid - lo; var j = mid2 + 1; var k = lo
+        while (i <= mid2 && j < tmp.size) {
+            @Suppress("UNCHECKED_CAST")
+            arr[k++] = if ((fn(tmp[i] as T)).compareTo(fn(tmp[j] as T)) <= 0) tmp[i++] else tmp[j++]
+        }
+        while (i <= mid2) arr[k++] = tmp[i++]
     }
 
     fun partition(fn: (T) -> Boolean): Pair<HList<T>, HList<T>> {

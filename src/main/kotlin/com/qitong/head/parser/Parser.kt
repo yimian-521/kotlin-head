@@ -1,6 +1,9 @@
 package com.qitong.head.parser
 
 import com.qitong.head.ast.*
+import com.qitong.head.checker.TypeChecker
+import com.qitong.head.internal.Capabilities
+import com.qitong.head.eventbus.DependencyGraph
 import com.qitong.head.lexer.Token
 import com.qitong.head.lexer.TokType
 import com.qitong.head.lexer.TokType.*
@@ -13,25 +16,14 @@ enum class PrecProfile {
     DEFENSIVE
 }
 
-/** 解析诊断——Parser自带的轻量诊断，不依赖外部TypeChecker */
-enum class ParseDiagLevel { WARN, EXPECTED }
-data class ParseDiag(val level: ParseDiagLevel, val msg: String, val pos: Pos)
-
-/** 外部钩子——Parser不直接依赖TypeChecker/Capabilities/DependencyGraph */
-class ParserHooks(
-    val onImport: ((String) -> Unit)? = null,
-    val onUnknownSyntax: ((String) -> String?)? = null  // 返回建议文本，null=无建议
-)
-
 class Parser(
     private val tokens: List<Token>,
-    private val onRecover: ((String, () -> Any?) -> Any?)? = null,
-    private val hooks: ParserHooks? = null
+    private val onRecover: ((String, () -> Any?) -> Any?)? = null
 ) {
     private var pos = 0
 
     companion object {
-        /** 军师进程决策——编译前切换。默认 STANDARD。和 HConcurrencyProfile 同构 */
+        /** 军师进程决策——编译前切换。默认 STANDARD */
         var activePrecTable: PrecProfile = PrecProfile.STANDARD
     }
 
@@ -85,7 +77,7 @@ class Parser(
             }
             val importPath = sb.toString()
             if (importPath.isNotEmpty()) {
-                hooks?.onImport?.invoke(importPath.replace(".", "/"))
+                DependencyGraph.registerImport(importPath.replace(".", "/"), "current_file")
             }
         }
     }
@@ -135,19 +127,19 @@ class Parser(
     private fun isDeclarationStart(): Boolean = isDeclarationStart(peek().type)
 
     // ─── 声明 ───
-    private val parseDiags = mutableListOf<ParseDiag>()
+    private val parseDiags = mutableListOf<TypeChecker.Diag>()
     
     /** Parser 层的诊断（WARNING/SKIPPED/EXPECTED），最终合并到 Diagnostic */
-    fun parserDiags(): List<ParseDiag> = parseDiags.toList()
+    fun parserDiags(): List<TypeChecker.Diag> = parseDiags.toList()
 
     private fun warnSkip(reason: String, expected: String? = null, autoFix: Boolean = false) {
         val pos = peek().pos
-        val level = if (expected != null) ParseDiagLevel.EXPECTED else ParseDiagLevel.WARN
+        val level = if (expected != null) TypeChecker.DiagLevel.EXPECTED else TypeChecker.DiagLevel.WARN
         val prefix = if (autoFix) "🔧 [自动容错] " else ""
         val suffix = if (autoFix) "（不跳过将导致编译崩溃）" else ""
         val msg = if (expected != null) "${prefix}跳过: $reason —— 🔮 $expected$suffix"
                   else "${prefix}跳过: $reason$suffix"
-        parseDiags += ParseDiag(level, msg, pos)
+        parseDiags += TypeChecker.Diag(level, msg, pos)
     }
 
     private fun parseDeclaration(anns: List<KtAnnotation> = emptyList()): KtDecl? {
@@ -213,7 +205,7 @@ class Parser(
         }
         // 不认识的关键字 → 只跳当前 token，不连累后续
         val t = peek()
-        warnSkip("不支持的语法: ${t.text}关键字", hooks?.onUnknownSyntax?.invoke(t.text))
+        warnSkip("不支持的语法: ${t.text}关键字", Capabilities.expectedFor(t.text))
         advance() // ★ 只跳一步——不调用 skipToNextDecl
         return KtVal("?unk", null, null, emptyList(), emptyList(), Span(t.pos, lastPos()))
     }
@@ -234,7 +226,7 @@ class Parser(
                 var braceSkips = 0
                 var consecLbrace = 0  // ★ 连续 LBRACE 计数器——检测花括号泛滥
                 while (depth > 0 && !isEof() && totalSkips < 2000 && braceSkips < 300) {
-                    if (depth > 128) { warnSkip("花括号嵌套过深(>$depth)", "略过整块"); break }
+                    if (depth > 60) { warnSkip("花括号嵌套过深(>$depth)", "略过整块"); break }
                     val tt = peek().type
                     if (isDeclarationStart(tt)) break
                     when (tt) {

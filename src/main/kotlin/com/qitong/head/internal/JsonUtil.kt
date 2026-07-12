@@ -86,10 +86,30 @@ object JsonUtil {
                 val c = advance()
                 when (c) {
                     '"' -> return sb.toString()
-                    '\\' -> sb.append(escapeChar(advance()))
+                    '\\' -> {
+                        val ec = advance()
+                        when (ec) {
+                            'u' -> sb.append(readHex4().toChar())
+                            else -> sb.append(escapeChar(ec))
+                        }
+                    }
                     else -> sb.append(c)
                 }
             }
+        }
+
+        private fun readHex4(): Int {
+            var v = 0
+            repeat(4) {
+                val c = advance()
+                v = v * 16 + when (c) {
+                    in '0'..'9' -> c - '0'
+                    in 'a'..'f' -> c - 'a' + 10
+                    in 'A'..'F' -> c - 'A' + 10
+                    else -> throw error("expected hex digit, got '$c'")
+                }
+            }
+            return v
         }
 
         private fun readNumber(): Number {

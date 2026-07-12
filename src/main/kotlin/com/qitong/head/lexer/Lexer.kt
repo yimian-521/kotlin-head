@@ -35,7 +35,10 @@ class Lexer(private val src: String) {
         put("true", TokType.BOOL_LIT); put("false", TokType.BOOL_LIT)
     }
 
+    private var cachedTokens: HList<Token>? = null
+
     fun tokenize(): List<Token> {
+        cachedTokens?.let { return it.toList() }
         val tokens = HList<Token>()
         while (i < src.length) {
             val start = Pos(line, col)
@@ -90,6 +93,7 @@ class Lexer(private val src: String) {
             }
         }
         tokens.add(Token(TokType.EOF, "", Pos(line, col)))
+        cachedTokens = tokens
         return tokens.toList()
     }
 

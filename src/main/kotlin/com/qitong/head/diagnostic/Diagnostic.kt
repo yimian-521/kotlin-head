@@ -55,14 +55,15 @@ class Diagnostic(
         }
         // Bug扫描
         if (bugFindings.isNotEmpty()) {
-            sb.append("🐛 BugScanner: ${bugFindings.size} 处结构隐患\n")
+            sb.append("🐛 BugScanner: ${bugFindings.size} 处\n")
             for ((i, f) in bugFindings.withIndex()) {
                 val icon = when (f.severity) {
                     BugScanner.Severity.HIGH -> "🔴"
                     BugScanner.Severity.MEDIUM -> "🟠"
                     BugScanner.Severity.LOW -> "🟡"
                 }
-                sb.append("  $icon ${f.message}\n")
+                val fixHint = if (f.fix.isNotEmpty()) " → ${f.fix}" else ""
+                sb.append("  $icon ${f.rule}: ${f.message}$fixHint\n")
             }
         }
         return sb.toString()
