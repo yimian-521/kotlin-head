@@ -150,12 +150,16 @@ object ApkPackCoordinator {
             val manifestPath = "$buildDir/AndroidManifest.xml"
             java.io.File(manifestPath).writeText(generateManifest(packageName, versionCode, versionName))
             
+            // 生成真正的DEX（不再用jar冒充）
+            val dexPath = "$buildDir/classes.dex"
+            java.io.File(dexPath).writeBytes(DexWriter.minimal(base.substringAfterLast('/').ifEmpty { "app" }))
+            
             // ZIP打包
             val resDir = "$base/res"
             val out = java.io.File(outputApk)
             out.parentFile?.mkdirs()
             java.util.zip.ZipOutputStream(java.io.FileOutputStream(out).buffered()).use { zip ->
-                listOf("AndroidManifest.xml" to manifestPath, "classes.dex" to classJar).forEach { (name, path) ->
+                listOf("AndroidManifest.xml" to manifestPath, "classes.dex" to dexPath).forEach { (name, path) ->
                     val f = java.io.File(path)
                     if (f.exists()) {
                         zip.putNextEntry(java.util.zip.ZipEntry(name))
