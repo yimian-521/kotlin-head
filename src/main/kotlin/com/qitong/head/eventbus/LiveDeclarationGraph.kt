@@ -160,6 +160,14 @@ object LiveDeclarationGraph {
                 expr.branches.forEach { scanExpr(it.condition, refs, depth + 1); scanExpr(it.body, refs, depth + 1) }
                 expr.elseBranch?.let { scanExpr(it, refs, depth + 1) }
             }
+            is KtFor -> {
+                scanExpr(expr.iterable, refs, depth + 1)
+                expr.body?.let { scanExpr(it, refs, depth + 1) }
+            }
+            is KtWhile -> {
+                scanExpr(expr.cond, refs, depth + 1)
+                expr.body?.let { scanExpr(it, refs, depth + 1) }
+            }
             else -> {}
         }
     }
