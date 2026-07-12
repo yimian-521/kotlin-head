@@ -128,7 +128,74 @@ object ApkPackCoordinator {
         return ""
     }
 
-    private fun injectDex(apkPath: String, dexPath: String, outputPath: String): Boolean {
+    /** 纯ZIP打包——不依赖Android SDK，直接构建APK */
+    fun zipPack(dir: String, packageName: String = "com.example.app", versionCode: Int = 1, versionName: String = "1.0"): PackReport {
+        val base = dir.trimEnd('/')
+        val buildDir = "$base/build"
+        val outputApk = "$buildDir/${base.substringAfterLast('/').ifEmpty { "app" }}.apk"
+        val classJar = "$buildDir/classes.jar"
+        
+        try {
+            // 编译→jar
+            if (!java.io.File(classJar).exists()) {
+                val srcDir = java.io.File(base)
+                val ktFiles = srcDir.walk().filter { it.isFile && it.extension == "kt" }.map { it.absolutePath }.toList()
+                if (ktFiles.isEmpty()) return PackReport(false, listOf("无.kt文件"), com.qitong.head.headstd.HList())
+                java.io.File(buildDir).mkdirs()
+                val p = ProcessBuilder(listOf("kotlinc", "-d", classJar) + ktFiles).redirectErrorStream(true).start()
+                if (!p.waitFor(30, java.util.concurrent.TimeUnit.SECONDS) || p.exitValue() != 0) return PackReport(false, listOf("kotlinc编译失败"), com.qitong.head.headstd.HList())
+            }
+            
+            // 生成manifest
+            val manifestPath = "$buildDir/AndroidManifest.xml"
+            java.io.File(manifestPath).writeText(generateManifest(packageName, versionCode, versionName))
+            
+            // ZIP打包
+            val resDir = "$base/res"
+            val out = java.io.File(outputApk)
+            out.parentFile?.mkdirs()
+            java.util.zip.ZipOutputStream(java.io.FileOutputStream(out).buffered()).use { zip ->
+                listOf("AndroidManifest.xml" to manifestPath, "classes.dex" to classJar).forEach { (name, path) ->
+                    val f = java.io.File(path)
+                    if (f.exists()) {
+                        zip.putNextEntry(java.util.zip.ZipEntry(name))
+                        java.io.FileInputStream(f).buffered().use { it.copyTo(zip) }
+                        zip.closeEntry()
+                    }
+                }
+                val res = java.io.File(resDir)
+                if (res.isDirectory) res.walkTopDown().filter { it.isFile }.forEach { f ->
+                    val rel = "res/" + f.relativeTo(res).path.replace('\\', '/')
+                    zip.putNextEntry(java.util.zip.ZipEntry(rel))
+                    java.io.FileInputStream(f).buffered().use { it.copyTo(zip) }
+                    zip.closeEntry()
+                }
+            }
+            
+            val artifacts = if (out.exists()) listOf(outputApk, classJar) else emptyList()
+            return PackReport(out.exists(), artifacts, com.qitong.head.headstd.HList())
+        } catch (e: Exception) {
+            return PackReport(false, listOf(e.message ?: "ZIP打包失败"), com.qitong.head.headstd.HList())
+        }
+    }
+
+    private fun generateManifest(packageName: String, versionCode: Int, versionName: String): String {
+        return """<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="$packageName"
+    android:versionCode="$versionCode"
+    android:versionName="$versionName">
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35"/>
+    <application android:label="$packageName">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>"""
+    }
         return try {
             java.io.File(apkPath).copyTo(java.io.File(outputPath), true)
             // 用zip把classes.dex写入APK（APK本质是ZIP）
