@@ -86,6 +86,50 @@ object DexWriter {
         return buf.toByteArray()
     }
 
+
+    fun withHello(className: String = "hello/World", message: String = "hello from kotlin-head v1.0.5"): ByteArray {
+        val buf = ByteArrayOutputStream(); val w = DexOutput(buf)
+        val S = listOf("L$className;", "V", "VL", "main", "([Ljava/lang/String;)V",
+            "Ljava/lang/Object;", "<init>", "Ljava/lang/System;", "Ljava/io/PrintStream;",
+            "out", "println", "(Ljava/lang/String;)V", message, "Ljava/lang/String;")
+        val H = 0x70; val strOff = H; val typeOff = strOff + S.size * 4
+        val protoOff = typeOff + 5 * 4; val fieldOff = protoOff + 2 * 12
+        val methodOff = fieldOff + 1 * 8; val classOff = methodOff + 2 * 8
+        val dataOff = classOff + 1 * 32
+
+        var cur = dataOff; val sdo = mutableListOf<Int>()
+        for (s in S) { sdo.add(cur); cur += 1 + s.toByteArray(Charsets.UTF_8).size + 1 }
+        val codeOff = cur; val codeLen = 16 + 14; val cdOff = codeOff + codeLen
+        val fsize = cdOff + 12
+
+        w.bytes(MAGIC); w.int(0); w.bytes(ByteArray(20))
+        w.int(fsize); w.int(H); w.int(0x12345678); w.int(0); w.int(0); w.int(0)
+        w.int(S.size); w.int(strOff); w.int(5); w.int(typeOff); w.int(2); w.int(protoOff)
+        w.int(1); w.int(fieldOff); w.int(2); w.int(methodOff); w.int(1); w.int(classOff)
+        w.int(fsize - dataOff); w.int(dataOff)
+
+        for (o in sdo) w.int(o)
+        w.int(0); w.int(5); w.int(7); w.int(8); w.int(13)
+        w.int(1); w.int(0); w.int(0); w.int(2); w.int(0); w.int(0)
+        w.short(2); w.short(3); w.int(9)
+        w.short(0); w.short(0); w.int(3); w.short(3); w.short(1); w.int(10)
+        w.int(0); w.int(1); w.int(NO_INDEX); w.int(0); w.int(NO_INDEX); w.int(0)
+        w.int(cdOff); w.int(0)
+
+        for (s in S) { val b = s.toByteArray(Charsets.UTF_8); w.uleb(b.size); w.bytes(b); w.byte(0) }
+
+        w.short(3); w.short(1); w.short(1); w.short(0); w.int(0); w.int(7)
+        w.byte(0x1a); w.byte(0x00); w.byte(0x0c)
+        w.byte(0x62); w.byte(0x01); w.byte(0x00); w.byte(0x00)
+        w.byte(0x6e); w.byte(0x10); w.byte(0x01); w.byte(0x00); w.byte(0x00); w.byte(0x00)
+        w.byte(0x0e); w.byte(0x00)
+
+        w.uleb(0); w.uleb(0); w.uleb(1); w.uleb(0)
+        w.uleb(0); w.uleb(8); w.uleb(codeOff)
+
+        return buf.toByteArray()
+    }
+
     private class DexOutput(private val out: OutputStream) {
         fun byte(v: Int) { out.write(v and 0xFF) }
         fun bytes(b: ByteArray) { out.write(b) }
