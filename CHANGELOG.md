@@ -1,5 +1,15 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v1.0.5 (2026-07-12) — APK完全适配 📦⚡
+> 从空壳到完整打包管线。androidJar动态扫描SDK版本。
+
+| 组件 | 说明 |
+|------|------|
+| compileToDex | kotlinc→d8转dex |
+| aapt2Link | 资源打包+manifest |
+| injectDex | ZIP流注入classes.dex |
+| androidJar | 自动扫描最新SDK版本 |
+
 ## v1.0.4 (2026-07-12) — 阶跃审计修复 🪞⚡
 > step-3.7-flash三Agent并行审计49条bug + maestro流水线落地。致命级清零，军用级热路径优化。
 
