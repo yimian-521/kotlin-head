@@ -152,7 +152,7 @@ object ApkPackCoordinator {
             
             // 生成真正的DEX（不再用jar冒充）
             val dexPath = "$buildDir/classes.dex"
-            java.io.File(dexPath).writeBytes(DexWriter.minimal(base.substringAfterLast('/').ifEmpty { "app" }))
+            java.io.File(dexPath).writeBytes(DexWriter.withMain(base.substringAfterLast('/').ifEmpty { "app" }))
             
             // ZIP打包
             val resDir = "$base/res"
