@@ -95,17 +95,25 @@ object BugDB {
     }
 
     fun stats(): String = buildString {
+        var sevMild = 0; var sevMod = 0; var sevSevere = 0
+        val catCounts = mutableMapOf<BugCategory, Int>()
+        for (r in rules) {
+            when (r.severity) {
+                BugSeverity.MILD -> sevMild++
+                BugSeverity.MODERATE -> sevMod++
+                BugSeverity.SEVERE -> sevSevere++
+            }
+            catCounts[r.category] = (catCounts[r.category] ?: 0) + 1
+        }
         append("BugDB 规则统计\n")
         append("━━━━━━━━━━━━━━━━━━━━\n")
-        BugSeverity.values().forEach { s ->
-            val c = rules.count { it.severity == s }
-            append("  ${s.label}: $c 条\n")
-        }
+        append("  ${BugSeverity.MILD.label}: $sevMild 条\n")
+        append("  ${BugSeverity.MODERATE.label}: $sevMod 条\n")
+        append("  ${BugSeverity.SEVERE.label}: $sevSevere 条\n")
         append("  总计: ${rules.size} 条\n")
         append("━━━━━━━━━━━━━━━━━━━━\n")
-        BugCategory.values().forEach { cat ->
-            val c = rules.count { it.category == cat }
-            if (c > 0) append("  ${cat.label}: $c 条\n")
+        for ((cat, c) in catCounts) {
+            append("  ${cat.label}: $c 条\n")
         }
     }
 
@@ -120,9 +128,10 @@ object BugDB {
         val idx = ensureIndex()
         val seen = mutableSetOf<String>()
         val hits = mutableListOf<BugRule>()
-        // 按行过滤：跳过自引用/预热代码
+        // 按行过滤：跳过自引用/预热代码（预编译Regex）
         val filtered = if (skipPatterns.isNotEmpty()) {
-            code.lines().filter { line -> skipPatterns.none { Regex(it).containsMatchIn(line) } }
+            val compiled = skipPatterns.map { Regex(it) }
+            code.lines().filter { line -> compiled.none { it.containsMatchIn(line) } }
                 .joinToString("\n")
         } else code
         val normalized = filtered.replace("\\s+".toRegex(), "").toLowerCase()
