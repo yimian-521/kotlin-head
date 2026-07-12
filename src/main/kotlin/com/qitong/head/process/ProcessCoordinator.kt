@@ -606,9 +606,9 @@ class CommanderImpl(
 ) : Commander {
 
     private val processors = HList<Class<*>>()
-    private val subProcesses = HList<SubProcessImpl>()
+    private var subProcesses = HList<SubProcessImpl>()
     private val subCounter = AtomicInteger(0)
-    private const val MAX_SUB_PROCESSES = 500
+    private val MAX_SUB_PROCESSES = 500
 
     // v0.8.5: 挂载的检测进程列表（旁路观察，不阻塞子进程）
     private val watchProcesses = HList<WatchProcess>()
@@ -680,11 +680,12 @@ class CommanderImpl(
             id = ProcessId(commanderId = id, subProcessId = "sub-${subCounter.incrementAndGet()}", bodyId = ""),
             tag = tag, mode = mode, parentCommander = this, occupation = occupation, tendency = tendency
         ).also { subProcesses.add(it) }) }
-        // 保留最近500个，超出则截掉最早一半
+        // 超出上限：截掉最早一半
         if (subProcesses.size > MAX_SUB_PROCESSES) {
             val keep = subProcesses.drop(subProcesses.size / 2)
-            subProcesses.clear()
-            keep.forEach { subProcesses.add(it) }
+            val fresh = HList<SubProcessImpl>()
+            keep.forEach { fresh.add(it) }
+            subProcesses = fresh
         }
         return result
     }
