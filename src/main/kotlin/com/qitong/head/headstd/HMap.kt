@@ -13,9 +13,9 @@ class HMap<K, V> {
     @Volatile private var _vals: Array<Any?> = arrayOfNulls(8)
     private var _size = 0
 
-    /** 特征索引：key前2字符 → 组内键位置列表（保持有序） */
-    private var featIdx: MutableMap<String, MutableList<Int>>? = null
-    private var featIdxSize = 0  // 索引版本号，put/remove后失效
+    /** 特征索引：key前2字符 → (组内位置列表, 有效标记) */
+    private data class Group(val indices: MutableList<Int> = mutableListOf(), var valid: Boolean = true)
+    private var featIdx: MutableMap<String, Group>? = null
 
     var size: Int
         get() = _size
@@ -25,58 +25,36 @@ class HMap<K, V> {
         val i = indexOf(key)
         if (i >= 0) { _vals[i] = value; return }
         if (_size == _keys.size) grow()
-        // 插入排序保持组内有序
         val prefix = keyPrefix(key)
-        val group = ensureFeatIdx().getOrPut(prefix) { mutableListOf() }
-        var insertPos = group.size
-        for (gi in group.indices) {
-            val ki = group[gi]
+        val group = ensureFeatIdx().getOrPut(prefix) { Group() }
+        var insertPos = group.indices.size
+        for (gi in group.indices.indices) {
+            val ki = group.indices[gi]
             if (compareKeys(_keys[ki] as K, key) > 0) { insertPos = gi; break }
         }
-        group.add(insertPos, _size)
-        _keys[_size] = key
-        _vals[_size] = value
-        _size++
-        featIdxSize++
+        group.indices.add(insertPos, _size)
+        _keys[_size] = key; _vals[_size] = value; _size++
     }
 
     operator fun set(key: K, value: V) = put(key, value)
 
-    /** 精确查找——特征索引加速 */
+    /** 精确查找——特征索引加速，组失效时局部重建 */
     operator fun get(key: K): V? {
-        val group = featIdx?.get(keyPrefix(key))
-        if (group == null) {
-            val fallback = indexOfFallback(key)
-            if (fallback >= 0) {
-                @Suppress("UNCHECKED_CAST")
-                return _vals[fallback] as V
-            }
-            return null
-        }
-        val s = group.size
+        val prefix = keyPrefix(key)
+        val group = featIdx?.get(prefix) ?: return indexOfFallback(key)
+        if (!group.valid) rebuildGroup(prefix, group)
+        val s = group.indices.size
         if (s == 0) return null
-        // 自适应：≤3线性，>3二分
         if (s <= 3) {
-            for (gi in group) {
-                if (checkKey(gi, key)) {
-                    @Suppress("UNCHECKED_CAST")
-                    return _vals[gi] as V
-                }
+            for (gi in group.indices) {
+                if (checkKey(gi, key)) { @Suppress("UNCHECKED_CAST"); return _vals[gi] as V }
             }
         } else {
             var lo = 0; var hi = s - 1
             while (lo <= hi) {
-                val mid = (lo + hi) / 2
-                val gi = group[mid]
+                val mid = (lo + hi) / 2; val gi = group.indices[mid]
                 val cmp = compareKeys(_keys[gi] as K, key)
-                when {
-                    cmp == 0 -> {
-                        @Suppress("UNCHECKED_CAST")
-                        return _vals[gi] as V
-                    }
-                    cmp < 0 -> lo = mid + 1
-                    else -> hi = mid - 1
-                }
+                when { cmp == 0 -> { @Suppress("UNCHECKED_CAST"); return _vals[gi] as V }; cmp < 0 -> lo = mid + 1; else -> hi = mid - 1 }
             }
         }
         return null
@@ -106,15 +84,10 @@ class HMap<K, V> {
         @Suppress("UNCHECKED_CAST")
         val old = _vals[i] as V
         _size--
-        if (i < _size) {
-            _keys[i] = _keys[_size]
-            _vals[i] = _vals[_size]
-        }
+        if (i < _size) { _keys[i] = _keys[_size]; _vals[i] = _vals[_size] }
         _keys[_size] = null; _vals[_size] = null
-        featIdx?.get(keyPrefix(key))?.let { group ->
-            group.removeAt(group.indexOf(i))
-            featIdxSize--  // 版本号降级，下次ensureFeatIdx时检查
-        }
+        // 标记组失效——下次get时局部重建
+        featIdx?.get(keyPrefix(key))?.let { it.valid = false }
         return old
     }
 
@@ -179,41 +152,46 @@ class HMap<K, V> {
     }
 
     private fun indexOf(key: K): Int {
-        val group = featIdx?.get(keyPrefix(key))
-        if (group != null) {
-            if (group.size <= 3) {
-                for (gi in group) if (checkKey(gi, key)) return gi
-            } else {
-                var lo = 0; var hi = group.size - 1
-                while (lo <= hi) {
-                    val mid = (lo + hi) / 2
-                    val gi = group[mid]
-                    val cmp = compareKeys(_keys[gi] as K, key)
-                    when { cmp == 0 -> return gi; cmp < 0 -> lo = mid + 1; else -> hi = mid - 1 }
-                }
+        val prefix = keyPrefix(key)
+        val group = featIdx?.get(prefix) ?: return indexOfFallback(key)
+        if (!group.valid) rebuildGroup(prefix, group)
+        val s = group.indices.size
+        if (s <= 3) {
+            for (gi in group.indices) if (checkKey(gi, key)) return gi
+        } else {
+            var lo = 0; var hi = s - 1
+            while (lo <= hi) {
+                val mid = (lo + hi) / 2; val gi = group.indices[mid]
+                val cmp = compareKeys(_keys[gi] as K, key)
+                when { cmp == 0 -> return gi; cmp < 0 -> lo = mid + 1; else -> hi = mid - 1 }
             }
-            return -1
-        }
-        return indexOfFallback(key)
-    }
-
-    private fun indexOfFallback(key: K): Int {
-        for (i in 0 until _size) {
-            if (checkKey(i, key)) return i
         }
         return -1
     }
 
-    private fun ensureFeatIdx(): MutableMap<String, MutableList<Int>> {
-        featIdx?.let { if (featIdxSize == _size) return it }
-        val idx = mutableMapOf<String, MutableList<Int>>()
+    private fun indexOfFallback(key: K): Int {
+        for (i in 0 until _size) { if (checkKey(i, key)) return i }
+        return -1
+    }
+
+    private fun ensureFeatIdx(): MutableMap<String, Group> {
+        featIdx?.let { return it }
+        val idx = mutableMapOf<String, Group>()
         for (i in 0 until _size) {
-            val prefix = keyPrefix(_keys[i] as K)
-            idx.getOrPut(prefix) { mutableListOf() }.add(i)
+            val gi = idx.getOrPut(keyPrefix(_keys[i] as K)) { Group() }
+            gi.indices.add(i)
         }
         featIdx = idx
-        featIdxSize = _size
         return idx
+    }
+
+    /** 局部重建一个组——只扫全量_keys中匹配该前缀的 */
+    private fun rebuildGroup(prefix: String, group: Group) {
+        group.indices.clear()
+        for (i in 0 until _size) {
+            if (keyPrefix(_keys[i] as K) == prefix) group.indices.add(i)
+        }
+        group.valid = true
     }
 
     private fun matchScore(a: String, b: String): Int {
