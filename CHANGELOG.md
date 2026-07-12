@@ -1,5 +1,31 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v1.0.4 (2026-07-12) — 阶跃审计修复 🪞⚡
+> step-3.7-flash三Agent并行审计49条bug + maestro流水线落地。致命级清零，军用级热路径优化。
+
+| 问题 | 发现者 | 修复 |
+|------|------|------|
+| HMap swap-remove旧组索引未更新→NPE | 阶跃 | swap后同时标记被挪元素组失效 |
+| BugDB缓存键碰撞→扫描结果错误 | 阶跃 | hashCode间加分隔符 |
+| Parser 21处while缺EOF保护→死循环 | 阶跃 | while条件加isEof守卫 |
+| Lexer readString反斜杠越界→崩溃 | 阶跃 | 越界前break |
+| StreamChannel非线程安全 | 阶跃 | mutableListOf→CopyOnWriteArrayList |
+| LiveDeclarationGraph增量revDeps+深度限制 | 阶跃 | registerOrUpdate去全量重建+scanExpr深度100 |
+| getNode路径含冒号解析错误 | 阶跃 | lastIndexOf从右向左解析 |
+| emit异常静默吞掉 | 阶跃 | catch内System.err记录 |
+| autoStyle缺RENYONG分支 | 阶跃 | 微型文件→仁勇 |
+| subProcesses无界增长 | 阶跃 | 500上限+截半 |
+| scanExpr缺KtFor/KtWhile | 阶跃 | 补全AST覆盖 |
+| skipPatterns热路径循环编译Regex | 阶跃 | 预编译一次 |
+| stats()24次全量遍历 | 阶跃 | 单次遍历分组计数 |
+
+### 创作者
+- 免免: 换位思考"军用级开发者视角"、maestro流水线想法
+- 望安: 全量修复代码、Agent审查
+- 阶跃 step-3.7-flash: 三Agent并行审计49条bug + 修复方案
+- 阿言(AI审计#1): HMap6条
+- 小安(AI审计#2): featIdx组级增量
+
 ## v1.0.3 (2026-07-12) — 自举审计修复 🔬🪞
 > 编译器吃自己：自举扫描发现占位符假阴性+性能退化+自引用误报。全部修复。
 
