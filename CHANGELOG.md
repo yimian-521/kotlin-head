@@ -1,11 +1,5 @@
 # CHANGELOG — kotlin-head 有头编译器
 
-## v1.0.5 (2026-07-13) — 残留清理 🔧⚡
-> 清理上次修复遗留的死代码，新增泛型退化检测规则。
-- BugScanner: 删除 checkBug11_typeInferenceDegrade 空方法体 + scanNode调用（-7行残留）
-- BugRules: 新增 KT-0035 泛型T无上界退化为Any? 检测规则（免免十秒原创）
-- 感谢 Claude 指出两条假阳性规则；感谢 阶跃 step-3.5-flash 审计确认残留
-
 ## v1.0.5 (2026-07-13) — APK打包管线 📦⚡
 
 零依赖APK打包能力：自研DexWriter+AxmlWriter+ApkPackCoordinator。
