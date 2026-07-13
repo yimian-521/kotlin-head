@@ -65,12 +65,11 @@ class BugScanner {
                 checkBug9_platformTypeBang(node)
                 checkBug10_delegateTrap(node)
                 node.value?.let { scanExpr(it) }
-                if (node.name.contains("69")) System.err.println("[BS] saw hell_69: value=${node.value?.javaClass?.simpleName}")
             }
             is KtBlock -> node.statements.forEach { scanNode(it) }
             is KtIf -> { scanExpr(node.cond); scanExpr(node.thenBranch); node.elseBranch?.let { scanExpr(it) } }
             is KtBinary -> scanExpr(node)
-            is KtCall -> { checkBug11_typeInferenceDegrade(node); scanExpr(node) }
+            is KtCall -> scanExpr(node)
             is KtReturn -> { node.value?.let { scanExpr(it) } }
             is KtMemberAccess -> scanNode(node.target)
             is KtLambda -> scanExpr(node.body)
@@ -185,14 +184,6 @@ class BugScanner {
         if (valDecl.modifiers.contains("by"))
             findings.add(Finding("KT-DELEGATE-TRAP", Severity.LOW, "委托属性异常被包装为KotlinNullPointerException", valDecl.valSpan))
     }
-    private fun checkBug11_typeInferenceDegrade(call: KtCall) {
-        val targetName = when (val t = call.target) {
-            is KtRef -> t.name; is KtMemberAccess -> t.member; else -> return
-        }
-        if (call.args.size >= 3 && targetName.length > 10)
-            findings.add(Finding("KT-TYPE-DEGRADE", Severity.LOW, "复杂泛型调用($targetName)可能退化为Any", call.callSpan))
-    }
-
     companion object {
         fun from(file: KtFile, source: String = "") = BugScanner().scan(file, source)
     }

@@ -83,7 +83,9 @@ object BugRules {
             title="星投影操作Set<I>",trigger="val x:Set<I>*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
         BugDB.load(BugRule(id="KT-0034",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
             title="星投影操作Map<S,I>",trigger="val x:Map<S,I>*=...;x.add(...)",detection="星投影只读",fix="指定具体类型参数"))
-        BugDB.load(BugRule(id="KT-0035",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
+        BugDB.load(BugRule(id="KT-0035",category=BugCategory.GENERICS,severity=BugSeverity.MODERATE,
+            title="泛型T无上界退化为Any?",trigger="fun <T> f(t:T) 或 class Box<T>",detection="<T>无 :Any 约束，T可空退化为Any?，方法调用全退化",fix="加 <T : Any> 约束"))
+        BugDB.load(BugRule(id="KT-0035b",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="GlobalScope泄漏",trigger="GlobalScope.launch{",detection="不受控的生命周期",fix="lifecycleScope或viewModelScope"))
         BugDB.load(BugRule(id="KT-0036",category=BugCategory.COROUTINES,severity=BugSeverity.SEVERE,
             title="launch吞异常",trigger="launch{riskyOp()}",detection="launch不传播异常",fix="async+await或CoroutineExceptionHandler"))
