@@ -1,0 +1,237 @@
+{
+  "_comment": "kotlin-head 能力路线图。Parser 启动时自动读取。加新语法后只改此文件，不改源码。",
+  "project": "kotlin-head",
+  "version": "1.0.5",
+  "capabilities": {
+    "lexing": { "status": "supported", "notes": "~170行，关键字/运算符/字面量/标识符/注解跳过/块注释/ELVIS" },
+    "parsing": { "status": "partial", "notes": "~700行，递归下降+容错跳过+尾部lambda。32/32零崩溃。object/enum/interface待支持" },
+    "ast": { "status": "supported", "notes": "~95行，KtClass/KtCall等完整声明+表达式节点" },
+    "type_checking": { "status": "partial", "notes": "基本符号表+类型绑定，泛型待支持" },
+    "diagnostic": { "status": "supported", "notes": "~75行，四级诊断+版本路线图" },
+    "bug_scanner": { "status": "supported", "notes": "~55行，AST结构模式检测" },
+    "hed_interaction": { "status": "supported", "notes": "按钮式终端交互。15种行为模式，AI+人同读。首个HED实例。v0.12.0: V5超预索引——热槽组并行预跑，按下仅dict.get" },
+    "memory_tree": { "status": "design", "notes": "MemoryTree/MemoryNode全局内存管理。进程体内存预算+超限裁决+父进程风格联动。Python原型验证完成，Kotlin移植待启动。" },
+    "super_preheat_index": { "status": "design", "notes": "超预索引V5：场景切换→热槽组全覆盖并行预跑→结果缓存→按下零执行。八轮Python原型迭代。轻/中/重延迟统一~200ns。" },
+    "tdl_documents": { "status": "supported", "notes": "三文档联动(CHANGELOG+BUGS+capabilities)。首个TDL实例" },
+    "devmode_storage": { "status": "supported", "notes": "独立jar(16KB)，JSON+CRC，零依赖" },
+    "ecosystem_advisory": { "status": "discovered", "notes": "Kotlin平台类型T!×结构化并发叠加漏洞。kotlin-head零依赖天然免疫。详见KOTLIN_T_BUG_ADVISORY.md" }
+  },
+  "bugs_active": 0,
+  "bugs_resolved": 7,
+  "roadmap": {
+    "v0.3.0": {
+      "done": "HED/TDL双格式落地",
+      "keywords": [],
+      "desc": "格式命名+宪法+行为模式+语言适配层"
+    },
+    "v0.5.1": {
+      "done": "class正解析+继承+LT/GT归位+尾部lambda。綦桐17/30 AST零崩溃",
+      "keywords": ["class", "inheritance", "tail_lambda"],
+      "desc": "class声明完整解析+继承关系+LT/GT泛型归位+尾部lambda正解析"
+    },
+    "v0.5.2": {
+      "done": "<T>/by/=三刀语义修复+Skill 3.2「看位置不分类」",
+      "keywords": ["generic", "delegate", "assignment", "position", "classification"],
+      "desc": "三处核心语义歧义修复：泛型声明与调用/委托与迭代/赋值与默认值"
+    },
+    "v0.5.3": {
+      "done": "生态警示：Kotlin叠加漏洞发现+Skill 3.3「看交叉不看标签」",
+      "keywords": ["platform_type", "structured_concurrency", "silent_corruption"],
+      "desc": "发现Kotlin官方两个设计特性叠加产生毁灭级漏洞。零依赖天然免疫"
+    },
+    "v0.6.0": {
+      "done": "设计蓝图定稿：Stage Contract + 反编译管线 + 綦桐3.4.4-9分析（经免免四阶段全量审核修正）",
+      "keywords": ["lambda", "suspend", "generic_full", "sealed", "inner", "inline", "operator", "infix", "decompilation", "stage_contract"],
+      "desc": "Lambda/协程/泛型完整 + 反编译管线 + 阶段间契约（Stage Contract）",
+      "stage_contract": {
+        "_comment": "四阶段双向契约。经免免全量审核修正。核心三原则：不静默、不甩锅、不断链。",
+        "lexer_to_parser": {
+          "declare": [
+            "Token消歧义选择（<泛型/小于、{Lambda/块、*乘法/星投影、@注解/标签、::成员引用/类引用、->Lambda箭头/when箭头、?可空/Elvis前半、!!非空断言）",
+            "字符串内结构精确化（${...}嵌套边界、\"\"\"原始字符串$转义、\\uXXXX合法性、转义序列完整性）"
+          ],
+          "no_skip": "Lexer不跳过不可识别字符——标记为「Lexer未决」原样传给Parser。上游不替下游判死刑。",
+          "verify": "Parser卡住时向所有已完成阶段广播查询（跨阶段查询总线），不只回查Lexer"
+        },
+        "parser_to_ast": {
+          "declare": [
+            "尽力解析标记——由Parser在归约时写入AST节点，非AST自判",
+            "歧义绑定选择（a.b属性访问vs包路径——方向对，不动）"
+          ],
+          "no_skip": "恢复跳过区间不能直接跳过——不确定的一律保留为ERROR节点传给Diagnostic",
+          "verify": "子树类型不匹配本质上不归AST管，是TypeChecker的事。AST可借力Parser但不主责"
+        },
+        "ast_to_typechecker": {
+          "declare": [
+            "推断vs显式标注不分开标记——只标两者是否一致。冲突→警告，一致→无需区分",
+            "平台类型T!标记——方向对",
+            "外部依赖盲区——思路对，但不单独标记。需跨源协作防骗，否则标<?>降级"
+          ],
+          "verify": "推断链断裂时回查上游，但需附加排除日志（候选列表+筛选依据+落选原因），不只是断裂节点+依赖链+回退"
+        },
+        "typechecker_to_diagnostic": {
+          "declare": [
+            "隐式转换路径——方向对，不加协作（内部闭环）",
+            "推理链断裂详情——加排除日志：候选列表+筛选依据+最终落选原因",
+            "跨阶段冲突——方向对，不改"
+          ],
+          "verify": "Diagnostic汇总可稍微管宽一点（下游症状作参考信号），但铁律：不把下游症状当根因报"
+        }
+      },
+      "decompilation_pipeline": {
+        "_comment": "反编译管线。经免免指出两条接缝后修正。",
+        "flow": "APK→(unzip)→dex→(jadx)→Kt源码→kotlin-head AST→语义复原输出",
+        "core_insight": "编译器为编译必须看懂源码→AST已暴露所有结构→语义复原=把AST已算出的类型/调用链/继承关系翻译回源码",
+        "not_formatting": "不是pretty-print格式化。格式化=a.b(c)→a.b(c)。语义复原=a.b(c)→GatewayService.sendMessage(Callback)",
+        "seam_a": "jadx吐出的不一定是标准Kotlin（Java残留语法、匿名类展开、混淆后非标准结构）→Lexer/Parser优雅降级，不炸管道",
+        "seam_b": "类型推断链碰到未知外部库会断→标<?>降级，不装懂。铁律：推断的归推断，未知标<?>。不静默崩溃。",
+        "output": "结构化分析报告：AST视图+类型绑定+混淆恢复标注+风险标注（T!叠加等）"
+      }
+    },
+    "v0.6.1": {
+      "done": "按钮菜单同步：+Bug扫描入口/+能力路线图/+反编译管线展示，核心编译器不动。Main.kt VERSION 0.4.5-dev→0.6.1",
+      "keywords": ["hed_menu", "bug_scanner_ui", "roadmap_ui", "decomp_ui"],
+      "desc": "HED交互按钮更新——版本号+新增三个页面入口，编译器核心零改动"
+    },
+    "v0.6.2": {
+      "done": "静默链阶乘模型+三层叠加发现+BUGS更新。未写新编译器代码",
+      "keywords": ["silence_chain", "triple_overlap", "stealth_kill"],
+      "desc": "发现T!×结构化并发×阻塞IO取消失效=交错污染。静默链四裂缝解法。对比验证"
+    },
+    "v0.6.3": {
+      "done": "免免修正版：四裂缝修复方案——护照制T! + 吸烟者体检 + 看门狗IO断电 + 三色隔离标签",
+      "keywords": ["passport_type", "health_check", "watchdog_io", "triage_isolation"],
+      "desc": "静默链四裂缝精准修复：T!特征识别替代全量安检、危险操作前无感体检替代全量isActive、外部看门狗强制关IO句柄替代自觉检查、SupervisorJob三色隔离分类替代静默吞异常"
+    },
+    "v0.7.0": {
+      "done": "架构三刀：泛型专用路径+链式递归嵌套+修饰符不吞。Skill 3.3.2「按身份排查错误」",
+      "keywords": ["generics", "member_access", "modifiers", "identity_debug"],
+      "desc": "泛型<T>从源头不走进运算符、链式a.b().c递归KtMemberAccess嵌套、KtFun/KtVal加modifiers列表不吞修饰符。排查方法论创新：按身份（类型/特征）查错误替代穷举法——suspend是IDENT类型→skipPackage缺IDENT停止条件→一眼锁定"
+    },
+    "v0.8.0": {
+      "done": "四层进程树架构：插拔式进程树+领域自动划分+协同协议+三层容错+复制性引用。綦桐32/32保持通过",
+      "keywords": ["process_tree", "commander", "annotation_triage", "collaboration", "fault_tolerance", "copy_reference"],
+      "desc": "主进程→指挥官→子进程→进程体四层插拔式架构。领域划分三层：反向排除+标签匹配+依赖图分簇。协同三模式：分片/流水线/竞合。容错三层判断：局部继续/成功一半分报/架构才停。复制性引用：Git clone不是mount。process/包621行编译零警告。AST新增KtAnnotation节点，Parser不再跳过注解"
+    },
+    "v0.8.1": {
+      "done": "EventBus三种通道+异步I/O+依赖图解析——Node.js事件驱动/流式管道/npm依赖树能力适配到Kotlin编译器",
+      "keywords": ["eventbus", "async_io", "dependency_graph", "stream", "event_loop", "npm_style"],
+      "desc": "EventBus：事件通道（EventEmitter一发多收）+流式通道（Stream/pipe链式串联）+工作通道（Worker Pool）。异步I/O：文件读取走独立线程池不卡主循环。依赖图：import解析→冲突检测→dep频道联动HED/TDL/进程树。eventbus/包297行编译零错误"
+    },
+    "v0.8.2": {
+    "done": "IR中间表示+Pass优化管线(死代码消除/常量折叠/内联展开)+动态专业集数路由+EventBus全管线接通+Parser skipPackage修复",
+    "keywords": ["IR", "Pass", "死代码消除", "常量折叠", "内联展开", "动态专业集数路由"],
+    "desc": "model层5/5通过"
+  },
+  "v0.8.3": {
+    "done": "AsyncIO归指挥官+依赖图staging(snapshot/stage/commit)+import接通+冲突检测广播。角色不塌缩",
+    "keywords": ["AsyncIO", "staging", "依赖图", "角色不塌缩"],
+    "desc": "model层5/5通过"
+  },
+  "v0.8.3": {
+    "done": "AsyncIO归指挥官(角色不塌缩)+依赖图staging(snapshot/stage/commit)+import接通+dep频道广播"
+  },
+"v0.8.5": {
+     "done": "四种指挥官(Bug/侦查/军师/执行)+五种检测进程(胆小/勇敢/抽样/趋势/哨兵)+子进程五职业(侦查/收集)+依赖图被动联动(dep_ready)"
+   },
+   "v0.9.0": {
+     "done": "LiveDeclarationGraph——第三种混合编译(声明级活图+浅提取+被动传播)。不是全量不是增量，是融合两者的第三种编译策略",
+     "keywords": ["live_declaration_graph", "mixed_compilation", "shallow_extract", "propagation", "decl_level"],
+     "desc": "声明级活图持续维护，变更传播只动受影响声明。循环依赖浅提取跳过body可随时展开。图和AST同源指挥官管图。第一次加量不加价，之后零遍历"
+   },
+   "v0.9.1": {
+     "done": "检测进程五风格全挂载+BugScanner冷门bug标准库(12条Kotlin规则)+进程树全面测评(3领域×5检测=15报告全通过)",
+     "keywords": ["watch_process", "bug_scanner", "kotlin_bugs", "process_testing"],
+     "desc": "五种检测进程自动挂载并验证。12条Kotlin冷门编译器bug。3领域×5检测=15报告。哨兵新增dispatch_done守门节点"
+   },
+    "v0.10.0": {
+      "done": "头标库运行时——HList/HMap/HString自实现替代kotlin-stdlib。全源码长期状态换头标库。146处println->hPrintln",
+      "keywords": ["head_stdlib","HList","HMap","HString"],
+      "desc": "自实现集合+IO替代。编译器内部状态全换头标库，零kotlin-stdlib集合引用"
+    },
+    "v0.11.0": {
+      "done": "主动容错——不认识的不杀，跳过但标注原因。綦桐32/32全通过",
+      "desc": "parsePrimary else改throw为warnSkip+跳过；parseExpression加容错"
+    },
+    "v0.11.1": {
+      "done": "链式?.嵌套联动修复+ELVIS优先级实测重校准+军师进程接管优先级+HMap定量动态并发",
+      "keywords": ["safe_access","elvis","strategist","concurrency"],
+      "desc": "链式?.AST加safeAccess标记+Parser while联动。ELVIS 2→5基于地狱文件实测。军师编译前扫文件选优先级表。HConcurrencyProfile+进程自选并发模式"
+    },
+    "v0.11.2": {
+      "done": "进程帝国版：八种指挥官(元帅/尖刀/闪电/常规)+七种检测性格(专业/慵懒)+十一种子进程职业+ProcessTendency倾向系统",
+      "keywords": ["commander","marshal","elite","lightning","watch","process_tendency","burst"],
+      "desc": "指挥官从4种扩充至8种（元帅大兵团、尖刀精英、闪电速攻、常规默认）。检测性格5→7（+专业语法洁癖/+慵懒紧急秒醒）。子进程职业6→11（+显微/摘要/攻坚/哨卫/列兵/爆裂）。倾向系统正交于职业——闪电挂BURST速度+1会自爆"
+    },
+    "v0.11.3": {
+      "done": "父进程觉醒版：八种治理风格+SceneEngine动态规则链+态势简报+检测性格8种",
+      "keywords": ["main_process_style","scene_engine","situation_briefing","hypernetwork"],
+      "desc": "MainProcessStyle八种（联邦/独裁/紧急/保守/契约/枭雄/仁勇/正常）影响容错阈值。SceneEngine替换30条静态模板——7规则×6维交叉推导覆盖无限场景（HyperNetwork同构）。态势简报输出场景诊断。检测性格+标准基线"
+    },
+    "v0.11.4": {
+      "done": "动态缺分补齐：删SceneRule尸体+deployArmy接SceneEngine。主动被动增派统一走动态推导",
+      "desc": "删7个匿名object+接口。被动增派不再全配列兵，走SceneEngine.derive()出态势简报。零挂件"
+    },
+    "v0.11.7": {
+      "done": "多项目并行调度：MultiProjectCoordinator+军队规模自定义(0.5~10x)+五道防线+开发者菜单",
+      "keywords": ["multi_project","parallel","army_scale","reinforce_policy"],
+      "desc": "收N个项目并行诊断+汇总简报。规模四档预设可自建/删除/恢复默认。上下限0.5~10x+兵力不足警报。管理员→开发者功能"
+    },
+    "v0.11.6": {
+      "done": "缓存可信度：三档(novice/skilled/expert)+模糊指纹+deriveCached网关+expert跳过derive+briefOf延迟",
+      "keywords": ["cache_trust","fuzzy_fingerprint","deriveCached","three_tier"],
+      "desc": "三档可信度expert跳过7条规则链。模糊指纹规模三档×密度两档共享缓存。derive只出Pair不拼String。培养系全接入"
+    },
+    "v0.11.5": {
+      "done": "培养系核心：ProcessIdentity+ExperienceCache+TitleSystem+RetirePool+ArmyPresetManager+ReinforcePolicy+三观",
+      "keywords": ["process_identity","experience_cache","title_system","retire_pool","army_preset","reinforce_policy","worldview"],
+      "desc": "老兵新兵同一把刀，老兵知道往哪砍。pid=灵魂不改，称号=铭牌只增不减，经验缓存64场景指纹职业倾向淘汰。退役非死亡回大厅。多套预设房间+大厅。PROTECTIVE保护老兵。三观自动生长"
+    },
+      "v0.11.8": {
+      "done": "定量混合打包：ApkPackCoordinator+java-head独立诊断器+军师三层诊断+修复七档+两步预览+打包容错+地狱测试100文件全杀",
+      "keywords": ["apk_pack","java_head","strategist_diagnosis","fault_tolerant","hell_test"],
+      "desc": "军师扫diff→自动决定打包步骤。java-head通道/实现分离。地狱测试覆盖率100%"
+    },
+    "v0.12.0": {
+      "done": "内存树 + HED按钮V5超预索引：MemoryTree+热槽组并行预跑+无变量函数+双模Router。八轮Python原型验证",
+      "keywords": ["memory_tree","super_preheat","hed_v5","hot_group","pipe_button","dual_mode_router"],
+      "desc": "进程树有了眼睛(内存预算+超限裁决)，按钮有了翅膀(热槽组并行预跑，按下仅dict.get)。V1-V5八轮迭代"
+    },
+    "v0.12.0+生态重构": {
+      "done": "v0.8~v0.12全区间HList/HMap替换+ProHList进化(add直通+remove标记+apply惰性清理)。11文件+518/-256行",
+      "desc": "EventBus→HMap, IR→ProHList, 进程树全HList/HMap。老模块不动，新模块全头标库"
+    },
+    "v0.12.1": {
+      "done": "BugDB 2937条全真实规则(双模超预索引+预加载≤1μs)。331种子+知识库变异。int++ 320命中/20分类。178S 8/8满分",
+      "desc": "SEVERE60%/MODERATE30%/MILD10%。倒排索引95x+指纹缓存3x。gen_bugdb.py可复刻"
+    },
+    "v0.12.2": {
+      "done": "双开关特调版：军师建议开关[8]+APK只编译开关[9]。同一套代码两个开关各管各的",
+      "desc": "编译是底线，操作是可选层"
+    },
+    "v0.12.3": {
+      "done": "八军生态+专武绑定+军师闪电双体系：八种进程体各有独立生态位，指挥官专武默认独占。14个Python模拟全验证",
+      "keywords": ["eight_army","weapon_binding","strategist_system","lightning_system","dual_dimension_rep","autophagy","assist_tracking","preset_template"],
+      "desc": "八种进程体独立生态位。军师三层纯信息调度。闪电跑图动态重分配。双维复制率。自噬吞并+沙盒清零。助攻追踪。增派预设模板。绝境验证15对700翻盘",
+      "pending_kotlin": "HED[12]军队配置面板(预设模板/专武绑定开关/军师闪电开关)+八军进程体Kotlin落地+指挥官绑定接口"
+    },
+    "v0.12.4": {
+      "done": "军师动态模式识别+独行扩军+指挥官自定义配队+军师基类匹配+headstd全版本兼容。v0.12.4路线图五项全✅",
+      "keywords": ["strategist_dynamic","solo_expansion","squad_config","strategist_match","headstd_compat"],
+      "desc": "derive()加时间维度(趋势→切兵种)。无队友时自动检测+create临时ArmyProcess。RoomSlotManager栈位分配。matchStrategist按bug密度选兵种。headstd.jar全版本零错"
+    },
+    "v0.12.5": {
+      "done": "--sim-ui源码模拟测试(五链路全通)+分体式沙盒六审修复(14条bug，免免10条独杀6条)",
+      "keywords": ["sim_ui","sandbox","six_audit","mianmian","if_vs_equals"],
+      "desc": "无APK测试APK功能。沙盒模拟器六审。免免独杀6条"
+    },
+    "v1.0.2": {
+      "done": "25模块重构：本质化架构+三分索引+去中心调度。BugDB2937全真实。墓碑引擎。178S 8/8",
+      "keywords": ["重构","本质化","三分索引","去中心","墓碑引擎","BugDB","HMap","LiveDeclarationGraph","ProcessCoordinator"],
+      "desc": "底层库(HMap/HList/HString/HeadStd)+编译器核心(Ast/IR/Lexer/TypeChecker)+进程系统(自认领+forwardTo)+BugDB生态(双模+预加载)+墓碑引擎。小版本=别人大版本"
+    }
+  },
+  "bugs_active": 0,
+  "bugs_resolved": 7
+}
+}
