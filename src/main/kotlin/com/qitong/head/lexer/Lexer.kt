@@ -2,7 +2,6 @@ package com.qitong.head.lexer
 
 import com.qitong.head.ast.Pos
 import com.qitong.head.headstd.HList
-import com.qitong.head.headstd.HMap
 
 enum class TokType {
     FUN, VAL, VAR, CLASS, DATA, IF, ELSE, RETURN,
@@ -22,18 +21,6 @@ class Lexer(private val src: String) {
     private var line = 1
     private var col = 1
 
-    private val keywords: HMap<String, TokType> = HMap<String, TokType>().apply {
-        put("fun", TokType.FUN); put("val", TokType.VAL); put("var", TokType.VAR)
-        put("class", TokType.CLASS); put("data", TokType.DATA)
-        put("if", TokType.IF); put("else", TokType.ELSE); put("return", TokType.RETURN)
-        put("when", TokType.WHEN); put("for", TokType.FOR); put("while", TokType.WHILE)
-        put("object", TokType.OBJECT); put("interface", TokType.INTERFACE)
-        put("enum", TokType.ENUM); put("companion", TokType.COMPANION)
-        put("override", TokType.OVERRIDE)
-        put("import", TokType.IMPORT); put("package", TokType.PACKAGE); put("as", TokType.AS)
-        put("try", TokType.TRY); put("catch", TokType.CATCH); put("finally", TokType.FINALLY)
-        put("true", TokType.BOOL_LIT); put("false", TokType.BOOL_LIT)
-    }
 
     private var cachedTokens: HList<Token>? = null
 
@@ -132,14 +119,30 @@ class Lexer(private val src: String) {
         return Token(TokType.INT_LIT, sb.toString(), start)
     }
 
+    // when table
     private fun readIdent(start: Pos): Token {
         val sb = StringBuilder()
-        while (i < src.length && (src[i].isLetterOrDigit() || src[i] == '_')) { sb.append(src[i]); advance() }
+        while (i < src.length) {
+            val c = src[i]
+            if ((c in 'a'..'z') || (c in 'A'..'Z') || (c in '0'..'9') || c == '_') { sb.append(c); advance() }
+            else break
+        }
         val text = sb.toString()
-        val type = keywords.getExact(text) ?: TokType.IDENT
+        val type = when (text) {
+            "fun" -> TokType.FUN; "val" -> TokType.VAL; "var" -> TokType.VAR
+            "class" -> TokType.CLASS; "data" -> TokType.DATA
+            "if" -> TokType.IF; "else" -> TokType.ELSE; "return" -> TokType.RETURN
+            "when" -> TokType.WHEN; "for" -> TokType.FOR; "while" -> TokType.WHILE
+            "object" -> TokType.OBJECT; "interface" -> TokType.INTERFACE
+            "enum" -> TokType.ENUM; "companion" -> TokType.COMPANION
+            "override" -> TokType.OVERRIDE
+            "import" -> TokType.IMPORT; "package" -> TokType.PACKAGE; "as" -> TokType.AS
+            "try" -> TokType.TRY; "catch" -> TokType.CATCH; "finally" -> TokType.FINALLY
+            "true", "false" -> TokType.BOOL_LIT
+            else -> TokType.IDENT
+        }
         return Token(type, text, start)
     }
-
     private fun readEq(start: Pos): Token {
         advance()
         return if (peek() == '=') { advance(); tok(TokType.EQEQ, "==", start) } else tok(TokType.EQ, "=", start)

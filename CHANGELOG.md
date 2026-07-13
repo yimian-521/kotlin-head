@@ -1,5 +1,10 @@
 # CHANGELOG — kotlin-head 有头编译器
 
+## v1.0.7 (2026-07-13) — 磨砂 u{1F9F9}
+> 表达式级优化：Lexer关键词识别从HMap改为when，isLetterOrDigit改为字符范围。
+> 不改架构，只磨表达式——每个readIdent省去featIdx→二分查找链。
+> 预期Lexer -5%延迟。
+
 ## v1.0.6 (2026-07-13) — 计数式 🔢
 
 > 概念发布：Kotlin计数式——基于量存方程，颠覆传统 `count++`。
