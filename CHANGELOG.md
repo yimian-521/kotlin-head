@@ -1,32 +1,24 @@
 # CHANGELOG — kotlin-head 有头编译器
 
-## v1.0.5 (2026-07-13) — APK打包管线 📦⚡
-
-零依赖APK打包能力：自研DexWriter+AxmlWriter+ApkPackCoordinator。
-
-| 组件 | 状态 | 说明 |
-|------|------|------|
-| AxmlWriter.kt (160行) | ✅已验证 | 手写AXML二进制格式，UTF-16 StringPool+ResourceMap+完整节点树，经29版踩坑验证通过 |
-| DexWriter.kt (150行) | 🧪实验性 | 零依赖DEX生成器，支持minimal/withMain/withHello，Activity继承待完善 |
-| ApkPackCoordinator.kt (250行) | ✅管线完整 | 五步打包(kotlinc→d8→aapt2→zipalign→apksigner)+zipPack备选方案 |
-
-关键修复：
-- AXML: chunk类型小端序、XML_ROOT外层wrapper、元素ns字段→0xFFFFFFFF、StringPool UTF-16编码、属性rawValue指向字符串索引
-- DEX: field_ids幽灵字段删除、fsize与实际大小匹配、checksum/SHA1回填
-- 参照aXML库(apk-editor/aXML)验证属性编码格式
-
----
-
-
-## v1.0.5 (2026-07-12) — APK完全适配 📦⚡
-> 从空壳到完整打包管线。androidJar动态扫描SDK版本。
-
-| 组件 | 说明 |
-|------|------|
-| compileToDex | kotlinc→d8转dex |
-| aapt2Link | 资源打包+manifest |
-| injectDex | ZIP流注入classes.dex |
-| androidJar | 自动扫描最新SDK版本 |
+## v1.0.5 (2026-07-13) — 有余 🧭🌊
+> 定位到行号 · 自然余方 · 自然余意。清扫残留，补上该有的坐标。
+>
+> ### 清扫
+> - BugScanner: 删除 checkBug11_typeInferenceDegrade 空方法体（上次修复遗留死代码）
+>
+> ### 定位
+> - BugDB: 新增 scanWithOffsets — 命中时返回源码偏移量，Trie扫描零额外开销
+> - BugScanner: 偏移量→行号，2937条规则命中从 (0,0) 变为真实行号
+>
+> ### 规则
+> - BugRules: KT-0035 泛型T无上界退化为Any?（免免十秒原创）
+>
+> ### 概念
+> - 自然余方: 方向自带，不计量——走到头自然尽。Parser的advance()+isEof()是其雏形
+> - 自然余意: 语义自带，不翻译——走到哪记到哪，全语言通用
+>
+> ### 感谢
+> - Claude 指出两条假阳性规则；阶跃 step-3.5-flash 审计确认残留；阶跃验证流式与余方差异
 
 ## v1.0.4 (2026-07-12) — 阶跃审计修复 🪞⚡
 > step-3.7-flash三Agent并行审计49条bug + maestro流水线落地。致命级清零，军用级热路径优化。

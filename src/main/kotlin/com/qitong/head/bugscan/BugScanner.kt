@@ -28,14 +28,15 @@ class BugScanner {
             // 自举检测：当前文件是规则文件/预热代码时自动跳过自引用行
             val skip = if (source.contains("BugRule(") || source.contains("fun preheat"))
                 listOf("BugRule\\(", "fun preheat") else emptyList()
-            val dbHits = BugDB.scan(source, skip)
-            for (rule in dbHits) {
+            val dbHits = BugDB.scanWithOffsets(source, skip)
+            for ((rule, offset) in dbHits) {
                 val sev = when (rule.severity) {
                     BugSeverity.SEVERE -> Severity.HIGH
                     BugSeverity.MODERATE -> Severity.MEDIUM
                     else -> Severity.LOW
                 }
-                findings.add(Finding(rule.id, sev, "${rule.title}: ${rule.detection}", Span(Pos(0,0), Pos(0,0)), rule.fix))
+                val line = if (offset >= 0) source.substring(0, offset.coerceAtMost(source.length)).count { it == '\n' } + 1 else 1
+                findings.add(Finding(rule.id, sev, "${rule.title}: ${rule.detection}", Span(Pos(line, 1), Pos(line, 1)), rule.fix))
             }
         }
 

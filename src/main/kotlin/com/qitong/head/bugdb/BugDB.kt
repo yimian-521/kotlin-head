@@ -122,13 +122,20 @@ object BugDB {
      * 短代码(<500字符): 直接倒排索引子串匹配，JVM原生优化
      * 长代码: Trie一次扫描，O(代码长度) 非 O(key数×代码长度)
      */
-    fun scan(code: String, skipPatterns: List<String> = emptyList()): List<BugRule> {
-        val fp = "${code.hashCode()}|${skipPatterns.hashCode()}"
-        scanCache[fp]?.let { return it }
+    fun scan(code: String, skipPatterns: List<String> = emptyList()): List<BugRule> =
+        scanWithOffsets(code, skipPatterns).map { it.first }
+
+    /**
+     * 同 scan，但返回命中时在 normalized 中的偏移量。
+     * 偏移量可用于定位到源码行。
+     */
+    fun scanWithOffsets(code: String, skipPatterns: List<String> = emptyList()): List<Pair<BugRule, Int>> {
+        val fp = "P${code.hashCode()}|${skipPatterns.hashCode()}"
+        @Suppress("UNCHECKED_CAST")
+        (scanCache[fp] as? List<Pair<BugRule, Int>>)?.let { return it }
         val idx = ensureIndex()
         val seen = mutableSetOf<String>()
-        val hits = mutableListOf<BugRule>()
-        // 按行过滤：跳过自引用/预热代码（预编译Regex）
+        val hits = mutableListOf<Pair<BugRule, Int>>()
         val filtered = if (skipPatterns.isNotEmpty()) {
             val compiled = skipPatterns.map { Regex(it) }
             code.lines().filter { line -> compiled.none { it.containsMatchIn(line) } }
@@ -137,25 +144,31 @@ object BugDB {
         val normalized = filtered.replace("\\s+".toRegex(), "").toLowerCase()
 
         if (normalized.length < 500) {
-            // 轻量通道：短代码直接用子串匹配（JVM原生优化）
             for ((trigger, matchedRules) in idx) {
                 val trimmed = trigger.trim()
                 val tNorm = trimmed.replace("\\s+".toRegex(), "").toLowerCase()
-                val matched = when {
-                    trimmed.startsWith("pattern:") ->
-                        Regex(trimmed.removePrefix("pattern:").trim()).containsMatchIn(code)
-                    trimmed.startsWith("!pattern:") ->
-                        !Regex(trimmed.removePrefix("!pattern:").trim()).containsMatchIn(code)
-                    else -> normalized.contains(tNorm)
+                val pos = when {
+                    trimmed.startsWith("pattern:") -> {
+                        val r = Regex(trimmed.removePrefix("pattern:").trim())
+                        r.find(code)?.range?.first ?: -1
+                    }
+                    trimmed.startsWith("!pattern:") -> -1
+                    else -> normalized.indexOf(tNorm)
                 }
-                if (matched) {
+                if (pos >= 0) {
                     for (r in matchedRules) {
-                        if (seen.add(r.id)) hits.add(r)
+                        if (seen.add(r.id)) hits.add(r to pos)
+                    }
+                } else if (trimmed.startsWith("!pattern:")) {
+                    val r = Regex(trimmed.removePrefix("!pattern:").trim())
+                    if (!r.containsMatchIn(code)) {
+                        for (r2 in matchedRules) {
+                            if (seen.add(r2.id)) hits.add(r2 to -1)
+                        }
                     }
                 }
             }
         } else {
-            // 重量通道：Trie + 滑动窗口，O(代码长度)
             val trieRoot = buildTrie(idx.keys)
             val n = normalized.length
             for (i in 0 until n) {
@@ -167,23 +180,23 @@ object BugDB {
                     node.end?.let { trigger ->
                         val matchedRules = idx[trigger] ?: return@let
                         for (r in matchedRules) {
-                            if (seen.add(r.id)) hits.add(r)
+                            if (seen.add(r.id)) hits.add(r to i)
                         }
                     }
                 }
             }
-            // 正则pattern单独走（不在Trie中）
             for ((trigger, matchedRules) in idx) {
                 if (!trigger.trim().startsWith("pattern:")) continue
                 val regex = Regex(trigger.trim().removePrefix("pattern:").trim())
-                if (regex.containsMatchIn(code)) {
+                val m = regex.find(code)
+                if (m != null) {
                     for (r in matchedRules) {
-                        if (seen.add(r.id)) hits.add(r)
+                        if (seen.add(r.id)) hits.add(r to m.range.first)
                     }
                 }
             }
         }
-        return hits.apply { scanCache[fp] = this }
+        return hits.apply { @Suppress("UNCHECKED_CAST"); (scanCache as MutableMap<String, Any>)[fp] = this }
     }
 
     // ─── Trie 节点（仅长代码使用）───
