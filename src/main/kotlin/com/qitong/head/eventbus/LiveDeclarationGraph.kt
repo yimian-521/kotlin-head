@@ -116,7 +116,7 @@ object LiveDeclarationGraph {
         return DeclNode(declId, kind, name, "?", null, path)
     }
 
-    fun totalDeclarations(): Int { var c = 0; deps.keys().forEach { c++ }; return c }
+    fun totalDeclarations(): Int = deps.keys().toList().size  // 方程：键集合自然携带计数
     fun totalFiles(): Int { val files = mutableSetOf<String>(); deps.keys().forEach { files.add(it.substringBefore(":")) }; return files.size }
 
     fun clear() { deps.clear(); revDeps.clear(); isLive = false }

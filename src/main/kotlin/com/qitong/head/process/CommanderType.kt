@@ -58,7 +58,7 @@ enum class CommanderType(val label: String, val description: String) {
         fun isBuiltin(name: String): Boolean = cachedValues.any { it.name == name }
 
         fun builtInCount() = cachedValues.size
-        fun customCount(): Int { var c = 0; customTypes.values().forEach { c++ }; return c }
+        fun customCount(): Int = customTypes.values().toList().size  // 方程：集合本身携带长度
     }
 }
 

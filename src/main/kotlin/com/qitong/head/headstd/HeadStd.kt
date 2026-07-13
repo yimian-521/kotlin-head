@@ -26,7 +26,7 @@ open class DiagStore {
 
     open fun get(group: String): HList<Diag> = groups.get(group) ?: HList()
     fun count(group: String): Int = groups.get(group)?.size ?: 0
-    fun totalCount(): Int { var t = 0; groups.values().forEach { t += it.size }; return t }
+    fun totalCount(): Int = groups.values().toList().sumOf { it.size }  // 方程：sumOf 定义结果，非手动累加
 
     open fun clear(group: String? = null) {
         if (group != null) {
