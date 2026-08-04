@@ -4,19 +4,19 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Probe imagex window
-        run: node probe.js
-        continue-on-error: true
-      - name: Record result
+      - name: Probe and record
         run: |
-          echo "探测时间: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> guard_log.md
-          node probe.js >> guard_log.md 2>&1 || true
-          tail -1 guard_log.md >> $GITHUB_STEP_SUMMARY
+          echo "## $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> guard_log.md
+          node probe.js >> guard_log.md 2>&1 || echo "（未恢复）" >> guard_log.md
+          tail -2 guard_log.md >> $GITHUB_STEP_SUMMARY
       - name: Commit log
         run: |
           git config user.email "guard@bot.local"
