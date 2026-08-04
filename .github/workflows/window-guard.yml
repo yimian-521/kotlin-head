@@ -1,22 +1,30 @@
-name: Window Guard
+name: Window Guard v2
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
+  push:
+    branches: [main]
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Probe and record
+      - name: Probe dual endpoints
+        id: probe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          node probe.js > probe_result.json 2>&1 || true
+          cat probe_result.json
           echo "## $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> guard_log.md
-          node probe.js >> guard_log.md 2>&1 || echo "（未恢复）" >> guard_log.md
-          tail -2 guard_log.md >> $GITHUB_STEP_SUMMARY
+          cat probe_result.json >> guard_log.md
+          echo "（探测完成）" >> guard_log.md
       - name: Commit log
         run: |
           git config user.email "guard@bot.local"
