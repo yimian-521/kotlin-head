@@ -2090,3 +2090,6 @@
 ## 2026-08-25 07:27:17 UTC
 {"time":"2026-08-25T07:27:16.550Z","results":{"imagex":"50000","cloud":"502"},"recovered":false}
 （探测完成）
+## 2026-08-25 08:07:23 UTC
+{"time":"2026-08-25T08:07:22.191Z","results":{"imagex":"50000","cloud":"502"},"recovered":false}
+（探测完成）
